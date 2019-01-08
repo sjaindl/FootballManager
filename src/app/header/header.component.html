@@ -1,0 +1,55 @@
+<div>
+    <mat-toolbar color="primary">
+      <mat-toolbar-row>
+        <button mat-icon-button (click)="sidenav.toggle(); setSideNavigationWidth();" fxShow="true" fxHide.gt-sm>
+          <mat-icon>menu</mat-icon>
+        </button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  
+    <mat-sidenav-container #sidenavContainer style="position: absolute;top: 1;left: 0;height: 100%;z-index: 10;background-color: rgba(1,0,0,0.0); min-width: 1%;" [ngStyle]="{'width': width}">
+   
+    <!-- <mat-sidenav-container #sidenavContainer fxFlexFill> -->
+      <mat-sidenav #sidenav>
+        <mat-nav-list>
+          <a (click)="sidenav.toggle();" md-button routerLink="/home" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-home fa-sm"></span>
+            &nbsp;Home
+          </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/team" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-portrait fa-sm"></span>
+            &nbsp;Mannschaft
+          </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/fanshop" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-shopping-cart fa-sm"></span>
+            &nbsp;Transfermarkt
+          </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/championship" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-award fa-sm"></span>
+            &nbsp;Spielstand
+          </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/about" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-info fa-sm"></span>
+            &nbsp;Über uns
+          </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/contact" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-users fa-sm"></span>
+            &nbsp;Kontakt
+          </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/surveys" routerLinkActive="active" mat-list-item>
+            <span class="fa fa-list-ol fa-sm"></span>
+            &nbsp;FAQ
+          </a>
+          <a (click)="sidenav.toggle(); setSideNavigationWidth();" mat-list-item>
+              <mat-icon>close</mat-icon> Close
+          </a>
+        </mat-nav-list>
+      </mat-sidenav>
+      <mat-sidenav-content fxFlexFill></mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+
+  <!-- <div class="logo">
+      <img src="/assets/images/logo.gif" height="120px" width="120px">
+  </div> -->
+  

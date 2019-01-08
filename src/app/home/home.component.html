@@ -1,0 +1,17 @@
+<!-- <img class="logo" src="/assets/images/logo.gif"> -->
+
+<!-- Social feed -->
+<div class="icon-bar">
+  <a href="https://www.facebook.com/hvtdpstainz/" target="_blank" class="facebook"><i class="fab fa-facebook"></i></a> 
+  <a href="https://twitter.com/HvStainz/" target="_blank" class="twitter"><i class="fab fa-twitter"></i></a> 
+  <a href="mailto:hvtdpstainz@gmx.at" class="mail"><i class="fa fa-envelope"></i></a> 
+  <a href="https://www.instagram.com/hvtdpstainz_2014/" target="_blank" class="instagram"><i class="fab fa-instagram"></i></a> 
+</div>
+
+<ul>
+    <li *ngFor="let item of items | async">
+        <pre>{{ item | json }}</pre>
+    </li>
+</ul>
+
+<cookie-law></cookie-law>
