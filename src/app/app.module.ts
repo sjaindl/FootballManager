@@ -13,13 +13,26 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { environment } from '../environments/environment';
+import { TeamComponent } from './team/team.component';
+import { MarketComponent } from './market/market.component';
+import { StandingComponent } from './standing/standing.component';
+import { AboutusComponent } from './aboutus/aboutus.component';
+import { ContactComponent } from './contact/contact.component';
+import { FaqComponent } from './faq/faq.component';
+import { AppRoutingModule } from './app-routing/app-routing.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    TeamComponent,
+    MarketComponent,
+    StandingComponent,
+    AboutusComponent,
+    ContactComponent,
+    FaqComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'football-manager'}),
@@ -36,7 +49,8 @@ import { environment } from '../environments/environment';
     MatToolbarModule,
     CookieLawModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
