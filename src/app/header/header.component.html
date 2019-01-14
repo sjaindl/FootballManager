@@ -40,6 +40,10 @@
             <span class="fa fa-list-ol fa-sm"></span>
             &nbsp;FAQ
           </a>
+          <a (click)="sidenav.toggle(); signOut();" md-button routerLink="/home" routerLinkActive="active" mat-list-item>
+            <span class="fas fa-sign-out-alt fa-sm"></span>
+            &nbsp;Logout
+          </a>
           <a (click)="sidenav.toggle(); setSideNavigationWidth();" mat-list-item>
               <mat-icon>close</mat-icon> Close
           </a>

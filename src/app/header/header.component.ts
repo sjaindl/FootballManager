@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -23,9 +24,13 @@ export class HeaderComponent implements OnInit {
     this.width = this.sidenav.opened ? '100%' : '0px';
    }
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
+  }
+
+  signOut() {
+    this.authService.signOut()
   }
 
 }

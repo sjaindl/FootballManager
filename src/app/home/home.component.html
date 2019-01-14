@@ -8,10 +8,30 @@
   <a href="https://www.instagram.com/hvtdpstainz_2014/" target="_blank" class="instagram"><i class="fab fa-instagram"></i></a> 
 </div>
 
-<ul>
-    <li *ngFor="let item of items | async">
-        <pre>{{ item | json }}</pre>
-    </li>
-</ul>
+<div *ngFor="let item of items | async">
+    <pre>{{ item | json }}</pre>
+</div>
+
+<!-- Email Registration -->
+<!-- <form [formGroup]="registerForm">
+    <div class="form-group">
+        <label>Email address</label>
+        <input type="email" formControlName="email" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" formControlName="password" required>
+        <label class="error">{{errorMessage}}</label>
+        <label class="success">{{successMessage}}</label>
+    </div>
+    <button type="submit" (click)="tryRegister(registerForm.value)" class="btn btn-default">Register</button>
+</form> -->
+<ngx-auth-firebaseui [providers]="[providers.Google, providers.Facebook, providers.EmailAndPassword]" 
+                     (onSuccess)="printUser($event)"
+                     [guestEnabled]="false"
+                     (onError)="printError()">
+</ngx-auth-firebaseui>
+
+<!-- <ngx-auth-firebaseui-user></ngx-auth-firebaseui-user> -->
 
 <cookie-law></cookie-law>

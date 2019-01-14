@@ -11,7 +11,7 @@ export const environment = {
     apiKey: FirebaseConfig.apiKey,
     authDomain: FirebaseConfig.authDomain,
     databaseURL: FirebaseConfig.databaseURL,
-    projectId: "footballmanager-a2019",
+    projectId: FirebaseConfig.projectId,
     storageBucket: FirebaseConfig.storageBucket,
     messagingSenderId: FirebaseConfig.messagingSenderId
   }

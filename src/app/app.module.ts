@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { CookieLawModule } from 'angular2-cookie-law'
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireModule } from 'angularfire2';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -20,6 +22,7 @@ import { AboutusComponent } from './aboutus/aboutus.component';
 import { ContactComponent } from './contact/contact.component';
 import { FaqComponent } from './faq/faq.component';
 import { AppRoutingModule } from './app-routing/app-routing.component';
+import { FirebaseConfig } from './shared/firebase.config';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,16 @@ import { AppRoutingModule } from './app-routing/app-routing.component';
     CookieLawModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AppRoutingModule
+    AngularFireAuthModule,
+    AppRoutingModule,
+    NgxAuthFirebaseUIModule.forRoot({
+      apiKey: FirebaseConfig.apiKey,
+      authDomain: FirebaseConfig.authDomain,
+      databaseURL: FirebaseConfig.databaseURL,
+      projectId: FirebaseConfig.projectId,
+      storageBucket: FirebaseConfig.storageBucket,
+      messagingSenderId: FirebaseConfig.messagingSenderId
+  }),
   ],
   providers: [],
   bootstrap: [AppComponent]
