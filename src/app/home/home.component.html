@@ -12,26 +12,44 @@
     <pre>{{ item | json }}</pre>
 </div>
 
-<!-- Email Registration -->
-<!-- <form [formGroup]="registerForm">
-    <div class="form-group">
-        <label>Email address</label>
-        <input type="email" formControlName="email" class="form-control" required>
-    </div>
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-control" formControlName="password" required>
-        <label class="error">{{errorMessage}}</label>
-        <label class="success">{{successMessage}}</label>
-    </div>
-    <button type="submit" (click)="tryRegister(registerForm.value)" class="btn btn-default">Register</button>
-</form> -->
-<ngx-auth-firebaseui [providers]="[providers.Google, providers.Facebook, providers.EmailAndPassword]" 
+<ngx-auth-firebaseui *ngIf="!this.authService.isSignedIn()" [providers]="[providers.Google, providers.Facebook, providers.EmailAndPassword]" 
                      (onSuccess)="printUser($event)"
                      [guestEnabled]="false"
                      (onError)="printError()">
 </ngx-auth-firebaseui>
 
 <!-- <ngx-auth-firebaseui-user></ngx-auth-firebaseui-user> -->
+
+<div *ngIf="this.authService.isSignedIn()" style="margin-left: 15px; margin-top: 20px; font-size: 20px">
+    Meine Ligen:
+    &nbsp;
+    <mat-form-field>
+        <mat-select placeholder="Wähle deine Liga" (selectionChange)="selectLeague($event.value)">
+            <mat-option *ngFor="let league of leagues" [value]="league">
+                {{league.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <br><br>
+    ODER
+    <br><br>
+    <button style="font-size: 20px" mat-button class="background-primary" (click)="showNewLeagueDialog()">Liga gründen</button>
+    <!-- TODO: mat-dialog mit Auswahl Liga (= derzeit Grenzlandcup) + Eingabe Liganame + Passwort (md5-hash!) -->
+    <br><br>
+    ODER
+    <br><br>
+    Liga beitreten
+    <br><br>
+    Liganame:
+    <br>
+    <input [ngModel]="joinleaguename" (ngModelChange)="joinleaguename = $event"> 
+    <br><br>
+    Passwort:
+    <br>
+    <input [(ngModel)]="joinpasswordname" (ngModelChange)="joinpasswordname = $event">
+    &nbsp;
+    <button style="font-size: 20px" mat-button class="background-primary" (click)="joinLeague()">beitreten</button>
+</div>
 
 <cookie-law></cookie-law>

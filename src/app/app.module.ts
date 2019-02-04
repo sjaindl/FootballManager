@@ -10,7 +10,7 @@ import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { TransferHttpCacheModule } from '@nguniversal/common';
-import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule } from '@angular/material';
+import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatSnackBarModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
@@ -23,6 +23,8 @@ import { ContactComponent } from './contact/contact.component';
 import { FaqComponent } from './faq/faq.component';
 import { AppRoutingModule } from './app-routing/app-routing.component';
 import { FirebaseConfig } from './shared/firebase.config';
+import { NewleagueDialogComponent } from './newleague.dialog/newleague.dialog.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,11 @@ import { FirebaseConfig } from './shared/firebase.config';
     StandingComponent,
     AboutusComponent,
     ContactComponent,
-    FaqComponent
+    FaqComponent,
+    NewleagueDialogComponent
+  ],
+  entryComponents: [
+    NewleagueDialogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'football-manager'}),
@@ -50,11 +56,18 @@ import { FirebaseConfig } from './shared/firebase.config';
     MatListModule,
     MatIconModule,
     MatToolbarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatSnackBarModule,
     CookieLawModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
     AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     NgxAuthFirebaseUIModule.forRoot({
       apiKey: FirebaseConfig.apiKey,
       authDomain: FirebaseConfig.authDomain,

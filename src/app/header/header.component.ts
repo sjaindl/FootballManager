@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
     this.width = this.sidenav.opened ? '100%' : '0px';
    }
 
-  constructor(private authService: AuthService) { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit() {
   }

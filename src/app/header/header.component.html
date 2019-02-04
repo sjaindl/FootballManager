@@ -4,6 +4,10 @@
         <button mat-icon-button (click)="sidenav.toggle(); setSideNavigationWidth();" fxShow="true" fxHide.gt-sm>
           <mat-icon>menu</mat-icon>
         </button>
+        &nbsp;
+        <div class="center" *ngIf="authService.currentLeague">
+          {{ authService.currentLeague.name }}
+        </div>
       </mat-toolbar-row>
     </mat-toolbar>
   

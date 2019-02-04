@@ -4,10 +4,21 @@ import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/cor
 // import { MysqlService } from '../services/mysql.service';
 import { Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser'
-import { AngularFirestore } from 'angularfire2/firestore';
-import { Observable } from 'rxjs';
+import { AngularFirestore, DocumentData } from 'angularfire2/firestore';
 import { AuthProvider } from 'ngx-auth-firebaseui';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { AuthService } from '../services/auth.service';
+import { FirebaseService } from '../services/firebase.service';
+import { League } from '../shared/League';
+import { NewleagueDialogComponent } from '../newleague.dialog/newleague.dialog.component';
+import { MatDialog, MatSnackBar } from '@angular/material';
+import { Md5 } from 'ts-md5';
+
+
+export interface Player {
+  firstName: string
+  lastName: string
+}
 
 @Component({
   selector: 'app-home',
@@ -17,16 +28,23 @@ import { AngularFireAuth } from 'angularfire2/auth';
 export class HomeComponent implements OnInit {
 
   imageBaseUrl: String
-  public items: Observable<any[]>
+  public items: DocumentData[]
   isMobile = null
   providers = AuthProvider
+  joinleaguename: string
+  joinpasswordname: string
+  username: string
 
+  leagues: League[] = []
+  // players: any[]
+  
   //private deviceService: DeviceDetectorService, private mysqlService: MysqlService, 
-  constructor(db: AngularFirestore, public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, private metaTagService: Meta, private angularFireAuth: AngularFireAuth) { 
-    // this.mysqlService.getNews().subscribe(news => {
-    //   this.items = news
-    // })
-    this.items = db.collection('/test').valueChanges();
+  constructor(db: AngularFirestore, 
+    public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, 
+    private metaTagService: Meta, private angularFireAuth: AngularFireAuth, 
+    public authService : AuthService, public firebaseService: FirebaseService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar) { 
   }
   
   ngOnInit() {
@@ -48,18 +66,65 @@ export class HomeComponent implements OnInit {
       name: 'description', content: "Spiele auf fussballmanager.at mit deinen Lieblingsspielern aus dem Grenzlandcup in eigenen Ligen gegen deine Freunde. Schlag noch heute am Transfermarkt zu und erstelle deine persönliche Aufstellung."
     })
 
-    this.angularFireAuth.auth.onAuthStateChanged(function(user) {
+    this.angularFireAuth.auth.onAuthStateChanged((user) => {
       if (user) {
-        // User is signed in.
         console.log("user signed in: " + user.displayName)
+
+        this.firebaseService.getUserFoundedLeagues("grenzlandcup").valueChanges().subscribe((leaguesArray) => {
+          this.leagues = []
+
+          leaguesArray.forEach(element => {
+            let league = new League()
+            league.init(element)
+            this.leagues.push(league)
+          })
+        })
+        
       } else {
         console.log("user signed out")
       }
-    });
+    })
+  }
+
+  selectLeague(league: League) {
+    this.authService.currentLeague = league
+  }
+
+  showNewLeagueDialog() {
+    let dialogRef = this.dialog.open(NewleagueDialogComponent, {
+      width: '350px',
+      data: {  }
+    })
+  }
+
+  joinLeague() {
+    console.log(this.joinleaguename)
+    this.firebaseService.getFoundedLeague("grenzlandcup", this.joinleaguename).valueChanges().subscribe(league => {
+
+      console.log('founded:' + league)
+      console.log(league == null)
+      
+      if (league == null) {
+        this.openSnackBar('Liga existiert nicht. Wähle einen existierenden Liganamen', '')
+      } else if (league.hashedPassword != Md5.hashStr(this.joinpasswordname)) {
+        this.openSnackBar('Falsches Passwort.', '')
+      } else {
+          this.firebaseService.addUserLeague("grenzlandcup", this.joinleaguename).then( param => {
+
+          console.log(param)
+          let league = new League()
+          league.name = this.joinleaguename
+          this.authService.currentLeague = league
+        }).catch(error =>  {
+          console.log(error)
+          this.openSnackBar(error, '')
+        })
+      }
+    })
   }
 
   ngAfterViewInit() {
-    this.cdr.detectChanges();
+    this.cdr.detectChanges()
   }
 
   checkDevice() {
@@ -70,10 +135,10 @@ export class HomeComponent implements OnInit {
   onResize(event) {
     this.checkDevice()
   }
-
+  
   showImageDetails(item) {
     console.log('navigate to ' + '/news/' + item.newsId)
-    this.router.navigate(['/news', item.newsId]);
+    this.router.navigate(['/news', item.newsId])
   }
 
   printUser(event) {
@@ -84,16 +149,9 @@ export class HomeComponent implements OnInit {
     console.log("error")
   }
 
-  // tryRegister(value){
-  //   this.authService.doRegister(value)
-  //   .then(res => {
-  //     console.log(res);
-  //     this.errorMessage = "";
-  //     this.successMessage = "Your account has been created";
-  //   }, err => {
-  //     console.log(err);
-  //     this.errorMessage = err.message;
-  //     this.successMessage = "";
-  //   })
-  // }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
 }

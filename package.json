@@ -54,6 +54,7 @@
     "firebase": "^5.7.2",
     "ngx-auth-firebaseui": "^2.2.1",
     "reflect-metadata": "^0.1.10",
+    "ts-md5": "^1.2.4",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
