@@ -1,3 +1,51 @@
-<p>
-  aboutus works!
-</p>
+<h1 class="large header">Über uns</h1>
+
+<div fxLayout="column">
+
+  <p class="normal">
+    Der Hobbyfußballverein <span class = "bold">Textildruckprofi Stainz</span> (kurz <span class = "bold">HV TDP Stainz</span>) wurde im Jahr 2014 gegründet.
+    Aus einem Gespräch bei einem kühlen blonden Erfrischungsgetränk zwischen Daniel Fabian und Eduard Orthaber entsprang die Idee einer Gründung eines Hobbyvereines. 
+  </p>
+
+  <p class="normal">
+    Diese Idee wurde von den beiden auch in die Tat umgesetzt. 
+    Neben den Gründungsmitgliedern schlossen sich einige weitere ehemalige Fußballer dem Verein an und so entstand ein Team aus vielen heimischen Kickern, die ihrem Hobby nachgehen.
+  </p>
+
+  <p class="normal">
+    Im Vereinsnamen befindet sich auch der Name unseres Hauptsponsors, der Firma „Textildruckprofi“ aus Deutschlandsberg. 
+    Seit der Gründung spielt der Verein in der Hobbyliga „Süd-Weststeirercup“ mit. Mittlerweile steht der Verein bei 3 Meistertiteln und einem Vizemeistertitel. Gespielt und trainiert wird im Stadion Stainz.
+  </p>
+
+  <div fxFlex="50" fxFlexOffset="10px">
+      <img class="center" src="assets/images/meister.jpg">
+  </div>
+
+  <h2 class="large">Unsere größten Erfolge (Stand Sommer 2018):</h2>
+
+  <ul class="small">
+    <li><span class="fa fa-dice-three fa-sm"></span> 3x Meister Süd-Weststeirercup (2015, 2016, 2018)</li>
+    <li><span class="fa fa-dice-two fa-sm"></span> 2x Turniersieger des Hobbyhallenmasters in Leibnitz (2015, 2016)</li>
+    <li><span class="fa fa-dice-one fa-sm"></span> 1x Vizemeister Süd-Weststeirercup (2017)</li>
+    <li><span class="fa fa-medal fa-sm"></span> Testspielerfolg gegen die Kampfmannschaft des SC Stainz (2015)</li>
+    <li><span class="fa fa-archway fa-sm"></span> Testspiel gegen den FC Red Bull Salzburg (2017)</li>
+    <li><span class="fa fa-futbol fa-sm"></span> Stammtischcup Finaltag (2018)</li>
+  </ul>
+  
+  <br>
+  
+  <p class="normal">
+    Seit Dezember 2017 ist der HV TDP Stainz auch ein gemeldeter Verein.
+    <br>
+    Unser Vorstand setzt sich zusammen aus:
+  </p>
+
+  <mat-list fxLayout="column" fxLayout.gt-sm="row">
+    <mat-list-item class="listImage" *ngFor="let chef of chefs">
+      <img mat-list-avatar class='img-preview' alt="{{chef.firstName}} {{chef.lastName | uppercase}}" >
+      <!-- TODO img src="{{imageBaseUrl.concat(chef.imagePath)}} fetch from firestore" -->
+      <h1 mat-line>{{chef.firstName}} {{chef.lastName | uppercase}}</h1>
+      <h1 mat-line>{{chef.function}}</h1>
+    </mat-list-item>
+  </mat-list>
+</div>
