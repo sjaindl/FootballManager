@@ -10,7 +10,7 @@ import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { TransferHttpCacheModule } from '@nguniversal/common';
-import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatSnackBarModule } from '@angular/material';
+import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatSnackBarModule, MatGridListModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
@@ -57,6 +57,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatIconModule,
     MatToolbarModule,
     MatFormFieldModule,
+    MatGridListModule,
     MatInputModule,
     MatSelectModule,
     MatOptionModule,

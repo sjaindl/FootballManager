@@ -36,12 +36,12 @@ export class AuthService implements CanActivate {
     canActivate(): boolean {
       console.log(this.isSignedIn())
       console.log(this.isLeagueSelected())
-
+      
       if (!this.isSignedIn() || !this.isLeagueSelected()) {
-        this.router.navigate(['home']);
-        return false;
+        this.router.navigate(['home'])
+        return false
       }
-      return true;
+      return true
     }
 
     constructor(public angularFireAuth: AngularFireAuth, public router: Router) {

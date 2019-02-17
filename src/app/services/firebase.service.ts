@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { AuthService } from './auth.service';
+import { Injectable } from '@angular/core'
+import { AngularFirestore } from 'angularfire2/firestore'
+import { AuthService } from './auth.service'
 import {Md5} from 'ts-md5/dist/md5'
-// import { auth } from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -25,17 +24,13 @@ export class FirebaseService {
     return this.getLeagues().doc(league)
   }
 
-  getTeams(league) {
-    return this.getLeague(league).collection('/teams/')
-  }
+
 
   getTeam(league, team) {
     return this.getTeams(league).doc(team)
   }
   
-  getPlayers(league, team) {
-    return this.getTeam(league, team).collection('/players/')
-  }
+
 
   getPlayer(league, team, player) {
     return this.getPlayers(league, team).doc(player)
@@ -55,6 +50,16 @@ export class FirebaseService {
       name: foundedLeague,
       hashedPassword: Md5.hashStr(password)
     })
+  }
+
+  //Teams
+  getTeams(league) {
+    return this.getLeague(league).collection('/teams/')
+  }
+
+  //Players
+  getPlayers(league, team) {
+    return this.getTeam(league, team).collection('/players/')
   }
 
   //Games: TODO
@@ -78,7 +83,7 @@ export class FirebaseService {
   }
 
   getUserFoundedLeagues(league) {
-    return this.getUserLeague(league).collection("foundedLeagues")
+    return this.getUserLeague(league).collection('foundedLeagues')
   }
 
   getUserFoundedLeague(league, foundedLeague) {
@@ -90,6 +95,22 @@ export class FirebaseService {
       name: foundedLeague
     })
   }
+
+  //Chefs
+  getChefs() {
+    return this.db.collection('chefs')
+  }
+
+  //Lineup
+  getLineUp(league, foundedLeague) {
+    return this.getUserFoundedLeague(league, foundedLeague).collection('lineup')
+  }
+  
+  //Players of team
+  getPlayersOfTeam(league, foundedLeague) {
+    return this.getUserFoundedLeague(league, foundedLeague).collection('teamPlayers')
+  }
+
 }
 
 export class Player {
