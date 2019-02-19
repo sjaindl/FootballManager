@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from '../services/firebase.service';
 import { AuthService } from '../services/auth.service';
+import { posix } from 'path';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-team',
@@ -12,8 +14,8 @@ export class TeamComponent implements OnInit {
   teams: any[]
   players: Player[] = []
   playersOfTeam: Player[] = []
+  originalLineup: Lineup[][] = []
   lineup: Lineup[][] = []
-  def: string[] = ['StefanJaindl', 'HrvojeSincek']
   formation = '4-4-2'
 
   gridColumnsDefenseFirstLine = 2
@@ -30,10 +32,7 @@ export class TeamComponent implements OnInit {
   priceSizeEm = 1.5
   detailSizeEm = 1.0
 
-  public selected2 = 'ChristianSchnitter'
-  selected = 'StefanJaindl'
-
-  constructor(public firebaseService: FirebaseService, public authService: AuthService) { }
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
 
@@ -42,79 +41,55 @@ export class TeamComponent implements OnInit {
     this.initLineupArray() 
     this.setFormation('4-4-2')
 
-    this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
-      this.teams = teamsArray
-
-      teamsArray.forEach(team => { //TODO check.. nur 1 team oder? .. nö
-        console.log(team.id)
-        this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
-
-          playersArray.forEach(p => {
-            let player = new Player()
-            player.init(p, team.id)
-            this.players.push(player)
-            console.log(p)
-          })
-
-          this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
-            playersOfTeamArray.forEach(p => {
-            let playerOfTeam = new Player()
-            let player = this.getPlayerByName(p.player)
-            playerOfTeam.init(player, team.id)
-            playerOfTeam.player = player.player
-            this.playersOfTeam.push(playerOfTeam)
-            console.log('player of team: ' + playerOfTeam)
-
+    // this.firebaseService.getFormation("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((formation) => {
+    //   this.setFormation(formation.formation)
+      
+      this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
+        this.teams = teamsArray
+  
+        teamsArray.forEach(team => {
+          console.log(team.id)
+          this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
+  
+            playersArray.forEach(p => {
+              let player = new Player()
+              player.init(p, team.id)
+              this.players.push(player)
+              console.log(p)
             })
-
-            this.firebaseService.getLineUp("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((LineupArray) => {
-              LineupArray.forEach(p => {
-                let linedUpPlayer = new Lineup()
-                let player = this.getPlayerByName(p.player)
-                linedUpPlayer.player = player.player
-                linedUpPlayer.position = p.position
-                linedUpPlayer.index = p.index
-                // this.lineup[linedUpPlayer.position][p.index] = player.player
-                this.lineup[linedUpPlayer.position][p.index] = player.player.split(' ').join('') 
-                console.log('linedup: ' + linedUpPlayer.player + ', with pos: ' + linedUpPlayer.position + ' and index: ' + linedUpPlayer.index)
+  
+            this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
+              playersOfTeamArray.forEach(p => {
+              let playerOfTeam = new Player()
+              let player = this.getPlayerByName(p.player)
+              playerOfTeam.init(player, team.id)
+              playerOfTeam.player = player.player
+              this.playersOfTeam.push(playerOfTeam)
+              console.log('player of team: ' + playerOfTeam)
+  
               })
+  
+              this.firebaseService.getLineUp("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((LineupArray) => {
+                LineupArray.forEach(p => {
+                  let linedUpPlayer = new Lineup()
+                  let player = this.getPlayerByName(p.player)
+                  linedUpPlayer.player = player.player
+                  linedUpPlayer.position = p.position
+                  linedUpPlayer.index = p.index
+                  this.lineup[linedUpPlayer.position][linedUpPlayer.index] = player.player.split(' ').join('') 
+                  this.originalLineup[linedUpPlayer.position][linedUpPlayer.index] = player.player.split(' ').join('') 
+                  console.log('linedup: ' + linedUpPlayer.player + ', with pos: ' + linedUpPlayer.position + ' and index: ' + linedUpPlayer.index)
+                })
+              })
+  
             })
-
           })
-
-          // this.buildLinedUpArray()
-
         })
       })
-    })
+    // })
 
-    // this.lineup['goal'][0] = 'ChristianSchnitter'
-    // // this.lineup['defense1'][0] = 'StefanJaindl'
-    // this.lineup['defense1'][1] = 'HrvojeSincek'
 
-    // let player = new Player()
-    // player.player = "CR 7"
-    // player.team = "HV TDP"
-    // player.marketValue = 10000
-    // this.players.push(player)
-
-    // let player2 = new Player()
-    // player2.player = "CR 2"
-    // player2.team = "HV TDP"
-    // player2.marketValue = 10000
-    // this.players.push(player2)
-
-    // let player3 = new Player()
-    // player3.player = "CR 3"
-    // player3.team = "HV TDP"
-    // player3.marketValue = 10000
-    // this.players.push(player3)
-
-    // let player4 = new Player()
-    // player4.player = "CR 4"
-    // player4.team = "HV TDP"
-    // player4.marketValue = 10000
-    // this.players.push(player4)
+    
   }
 
   curIndex: number
@@ -129,28 +104,39 @@ export class TeamComponent implements OnInit {
     this.lineup['midfield2'] = []
     this.lineup['attack1'] = []
     this.lineup['attack2'] = []
+
+    this.originalLineup = []
+    this.originalLineup['goal'] = []
+    this.originalLineup['defense1'] = []
+    this.originalLineup['defense2'] = []
+    this.originalLineup['midfield1'] = []
+    this.originalLineup['midfield2'] = []
+    this.originalLineup['attack1'] = []
+    this.originalLineup['attack2'] = []
   }
 
-  setCurLineUp(index, pos) {
-    this.curIndex = index
-    this.curPos = pos
-  }
-
-  get linedup() {
-    if (this.curPos != null && this.curIndex != null) {
-      console.log('*** linedup: **** ' + this.getLinedUpPlayer(this.curPos, this.curIndex) + ' @index/pos: ' + this.curIndex + '/' + this.curPos)
-      return this.getLinedUpPlayer(this.curPos, this.curIndex)
-    }
-    return ''
-  }
-
-  // buildLinedUpArray() {
-  //   this.lineup.forEach(element => {
-      
-  //   })
-  // }
   save() {
-    
+    var valid = true
+    this.firebaseService.positions.forEach(position => {
+      this.lineup[position].forEach(player => {
+        var equalCount = 0
+        this.lineup[position].forEach(player2 => {
+          console.log('check: ' + player + ', ' + player2)
+          if (player == player2) {
+            equalCount++ 
+          }
+        })
+        if (equalCount > 1) {
+          valid = false
+        }
+      })
+    })
+
+    if (!valid) {
+      this.openSnackBar('Spieler dürfen nicht öfter als einmal aufgestellt werden.', 'Nicht gespeichert.')
+    } else {
+      this.firebaseService.setLineup("grenzlandcup", this.authService.currentLeague.name, this.lineup, this.originalLineup)
+    }
   }
 
   getPlayerByName(name): Player {
@@ -166,14 +152,6 @@ export class TeamComponent implements OnInit {
 
   getLinedUpPlayer(position, index) {
     return this.lineup[position][index]
-    // var linedup = ''
-    // this.lineup.forEach(player => {
-    //   if (player.position == position && player.index == index) {
-    //     linedup = player.player.split(' ').join('')
-    //     return
-    //   }
-    // })
-    // return linedup
   }
   
   array(n: number): any[] {
@@ -216,24 +194,31 @@ export class TeamComponent implements OnInit {
   initLineupSubArrays(gridColumnsDefenseFirstLine, gridColumnsDefenseSecondLine, gridColumnsMidfieldFirstLine, 
     gridColumnsMidfieldSecondLine, gridColumnsAttackFirstLine, gridColumnsAttackSecondLine) {
     this.lineup["goal"].push(new Lineup())
+    this.originalLineup["goal"].push(new Lineup())
     
     for (let index = 0; index < gridColumnsDefenseFirstLine; index++) {
       this.lineup["defense1"].push(new Lineup())
+      this.originalLineup["defense1"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsDefenseSecondLine; index++) {
       this.lineup["defense2"].push(new Lineup())
+      this.originalLineup["defense2"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsMidfieldFirstLine; index++) {
       this.lineup["midfield1"].push(new Lineup())
+      this.originalLineup["midfield1"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsMidfieldSecondLine; index++) {
       this.lineup["midfield2"].push(new Lineup())
+      this.originalLineup["midfield2"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsAttackFirstLine; index++) {
       this.lineup["attack1"].push(new Lineup())
+      this.originalLineup["attack1"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsAttackSecondLine; index++) {
       this.lineup["attack2"].push(new Lineup())
+      this.originalLineup["attack2"].push(new Lineup())
     }
   }
 
@@ -252,8 +237,9 @@ export class TeamComponent implements OnInit {
     linedUpPlayer.position = pos
     linedUpPlayer.index = index
     
+    this.lineup[linedUpPlayer.position][index] = p.player.split(' ').join('') 
     //old player
-    var found = false
+    // var found = false
 
     // this.lineup.forEach(element => {
     //   //check whether there is already a lined up player at this pos
@@ -274,19 +260,14 @@ export class TeamComponent implements OnInit {
 
     // this.lineup.push(player)
   }
-/*
-  playerLinedUp(player: Player) {
-    var linedUp = false
-    this.lineup.forEach(element => {
-      if (player.player == element.player) {
-        // console.log('linedup: ' + player.player)
-        linedUp = true
-      }
-    })
-    return linedUp
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
   }
-  */
 }
+
 export class Lineup {
   player: string
   position: string

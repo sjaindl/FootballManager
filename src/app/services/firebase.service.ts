@@ -8,6 +8,8 @@ import {Md5} from 'ts-md5/dist/md5'
 })
 export class FirebaseService {
 
+  positions = ['goal', 'defense1', 'defense2', 'midfield1', 'midfield2', 'attack1', 'attack2']
+
   constructor(private db: AngularFirestore, private auth: AuthService) { }
 
   //FAQ
@@ -105,7 +107,37 @@ export class FirebaseService {
   getLineUp(league, foundedLeague) {
     return this.getUserFoundedLeague(league, foundedLeague).collection('lineup')
   }
-  
+
+  clearLineup(league, foundedLeague, originalLineup) {
+    // this.getLineUp(league, foundedLeague).valueChanges().subscribe((lineup) => {
+    this.positions.forEach(position => {
+      originalLineup[position].forEach(player => {
+        console.log('del:' + player)
+        this.getLineUp(league, foundedLeague).doc(player).delete()
+      })
+    })
+  }
+
+  setLineup(league, foundedLeague, lineup, originalLineup) {
+    this.clearLineup(league, foundedLeague, originalLineup)
+    
+    this.positions.forEach(position => {
+      lineup[position].forEach(player => {
+        console.log('add: ' + player)
+        this.getLineUp(league, foundedLeague).doc(player).set({
+          index: lineup[position].indexOf(player),
+          player: player,
+          position: position
+        })
+      })
+    })
+  }
+
+  //Formation
+  getFormation(league, foundedLeague) {
+    return this.getLineUp(league, foundedLeague).doc('formation')
+  }
+
   //Players of team
   getPlayersOfTeam(league, foundedLeague) {
     return this.getUserFoundedLeague(league, foundedLeague).collection('teamPlayers')
