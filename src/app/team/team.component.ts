@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from '../services/firebase.service';
 import { AuthService } from '../services/auth.service';
-import { posix } from 'path';
 import { MatSnackBar } from '@angular/material';
 
 @Component({
@@ -32,7 +31,16 @@ export class TeamComponent implements OnInit {
   priceSizeEm = 1.5
   detailSizeEm = 1.0
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) { }
+  displayedColumns: string[] = ['position', 'team', 'player', 'marketValue']
+  dataSource: Player[]
+  teamPositionSortOrder = new Map<string, number>()
+
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) { 
+    this.teamPositionSortOrder.set("goal", 1)
+    this.teamPositionSortOrder.set("defense", 2)
+    this.teamPositionSortOrder.set("midfield", 3)
+    this.teamPositionSortOrder.set("attack", 4)
+  }
 
   ngOnInit() {
 
@@ -55,7 +63,7 @@ export class TeamComponent implements OnInit {
               let player = new Player()
               player.init(p, team.id)
               this.players.push(player)
-              console.log(p)
+              // console.log(p)
             })
   
             this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
@@ -65,8 +73,28 @@ export class TeamComponent implements OnInit {
               playerOfTeam.init(player, team.id)
               playerOfTeam.player = player.player
               this.playersOfTeam.push(playerOfTeam)
-              console.log('player of team: ' + playerOfTeam)
-  
+              console.log('player of team: ' + playerOfTeam.player)
+              this.dataSource = this.playersOfTeam.sort((a, b) => {
+                  var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
+                  var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
+            
+                  if (aPositionSortOrder < bPositionSortOrder) {
+                    return -1
+                  } 
+                  else if (aPositionSortOrder > bPositionSortOrder) {
+                    return 1
+                  }
+                  else {
+                    if (a.player < b.player) {
+                      return -1
+                    } 
+                    else if (a.player > b.player) {
+                      return 1
+                    } else {
+                      return 0
+                    }
+                  }
+                })
               })
   
               this.firebaseService.getLineUp("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((LineupArray) => {
@@ -78,7 +106,7 @@ export class TeamComponent implements OnInit {
                   linedUpPlayer.index = p.index
                   this.lineup[linedUpPlayer.position][linedUpPlayer.index] = player.player.split(' ').join('') 
                   this.originalLineup[linedUpPlayer.position][linedUpPlayer.index] = player.player.split(' ').join('') 
-                  console.log('linedup: ' + linedUpPlayer.player + ', with pos: ' + linedUpPlayer.position + ' and index: ' + linedUpPlayer.index)
+                  // console.log('linedup: ' + linedUpPlayer.player + ', with pos: ' + linedUpPlayer.position + ' and index: ' + linedUpPlayer.index)
                 })
               })
   
@@ -238,34 +266,20 @@ export class TeamComponent implements OnInit {
     linedUpPlayer.index = index
     
     this.lineup[linedUpPlayer.position][index] = p.player.split(' ').join('') 
-    //old player
-    // var found = false
-
-    // this.lineup.forEach(element => {
-    //   //check whether there is already a lined up player at this pos
-    //   if (element.index == index && element.position == pos) {
-    //     found = true
-    //     element.player = p.player
-    //     // console.log("found " + element.player)
-    //     return
-    //   } else if (element.player == p.player) {
-    //       delete(this.lineup[this.lineup.indexOf(element)])
-    //   }
-    // })
-
-    // // console.log("found? " + found)
-    // if (!found) {
-    //   this.lineup.push(linedUpPlayer)
-    // }
-
-    // this.lineup.push(player)
   }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 2000,
-    });
+    })
   }
+}
+
+export class PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
 }
 
 export class Lineup {
