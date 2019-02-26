@@ -275,13 +275,6 @@ export class TeamComponent implements OnInit {
   }
 }
 
-export class PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
 export class Lineup {
   player: string
   position: string

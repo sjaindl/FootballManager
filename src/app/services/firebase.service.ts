@@ -9,6 +9,7 @@ import {Md5} from 'ts-md5/dist/md5'
 export class FirebaseService {
 
   positions = ['goal', 'defense1', 'defense2', 'midfield1', 'midfield2', 'attack1', 'attack2']
+  initialBalance = 200000
 
   constructor(private db: AngularFirestore, private auth: AuthService) { }
 
@@ -26,13 +27,9 @@ export class FirebaseService {
     return this.getLeagues().doc(league)
   }
 
-
-
   getTeam(league, team) {
     return this.getTeams(league).doc(team)
   }
-  
-
 
   getPlayer(league, team, player) {
     return this.getPlayers(league, team).doc(player)
@@ -94,7 +91,21 @@ export class FirebaseService {
 
   addUserLeague(league, foundedLeague) {
     return this.getUserFoundedLeague(league, foundedLeague).set({
-      name: foundedLeague
+      name: foundedLeague,
+      balance: this.initialBalance
+    })
+  }
+
+  changeBalance(league, foundedLeague, value) {
+    this.getUserFoundedLeague(league, foundedLeague)
+    .get().subscribe((doc) => {
+      var currentBalance = doc.get('balance')
+      
+      this.getUserFoundedLeague(league, foundedLeague).set({
+        name: foundedLeague,
+        balance: currentBalance + value
+      })
+
     })
   }
 
@@ -143,6 +154,29 @@ export class FirebaseService {
     return this.getUserFoundedLeague(league, foundedLeague).collection('teamPlayers')
   }
 
+  addPlayerOfTeam(league, foundedLeague, player) {
+    this.getPlayersOfTeam(league, foundedLeague).add({
+      player: player
+    })
+  }
+
+  removePlayerOfTeam(league, foundedLeague, player) {
+    let players = this.getPlayersOfTeam(league, foundedLeague).ref
+    players.where("player", "==", player.player).get().then( querySnapshot => {
+      querySnapshot.docs.forEach(element => {
+        console.log('delete ' + element.id)
+        players.doc(element.id).delete().then(() => {
+          this.getLineUp(league, foundedLeague).doc(player.player.split(' ').join('')).delete().catch(error =>  {
+            console.log(error)
+          }).then(() =>  {
+            console.log("successfully removed from lineup")
+          })
+        }).catch(error =>  {
+          console.log(error)
+        })
+      })
+    })
+  }
 }
 
 export class Player {
