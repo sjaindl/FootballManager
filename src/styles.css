@@ -45,6 +45,10 @@ $divider-color:        #BDBDBD; */
     transform: scale(1.01);
 }
 
+table {
+    width: 100%;
+}
+
 /* Links */
   
 /* unvisited link */

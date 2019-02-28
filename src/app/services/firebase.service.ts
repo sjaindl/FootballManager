@@ -51,6 +51,15 @@ export class FirebaseService {
     })
   }
 
+  //Standing
+  getStanding(league, foundedLeague) {
+    return this.getFoundedLeague(league, foundedLeague).collection('members')
+  }
+
+  getUserStanding(league, foundedLeague) {
+    return this.getStanding(league, foundedLeague).doc(this.auth.userId())
+  }
+
   //Teams
   getTeams(league) {
     return this.getLeague(league).collection('/teams/')
@@ -68,10 +77,14 @@ export class FirebaseService {
     return this.db.collection('/users/')
   }
 
+  getUser(uid) {
+    return this.db.collection('/users/').doc(uid)
+  }
+
   getCurrentUser() {
     return this.getUsers().doc(this.auth.userId())
   }
-   
+  
   //User Leagues
   getUserLeagues() {
     return this.getCurrentUser().collection('/userLeagues/')
@@ -90,6 +103,13 @@ export class FirebaseService {
   }
 
   addUserLeague(league, foundedLeague) {
+    //Add user ref to league
+    this.getUserStanding(league, foundedLeague).set({
+      uid: this.auth.userId,
+      points: 0
+    })
+    
+    //Create league
     return this.getUserFoundedLeague(league, foundedLeague).set({
       name: foundedLeague,
       balance: this.initialBalance
@@ -97,8 +117,7 @@ export class FirebaseService {
   }
 
   changeBalance(league, foundedLeague, value) {
-    this.getUserFoundedLeague(league, foundedLeague)
-    .get().subscribe((doc) => {
+    this.getUserFoundedLeague(league, foundedLeague).get().subscribe((doc) => {
       var currentBalance = doc.get('balance')
       
       this.getUserFoundedLeague(league, foundedLeague).set({
