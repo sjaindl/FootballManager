@@ -18,7 +18,7 @@
   </p>
 
   <div fxFlex="50" fxFlexOffset="10px">
-      <img class="center" src="assets/images/meister.jpg">
+      <img class="center" src="assets/meister.jpg">
   </div>
 
   <h2 class="large">Unsere größten Erfolge (Stand Sommer 2018):</h2>
@@ -42,7 +42,7 @@
 
   <mat-list fxLayout="column" fxLayout.gt-sm="row">
     <mat-list-item class="listImage" *ngFor="let chef of chefs">
-      <img mat-list-avatar class='img-preview' alt="{{chef.firstName}} {{chef.lastName | uppercase}}" >
+      <!-- <img mat-list-avatar class='img-preview' alt="{{chef.firstName}} {{chef.lastName | uppercase}}" > -->
       <!-- TODO img src="{{imageBaseUrl.concat(chef.imagePath)}} fetch from firestore" -->
       <h1 mat-line>{{chef.firstName}} {{chef.lastName | uppercase}}</h1>
       <h1 mat-line>{{chef.function}}</h1>

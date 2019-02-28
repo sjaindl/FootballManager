@@ -23,8 +23,6 @@ export class AuthService implements CanActivate {
     }
 
     isLeagueSelected(): boolean {
-      console.log('Liga:')
-      console.log(this.currentLeague)
       return this.currentLeague != null
     }
 
