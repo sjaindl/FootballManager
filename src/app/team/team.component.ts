@@ -36,10 +36,10 @@ export class TeamComponent implements OnInit {
   teamPositionSortOrder = new Map<string, number>()
 
   constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) { 
-    this.teamPositionSortOrder.set("goal", 1)
-    this.teamPositionSortOrder.set("defense", 2)
-    this.teamPositionSortOrder.set("midfield", 3)
-    this.teamPositionSortOrder.set("attack", 4)
+    this.teamPositionSortOrder.set("Tormann", 1)
+    this.teamPositionSortOrder.set("Verteidigung", 2)
+    this.teamPositionSortOrder.set("Mittelfeld", 3)
+    this.teamPositionSortOrder.set("Angriff", 4)
   }
 
   ngOnInit() {
@@ -125,22 +125,22 @@ export class TeamComponent implements OnInit {
 
   initLineupArray() {
     this.lineup = []
-    this.lineup['goal'] = []
-    this.lineup['defense1'] = []
-    this.lineup['defense2'] = []
-    this.lineup['midfield1'] = []
-    this.lineup['midfield2'] = []
-    this.lineup['attack1'] = []
-    this.lineup['attack2'] = []
+    this.lineup['Tormann'] = []
+    this.lineup['Verteidigung1'] = []
+    this.lineup['Verteidigung2'] = []
+    this.lineup['Mittelfeld1'] = []
+    this.lineup['Mittelfeld2'] = []
+    this.lineup['Angriff1'] = []
+    this.lineup['Angriff2'] = []
 
     this.originalLineup = []
-    this.originalLineup['goal'] = []
-    this.originalLineup['defense1'] = []
-    this.originalLineup['defense2'] = []
-    this.originalLineup['midfield1'] = []
-    this.originalLineup['midfield2'] = []
-    this.originalLineup['attack1'] = []
-    this.originalLineup['attack2'] = []
+    this.originalLineup['Tormann'] = []
+    this.originalLineup['Verteidigung1'] = []
+    this.originalLineup['Verteidigung2'] = []
+    this.originalLineup['Mittelfeld1'] = []
+    this.originalLineup['Mittelfeld2'] = []
+    this.originalLineup['Angriff1'] = []
+    this.originalLineup['Angriff2'] = []
   }
 
   save() {
@@ -221,32 +221,32 @@ export class TeamComponent implements OnInit {
 
   initLineupSubArrays(gridColumnsDefenseFirstLine, gridColumnsDefenseSecondLine, gridColumnsMidfieldFirstLine, 
     gridColumnsMidfieldSecondLine, gridColumnsAttackFirstLine, gridColumnsAttackSecondLine) {
-    this.lineup["goal"].push(new Lineup())
-    this.originalLineup["goal"].push(new Lineup())
+    this.lineup["Tormann"].push(new Lineup())
+    this.originalLineup["Tormann"].push(new Lineup())
     
     for (let index = 0; index < gridColumnsDefenseFirstLine; index++) {
-      this.lineup["defense1"].push(new Lineup())
-      this.originalLineup["defense1"].push(new Lineup())
+      this.lineup["Verteidigung1"].push(new Lineup())
+      this.originalLineup["Verteidigung1"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsDefenseSecondLine; index++) {
-      this.lineup["defense2"].push(new Lineup())
-      this.originalLineup["defense2"].push(new Lineup())
+      this.lineup["Verteidigung2"].push(new Lineup())
+      this.originalLineup["Verteidigung2"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsMidfieldFirstLine; index++) {
-      this.lineup["midfield1"].push(new Lineup())
-      this.originalLineup["midfield1"].push(new Lineup())
+      this.lineup["Mittelfeld1"].push(new Lineup())
+      this.originalLineup["Mittelfeld1"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsMidfieldSecondLine; index++) {
-      this.lineup["midfield2"].push(new Lineup())
-      this.originalLineup["midfield2"].push(new Lineup())
+      this.lineup["Mittelfeld2"].push(new Lineup())
+      this.originalLineup["Mittelfeld2"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsAttackFirstLine; index++) {
-      this.lineup["attack1"].push(new Lineup())
-      this.originalLineup["attack1"].push(new Lineup())
+      this.lineup["Angriff1"].push(new Lineup())
+      this.originalLineup["Angriff1"].push(new Lineup())
     }
     for (let index = 0; index < gridColumnsAttackSecondLine; index++) {
-      this.lineup["attack2"].push(new Lineup())
-      this.originalLineup["attack2"].push(new Lineup())
+      this.lineup["Angriff2"].push(new Lineup())
+      this.originalLineup["Angriff2"].push(new Lineup())
     }
   }
 

@@ -31,9 +31,9 @@
   <br>
   <br>
 
-<mat-select class="player" placeholder="Tormann wählen" (selectionChange)="selectPlayer($event.value, 0, 'goal')" [(value)]="lineup['goal'][0]">
+<mat-select class="player" placeholder="Tormann wählen" (selectionChange)="selectPlayer($event.value, 0, 'Tormann')" [(value)]="lineup['Tormann'][0]">
   <div *ngFor="let player of playersOfTeam">
-    <mat-option *ngIf="player.position == 'goal'" value="{{ player.player.split(' ').join('') }}">
+    <mat-option *ngIf="player.position == 'Tormann'" value="{{ player.player.split(' ').join('') }}">
       {{player.player}}
     </mat-option>
   </div>
@@ -46,9 +46,9 @@
 <div fxFlex>
   <mat-grid-list cols="{{gridColumnsDefenseFirstLine}}" rowHeight="{{gridImageHeight}}">
     <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsDefenseFirstLine); let i = index;">
-      <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'defense1')" [(value)]="lineup['defense1'][i]">
+      <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'Verteidigung1')" [(value)]="lineup['Verteidigung1'][i]">
         <div *ngFor="let player of playersOfTeam">
-          <mat-option *ngIf="player.position == 'defense'" value="{{ player.player.split(' ').join('') }}">
+          <mat-option *ngIf="player.position == 'Verteidigung'" value="{{ player.player.split(' ').join('') }}">
               {{player.player}}
           </mat-option>
         </div>
@@ -64,9 +64,9 @@
 <div fxFlex>
   <mat-grid-list cols="{{gridColumnsDefenseSecondLine}}" rowHeight="{{gridImageHeight}}">
       <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsDefenseSecondLine); let i = index;">
-      <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'defense2')" [(value)]="lineup['defense2'][i]">
+      <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'Verteidigung2')" [(value)]="lineup['Verteidigung2'][i]">
         <div *ngFor="let player of playersOfTeam">
-          <mat-option *ngIf="player.position == 'defense'" value="{{ player.player.split(' ').join('') }}">
+          <mat-option *ngIf="player.position == 'Verteidigung'" value="{{ player.player.split(' ').join('') }}">
               {{player.player}}
           </mat-option>
         </div>
@@ -82,9 +82,9 @@
 <div fxFlex>
   <mat-grid-list cols="{{gridColumnsMidfieldFirstLine}}" rowHeight="{{gridImageHeight}}">
       <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsMidfieldFirstLine); let i = index;">
-      <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'midfield1')" [(value)]="lineup['midfield1'][i]">
+      <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'Mittelfeld1')" [(value)]="lineup['Mittelfeld1'][i]">
         <div *ngFor="let player of playersOfTeam">
-          <mat-option *ngIf="player.position == 'midfield'" value="{{ player.player.split(' ').join('') }}">
+          <mat-option *ngIf="player.position == 'Mittelfeld'" value="{{ player.player.split(' ').join('') }}">
               {{player.player}}
           </mat-option>
         </div>
@@ -99,9 +99,9 @@
 <div fxFlex>
   <mat-grid-list cols="{{gridColumnsMidfieldSecondLine}}" rowHeight="{{gridImageHeight}}">
       <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsMidfieldSecondLine); let i = index;">
-      <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'midfield2')" [(value)]="lineup['midfield2'][i]">
+      <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'Mittelfeld2')" [(value)]="lineup['Mittelfeld2'][i]">
         <div *ngFor="let player of playersOfTeam">
-          <mat-option *ngIf="player.position == 'midfield'" value="{{ player.player.split(' ').join('') }}">
+          <mat-option *ngIf="player.position == 'Mittelfeld'" value="{{ player.player.split(' ').join('') }}">
               {{player.player}}
           </mat-option>
         </div>
@@ -116,9 +116,9 @@
 <div fxFlex>
   <mat-grid-list cols="{{gridColumnsAttackFirstLine}}" rowHeight="{{gridImageHeight}}">
       <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsAttackFirstLine); let i = index;">
-      <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'attack1')" [(value)]="lineup['attack1'][i]">
+      <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'Angriff1')" [(value)]="lineup['Angriff1'][i]">
         <div *ngFor="let player of playersOfTeam">
-          <mat-option *ngIf="player.position == 'attack'" value="{{ player.player.split(' ').join('') }}">
+          <mat-option *ngIf="player.position == 'Angriff'" value="{{ player.player.split(' ').join('') }}">
               {{player.player}}
           </mat-option>
         </div>
@@ -133,9 +133,9 @@
 <div fxFlex>
   <mat-grid-list cols="{{gridColumnsAttackSecondLine}}" rowHeight="{{gridImageHeight}}">
       <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsAttackSecondLine); let i = index;">
-      <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'attack2')" [(value)]="lineup['attack2'][i]">
+      <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'Angriff2')" [(value)]="lineup['Angriff2'][i]">
         <div *ngFor="let player of playersOfTeam">
-          <mat-option *ngIf="player.position == 'attack'" value="{{ player.player.split(' ').join('') }}">
+          <mat-option *ngIf="player.position == 'Angriff'" value="{{ player.player.split(' ').join('') }}">
               {{player.player}}
           </mat-option>
         </div>

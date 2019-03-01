@@ -8,8 +8,8 @@ import {Md5} from 'ts-md5/dist/md5'
 })
 export class FirebaseService {
 
-  positions = ['goal', 'defense1', 'defense2', 'midfield1', 'midfield2', 'attack1', 'attack2']
-  initialBalance = 200000
+  positions = ['Tormann', 'Verteidigung1', 'Verteidigung2', 'Mittelfeld1', 'Mittelfeld2', 'Angriff1', 'Angriff2']
+  initialBalance = 3500000
 
   constructor(private db: AngularFirestore, private auth: AuthService) { }
 
@@ -34,7 +34,7 @@ export class FirebaseService {
   getPlayer(league, team, player) {
     return this.getPlayers(league, team).doc(player)
   }
-
+  
   //Founded leagues
   getFoundedLeagues(league) {
     return this.getLeague(league).collection('/foundedLeagues/')
@@ -105,7 +105,7 @@ export class FirebaseService {
   addUserLeague(league, foundedLeague) {
     //Add user ref to league
     this.getUserStanding(league, foundedLeague).set({
-      uid: this.auth.userId,
+      uid: this.auth.userId(),
       points: 0
     })
     

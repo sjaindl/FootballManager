@@ -36,9 +36,14 @@ export class NewleagueDialogComponent implements OnInit {
   ngOnInit() {
   }
   
-  async createLeague() {
-    await this.firebaseService.getFoundedLeague("grenzlandcup", this.leagueFormControl.value).valueChanges().subscribe(league => {
-      if (league != null) {
+  createLeague() {
+    var exists = true
+    this.firebaseService.getFoundedLeague("grenzlandcup", this.leagueFormControl.value).valueChanges().subscribe(league => {
+      if (league == null && exists == true) {
+        exists = false
+      }
+
+      if (exists) {
         this.openSnackBar('Liga existiert bereits. Wähle einen anderen Liganamen', '')
       } else {
         this.firebaseService.addFoundedLeague("grenzlandcup", this.leagueFormControl.value, this.passwordFormControl.value).then(SELECT_VALUE_ACCESSOR => {

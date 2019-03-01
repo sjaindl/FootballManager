@@ -100,10 +100,6 @@ export class HomeComponent implements OnInit {
   joinLeague() {
     console.log(this.joinleaguename)
     this.firebaseService.getFoundedLeague("grenzlandcup", this.joinleaguename).valueChanges().subscribe(league => {
-
-      console.log('founded:' + league)
-      console.log(league == null)
-      
       if (league == null) {
         this.openSnackBar('Liga existiert nicht. Wähle einen existierenden Liganamen', '')
       } else if (league.hashedPassword != Md5.hashStr(this.joinpasswordname)) {

@@ -20,10 +20,10 @@ export class MarketComponent implements OnInit {
   displayedColumns: string[] = ['position', 'team', 'player', 'marketValue', 'buy']
 
   constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) {
-    this.teamPositionSortOrder.set("goal", 1)
-    this.teamPositionSortOrder.set("defense", 2)
-    this.teamPositionSortOrder.set("midfield", 3)
-    this.teamPositionSortOrder.set("attack", 4)
+    this.teamPositionSortOrder.set("Tormann", 1)
+    this.teamPositionSortOrder.set("Verteidigung", 2)
+    this.teamPositionSortOrder.set("Mittelfeld", 3)
+    this.teamPositionSortOrder.set("Angriff", 4)
   }
 
   ngOnInit() {
@@ -44,6 +44,7 @@ export class MarketComponent implements OnInit {
             this.players.push(player)
           })
 
+          this.setDataSource()
           this.fetchPlayersOfTeam(team.id)
         })
       })
@@ -53,34 +54,38 @@ export class MarketComponent implements OnInit {
   fetchPlayersOfTeam(teamId) {
     this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
       playersOfTeamArray.forEach(p => {
-      let playerOfTeam = new Player()
-      let player = this.getPlayerByName(p.player)
-      playerOfTeam.init(player, teamId)
-      playerOfTeam.player = player.player
-      this.playersOfTeam.push(playerOfTeam)
-      // console.log('player of team: ' + playerOfTeam.player)
-      this.dataSource = this.players.sort((a, b) => {
-          var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
-          var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
-    
-          if (aPositionSortOrder < bPositionSortOrder) {
-            return -1
-          } 
-          else if (aPositionSortOrder > bPositionSortOrder) {
-            return 1
-          }
-          else {
-            if (a.player < b.player) {
-              return -1
-            } 
-            else if (a.player > b.player) {
-              return 1
-            } else {
-              return 0
-            }
-          }
-        })
+        let playerOfTeam = new Player()
+        let player = this.getPlayerByName(p.player)
+        playerOfTeam.init(player, teamId)
+        playerOfTeam.player = player.player
+        this.playersOfTeam.push(playerOfTeam)
+        // console.log('player of team: ' + playerOfTeam.player)
+        this.setDataSource()
       })
+    })
+  }
+
+  setDataSource() {
+    this.dataSource = this.players.sort((a, b) => {
+      var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
+      var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
+
+      if (aPositionSortOrder < bPositionSortOrder) {
+        return -1
+      } 
+      else if (aPositionSortOrder > bPositionSortOrder) {
+        return 1
+      }
+      else {
+        if (a.player < b.player) {
+          return -1
+        } 
+        else if (a.player > b.player) {
+          return 1
+        } else {
+          return 0
+        }
+      }
     })
   }
 
