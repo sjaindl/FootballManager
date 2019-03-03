@@ -3,7 +3,8 @@
 /dist-server
 /tmp
 /out-tsc
-/deploy
+/public
+*.cache
 
 # Logs
 logs
