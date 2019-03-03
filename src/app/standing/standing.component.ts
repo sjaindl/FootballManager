@@ -23,7 +23,14 @@ export class StandingComponent implements OnInit {
       name: 'description', content: "Spiele auf fussballmanager.at mit deinen Lieblingsspielern aus dem Grenzlandcup in eigenen Ligen gegen deine Freunde. Checke hier in der Tabelle deine Platzierung!"
     })
 
+    this.fetchStandings()
+  }
+
+  fetchStandings() {
     this.firebaseService.getStanding("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((standingsArray) => {
+      var numberOfUsers = standingsArray.length
+      var currentUser = 0
+
       standingsArray.forEach(user => {
         this.firebaseService.getUser(user.uid).get().subscribe((doc) => {
           var name = doc.get('displayName')
@@ -34,29 +41,36 @@ export class StandingComponent implements OnInit {
 
           this.standings.push(standing)
 
-          this.dataSource = this.standings.sort((a, b) => {
-            if (a.points < b.points) {
-              return -1
-            } 
-            else if (a.points > b.points) {
-              return 1
-            }
-            else {
-              if (a.userName < b.userName) {
-                return -1
-              } 
-              else if (a.userName > b.userName) {
-                return 1
-              } else {
-                return 0
-              }
-            }
-          })
-
+          currentUser++
+          if (currentUser == numberOfUsers) {
+            this.setDataSource()
+          }
         })
       })
     })
   }
+
+  setDataSource() {
+    this.dataSource = this.standings.sort((a, b) => {
+      if (a.points < b.points) {
+        return -1
+      } 
+      else if (a.points > b.points) {
+        return 1
+      }
+      else {
+        if (a.userName < b.userName) {
+          return -1
+        } 
+        else if (a.userName > b.userName) {
+          return 1
+        } else {
+          return 0
+        }
+      }
+    })
+  }
+
 
 }
 
