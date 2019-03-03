@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FirebaseService } from '../services/firebase.service';
-import { AuthService } from '../services/auth.service';
-import { MatSnackBar } from '@angular/material';
+import { Component, OnInit } from '@angular/core'
+import { FirebaseService } from '../services/firebase.service'
+import { AuthService } from '../services/auth.service'
+import { MatSnackBar } from '@angular/material'
 
 @Component({
   selector: 'app-team',
@@ -31,7 +31,7 @@ export class TeamComponent implements OnInit {
   priceSizeEm = 1.5
   detailSizeEm = 1.0
 
-  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue']
+  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
 
@@ -49,8 +49,8 @@ export class TeamComponent implements OnInit {
     this.initLineupArray() 
     this.setFormation('4-4-2')
 
-    // this.firebaseService.getFormation("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((formation) => {
-    //   this.setFormation(formation.formation)
+    //this.firebaseService.getFormation("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((formation) => {
+      //this.setFormation("formation")
       
       this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
         this.teams = teamsArray
@@ -63,7 +63,6 @@ export class TeamComponent implements OnInit {
               let player = new Player()
               player.init(p, team.id)
               this.players.push(player)
-              // console.log(p)
             })
   
             this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
@@ -74,6 +73,7 @@ export class TeamComponent implements OnInit {
               playerOfTeam.player = player.player
               this.playersOfTeam.push(playerOfTeam)
               console.log('player of team: ' + playerOfTeam.player)
+
               this.dataSource = this.playersOfTeam.sort((a, b) => {
                   var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
                   var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
@@ -114,7 +114,7 @@ export class TeamComponent implements OnInit {
           })
         })
       })
-    // })
+    //})
 
 
     
@@ -285,11 +285,13 @@ export class Player {
   team: string
   player: string
   marketValue: number
+  points: number
   position: string
 
   init(json, team) {
     this.player = json.name
     this.marketValue = json.marketValue
+    this.points = json.points
     this.position = json.position
     this.team = team
   }

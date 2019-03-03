@@ -165,22 +165,28 @@
       <td mat-cell *matCellDef="let element"> {{element.position}} </td>
     </ng-container>
   
-    <!-- Name Column -->
+    <!-- Team Column -->
     <!-- <ng-container matColumnDef="team">
       <th mat-header-cell *matHeaderCellDef> Team </th>
       <td mat-cell *matCellDef="let element"> {{element.team}} </td>
     </ng-container> -->
   
-    <!-- Weight Column -->
+    <!-- Player name Column -->
     <ng-container matColumnDef="player">
       <th mat-header-cell *matHeaderCellDef> Spieler </th>
       <td mat-cell *matCellDef="let element"> {{element.player}} </td>
     </ng-container>
   
-    <!-- Symbol Column -->
+    <!-- Market Value Column -->
     <ng-container matColumnDef="marketValue">
       <th mat-header-cell *matHeaderCellDef> Marktwert </th>
       <td mat-cell *matCellDef="let element"> {{element.marketValue}} </td>
+    </ng-container>
+
+    <!-- Points Column -->
+    <ng-container matColumnDef="points">
+      <th mat-header-cell *matHeaderCellDef> Punkte </th>
+      <td mat-cell *matCellDef="let element"> {{element.points}} </td>
     </ng-container>
   
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

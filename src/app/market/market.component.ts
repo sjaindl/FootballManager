@@ -17,7 +17,7 @@ export class MarketComponent implements OnInit {
 
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
-  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'buy']
+  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'buy']
 
   constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) {
     this.teamPositionSortOrder.set("Tormann", 1)
@@ -163,12 +163,14 @@ export class MarketComponent implements OnInit {
 export class Player {
   team: string
   player: string
+  points: number
   marketValue: number
   position: string
 
   init(json, team) {
     this.player = json.name
     this.marketValue = json.marketValue
+    this.points = json.points
     this.position = json.position
     this.team = team
   }
