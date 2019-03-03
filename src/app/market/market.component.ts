@@ -13,11 +13,11 @@ export class MarketComponent implements OnInit {
   teams: any[]
   players: Player[] = []
   playersOfTeam: Player[] = []
-  balance = 0.0
+  balance = 0
 
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
-  displayedColumns: string[] = ['position', 'team', 'player', 'marketValue', 'buy']
+  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'buy']
 
   constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) {
     this.teamPositionSortOrder.set("Tormann", 1)

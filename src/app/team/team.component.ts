@@ -31,7 +31,7 @@ export class TeamComponent implements OnInit {
   priceSizeEm = 1.5
   detailSizeEm = 1.0
 
-  displayedColumns: string[] = ['position', 'team', 'player', 'marketValue']
+  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
 

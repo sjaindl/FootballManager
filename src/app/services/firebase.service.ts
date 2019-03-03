@@ -9,7 +9,7 @@ import {Md5} from 'ts-md5/dist/md5'
 export class FirebaseService {
 
   positions = ['Tormann', 'Verteidigung1', 'Verteidigung2', 'Mittelfeld1', 'Mittelfeld2', 'Angriff1', 'Angriff2']
-  initialBalance = 3500000
+  initialBalance = 4000000
 
   constructor(private db: AngularFirestore, private auth: AuthService) { }
 

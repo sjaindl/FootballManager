@@ -100,9 +100,11 @@ export class HomeComponent implements OnInit {
   joinLeague() {
     console.log(this.joinleaguename)
     this.firebaseService.getFoundedLeague("grenzlandcup", this.joinleaguename).valueChanges().subscribe(league => {
+      let anyLeague: any = league
+
       if (league == null) {
         this.openSnackBar('Liga existiert nicht. Wähle einen existierenden Liganamen', '')
-      } else if (league.hashedPassword != Md5.hashStr(this.joinpasswordname)) {
+      } else if (anyLeague.hashedPassword != Md5.hashStr(this.joinpasswordname)) {
         this.openSnackBar('Falsches Passwort.', '')
       } else {
           this.firebaseService.addUserLeague("grenzlandcup", this.joinleaguename).then( param => {
@@ -148,6 +150,6 @@ export class HomeComponent implements OnInit {
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 2000,
-    });
+    })
   }
 }
