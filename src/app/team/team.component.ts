@@ -43,15 +43,16 @@ export class TeamComponent implements OnInit {
   }
 
   ngOnInit() {
-
     //todo formation init
     
     this.initLineupArray() 
-    this.setFormation('4-4-2')
+    //this.setFormation('4-4-2')
 
-    //this.firebaseService.getFormation("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((formation) => {
-      //this.setFormation("formation")
-      
+    this.firebaseService.getUserFoundedLeague("grenzlandcup", this.authService.currentLeague.name).get().subscribe((doc) => {
+      var formation = doc.get('formation')
+      this.formation = formation
+      this.setFormation(formation)
+
       this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
         this.teams = teamsArray
   
@@ -109,15 +110,11 @@ export class TeamComponent implements OnInit {
                   // console.log('linedup: ' + linedUpPlayer.player + ', with pos: ' + linedUpPlayer.position + ' and index: ' + linedUpPlayer.index)
                 })
               })
-  
             })
           })
         })
       })
-    //})
-
-
-    
+    })
   }
 
   curIndex: number
@@ -159,11 +156,12 @@ export class TeamComponent implements OnInit {
         }
       })
     })
-
+    
     if (!valid) {
       this.openSnackBar('Spieler dürfen nicht öfter als einmal aufgestellt werden.', 'Nicht gespeichert.')
     } else {
       this.firebaseService.setLineup("grenzlandcup", this.authService.currentLeague.name, this.lineup, this.originalLineup)
+      this.firebaseService.setFormation("grenzlandcup", this.authService.currentLeague.name, this.formation)
     }
   }
 
@@ -188,7 +186,9 @@ export class TeamComponent implements OnInit {
 
   setFormation(formation: string) {
     console.log(formation)
+
     this.formation = formation
+    this.firebaseService.clearLineup("grenzlandcup", this.authService.currentLeague.name, this.originalLineup)
 
     if (formation == '3-4-3') {
       this.setGridColumns(1, 2, 2, 2, 2, 1)

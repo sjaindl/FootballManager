@@ -119,10 +119,12 @@ export class FirebaseService {
   changeBalance(league, foundedLeague, value) {
     this.getUserFoundedLeague(league, foundedLeague).get().subscribe((doc) => {
       var currentBalance = doc.get('balance')
+      var currentFormation = doc.get('formation')
       
       this.getUserFoundedLeague(league, foundedLeague).set({
         name: foundedLeague,
-        balance: currentBalance + value
+        balance: currentBalance + value,
+        formation: currentFormation
       })
 
     })
@@ -162,10 +164,19 @@ export class FirebaseService {
       })
     })
   }
-
+  
   //Formation
-  getFormation(league, foundedLeague) {
-    return this.getLineUp(league, foundedLeague).doc('formation')
+  setFormation(league, foundedLeague, formation) {
+    this.getUserFoundedLeague(league, foundedLeague).get().subscribe((doc) => {
+      var currentBalance = doc.get('balance')
+      
+      this.getUserFoundedLeague(league, foundedLeague).set({
+        name: foundedLeague,
+        balance: currentBalance,
+        formation: formation
+      })
+
+    })
   }
 
   //Players of team
