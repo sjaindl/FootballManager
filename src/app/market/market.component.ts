@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
-import { AuthService } from '../services/auth.service';
-import { MatSnackBar } from '@angular/material';
+import { AuthService } from '../services/auth.service'
+import { MatSnackBar } from '@angular/material'
 
 @Component({
   selector: 'app-market',
@@ -53,6 +53,8 @@ export class MarketComponent implements OnInit {
 
   fetchPlayersOfTeam(teamId) {
     this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
+      this.playersOfTeam = []
+
       playersOfTeamArray.forEach(p => {
         let playerOfTeam = new Player()
         let player = this.getPlayerByName(p.player)
@@ -148,6 +150,7 @@ export class MarketComponent implements OnInit {
     this.playersOfTeam.forEach(element => {
       if (element.player == player.player) {
         isInTeam = true
+        return
       }
     })
     return isInTeam

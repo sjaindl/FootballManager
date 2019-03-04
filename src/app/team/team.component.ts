@@ -64,7 +64,7 @@ export class TeamComponent implements OnInit {
               player.init(p, team.id)
               this.players.push(player)
             })
-  
+            
             this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
               playersOfTeamArray.forEach(p => {
               let playerOfTeam = new Player()
