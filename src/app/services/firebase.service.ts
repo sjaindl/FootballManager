@@ -79,7 +79,8 @@ export class FirebaseService {
       points: +player.points + +player.pointsCurrentRound
     })
 
-    this.getUsers().get().subscribe((users) => {
+    var userSubsc = this.getUsers().valueChanges().subscribe((users) => {
+      userSubsc.unsubscribe()
       users.forEach(user => {
         var anyUser: any = user
         var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
@@ -101,7 +102,8 @@ export class FirebaseService {
               if (foundedLeague.points != null) {
                 currentUserPoints += foundedLeague.points
               }
-              
+
+              console.log(league + ', ' + foundedLeague.name + ', ' + anyUser.uid + ', ' + (currentUserPoints + userPoints))
               this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).set({
                 name: foundedLeague.name,
                 balance: foundedLeague.balance,

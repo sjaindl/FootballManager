@@ -27,8 +27,6 @@ export class StandingComponent implements OnInit {
   }
 
   fetchStandings() {
-
-
     var subsc = this.firebaseService.getStanding("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((standingsArray) => {
       subsc.unsubscribe()
       var numberOfUsers = standingsArray.length
