@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { MatSnackBar } from '@angular/material'
+import { Lineup } from '../shared/lineup';
+import { Player } from '../shared/player';
 
 @Component({
   selector: 'app-team',
@@ -272,27 +274,5 @@ export class TeamComponent implements OnInit {
     this.snackBar.open(message, action, {
       duration: 2000,
     })
-  }
-}
-
-export class Lineup {
-  player: string
-  position: string
-  index: number
-}
-
-export class Player {
-  team: string
-  player: string
-  marketValue: number
-  points: number
-  position: string
-
-  init(json, team) {
-    this.player = json.name
-    this.marketValue = json.marketValue
-    this.points = json.points
-    this.position = json.position
-    this.team = team
   }
 }

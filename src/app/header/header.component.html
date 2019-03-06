@@ -44,6 +44,10 @@
             <span class="fa fa-list-ol fa-sm"></span>
             &nbsp;FAQ
           </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/admin" routerLinkActive="active" mat-list-item>
+            <span class="fas fa-lock fa-sm"></span>
+            &nbsp;Admin
+          </a>
           <a (click)="sidenav.toggle(); signOut();" md-button routerLink="/home" routerLinkActive="active" mat-list-item>
             <span class="fas fa-sign-out-alt fa-sm"></span>
             &nbsp;Logout

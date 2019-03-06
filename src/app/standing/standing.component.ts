@@ -27,24 +27,31 @@ export class StandingComponent implements OnInit {
   }
 
   fetchStandings() {
-    this.firebaseService.getStanding("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((standingsArray) => {
+
+
+    var subsc = this.firebaseService.getStanding("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((standingsArray) => {
+      subsc.unsubscribe()
       var numberOfUsers = standingsArray.length
       var currentUser = 0
 
-      standingsArray.forEach(user => {
-        this.firebaseService.getUser(user.uid).get().subscribe((doc) => {
-          var name = doc.get('displayName')
-          let standing = new Standing()
-          standing.uid = user.uid
-          standing.userName = name
-          standing.points = user.points
+      this.firebaseService.getUsers().valueChanges().subscribe((users) => {
+        users.forEach(user => {
+          var anyUser: any = user
 
-          this.standings.push(standing)
+          this.firebaseService.getUserFoundedLeague("grenzlandcup",this.authService.currentLeague.name, anyUser.uid).get().subscribe((leagueDoc) => {
+            var name = anyUser.displayName
+            let standing = new Standing()
+            standing.uid = anyUser.uid
+            standing.userName = name
+            standing.points = leagueDoc.get('points') != null ? leagueDoc.get('points') : 0
 
-          currentUser++
-          if (currentUser == numberOfUsers) {
-            this.setDataSource()
-          }
+            this.standings.push(standing)
+
+            currentUser++
+            if (currentUser == numberOfUsers) {
+              this.setDataSource()
+            }
+          })
         })
       })
     })

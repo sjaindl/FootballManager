@@ -25,6 +25,7 @@ import { AppRoutingModule } from './app-routing/app-routing.component';
 import { FirebaseConfig } from './shared/firebase.config';
 import { NewleagueDialogComponent } from './newleague.dialog/newleague.dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AdminareaComponent } from './adminarea/adminarea.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AboutusComponent,
     ContactComponent,
     FaqComponent,
-    NewleagueDialogComponent
+    NewleagueDialogComponent,
+    AdminareaComponent
   ],
   entryComponents: [
     NewleagueDialogComponent

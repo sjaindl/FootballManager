@@ -1,0 +1,55 @@
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+<!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef> Position </th>
+                <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        </ng-container>
+
+        <!-- Team Column -->
+        <!-- <ng-container matColumnDef="team">
+                <th mat-header-cell *matHeaderCellDef> Team </th>
+                <td mat-cell *matCellDef="let element"> {{element.team}} </td>
+        </ng-container> -->
+
+        <!-- Player name Column -->
+        <ng-container matColumnDef="player">
+                <th mat-header-cell *matHeaderCellDef> Spieler </th>
+                <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+        </ng-container>
+
+        <!-- Market Value Column -->
+        <ng-container matColumnDef="marketValue">
+                <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+                <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.'}} </td>
+        </ng-container>
+
+        <!-- Points Column -->
+        <ng-container matColumnDef="points">
+                <th mat-header-cell *matHeaderCellDef> aktuelle Punkte </th>
+                <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pointsCurrentRound">
+                <th mat-header-cell *matHeaderCellDef> Punkte für Runde </th>
+                <td mat-cell *matCellDef="let element">
+                        <input [ngModel]="element.pointsCurrentRound" (ngModelChange)="element.pointsCurrentRound = $event"> 
+                </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <br>
+
+        <button style="margin-left: 15px; font-size: 20px;" mat-button class="background-primary" (click)="save()">
+                Speichern
+        </button> 
+
+<br>
+<br>

@@ -70,6 +70,53 @@ export class FirebaseService {
     return this.getTeam(league, team).collection('/players/')
   }
 
+  changePlayerPoints(league, player) {
+    this.getPlayers(league, player.team).doc(player.playerId).set({
+      name: player.player,
+      marketValue: player.marketValue,
+      position: player.position,
+      playerId: player.playerId,
+      points: +player.points + +player.pointsCurrentRound
+    })
+
+    this.getUsers().get().subscribe((users) => {
+      users.forEach(user => {
+        var anyUser: any = user
+        var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
+          subsc.unsubscribe()
+
+          foundedLeagues.forEach(foundedLeague => {
+
+            var userPoints = 0
+            var subsc2 = this.getLineUp(league, foundedLeague.name, anyUser.uid).valueChanges().subscribe((linedUps) => {
+              subsc2.unsubscribe()
+              
+              linedUps.forEach(linedUp => {
+                if (linedUp.player == player.player.split(' ').join('')) {
+                  userPoints += +player.pointsCurrentRound
+                }
+              })
+              
+              var currentUserPoints = 0
+              if (foundedLeague.points != null) {
+                currentUserPoints += foundedLeague.points
+              }
+              
+              this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).set({
+                name: foundedLeague.name,
+                balance: foundedLeague.balance,
+                points: currentUserPoints + userPoints
+              })
+
+              
+            })
+          })
+        })    
+      })
+      
+    })
+  }
+
   //Games: TODO
 
   //User
@@ -86,20 +133,24 @@ export class FirebaseService {
   }
   
   //User Leagues
-  getUserLeagues() {
-    return this.getCurrentUser().collection('/userLeagues/')
+  getUserLeagues(uid = null) {
+    if (uid == null) {
+      return this.getCurrentUser().collection('/userLeagues/')
+    } else {
+      return this.getUser(uid).collection('/userLeagues/')
+    }
   }
 
-  getUserLeague(league) {
-    return this.getUserLeagues().doc(league)
+  getUserLeague(league, uid = null) {
+    return this.getUserLeagues(uid).doc(league)
   }
 
-  getUserFoundedLeagues(league) {
-    return this.getUserLeague(league).collection('foundedLeagues')
+  getUserFoundedLeagues(league, uid = null) {
+    return this.getUserLeague(league, uid).collection('foundedLeagues')
   }
 
-  getUserFoundedLeague(league, foundedLeague) {
-    return this.getUserFoundedLeagues(league).doc(foundedLeague)
+  getUserFoundedLeague(league, foundedLeague, uid = null) {
+    return this.getUserFoundedLeagues(league, uid).doc(foundedLeague)
   }
 
   addUserLeague(league, foundedLeague) {
@@ -136,8 +187,8 @@ export class FirebaseService {
   }
 
   //Lineup
-  getLineUp(league, foundedLeague) {
-    return this.getUserFoundedLeague(league, foundedLeague).collection('lineup')
+  getLineUp(league, foundedLeague, user = null) {
+    return this.getUserFoundedLeague(league, foundedLeague, user).collection('lineup')
   }
 
   clearLineup(league, foundedLeague, originalLineup) {
