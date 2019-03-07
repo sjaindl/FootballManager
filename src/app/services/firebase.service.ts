@@ -267,6 +267,17 @@ export class FirebaseService {
       })
     })
   }
+
+  //Visitor Count
+  setVisitorCount(count) {
+    return this.db.collection('stats').doc('stats').set({
+      visitorCount: count
+    })
+  }
+  
+  getVisitorCount() {
+    return this.db.collection('stats').doc('stats').get()
+  }
 }
 
 export class Player {
