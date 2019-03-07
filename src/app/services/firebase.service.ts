@@ -278,6 +278,17 @@ export class FirebaseService {
   getVisitorCount() {
     return this.db.collection('stats').doc('stats').get()
   }
+
+  //Freeze
+  freeze(freeze) {
+    return this.db.collection('freeze').doc('freeze').set({
+      freeze: freeze
+    })
+  }
+
+  isFreezed() {
+    return this.db.collection('freeze').doc('freeze').get()
+  }
 }
 
 export class Player {

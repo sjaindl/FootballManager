@@ -15,6 +15,7 @@ export class AdminareaComponent implements OnInit {
   displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'pointsCurrentRound', 'newMarketValue']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
+  freezed: boolean = false
   
   constructor(public firebaseService: FirebaseService, public authService: AuthService, public changeDetectorRefs: ChangeDetectorRef) { 
     this.teamPositionSortOrder.set("Tormann", 1)
@@ -24,6 +25,11 @@ export class AdminareaComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.firebaseService.isFreezed().subscribe((doc) => {
+      var isFreezed = doc.get('freeze')
+      this.freezed = isFreezed
+    })
+
     this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
         this.teams = teamsArray
   
@@ -92,4 +98,12 @@ export class AdminareaComponent implements OnInit {
     this.changeDetectorRefs.detectChanges()
   }
 
+  freezeDesc() {
+    return this.freezed ? 'Unfreeze!' : 'Freeze!'
+  }
+
+  freeze() {
+    this.freezed = !this.freezed
+    this.firebaseService.freeze(this.freezed)
+  }
 }

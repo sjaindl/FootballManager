@@ -33,6 +33,8 @@ export class TeamComponent implements OnInit {
   priceSizeEm = 1.5
   detailSizeEm = 1.0
 
+  freezed: boolean = false
+
   displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
@@ -45,7 +47,10 @@ export class TeamComponent implements OnInit {
   }
 
   ngOnInit() {
-    //todo formation init
+    this.firebaseService.isFreezed().subscribe((doc) => {
+      var isFreezed = doc.get('freeze')
+      this.freezed = isFreezed
+    })
     
     this.initLineupArray() 
     //this.setFormation('4-4-2')
@@ -143,6 +148,11 @@ export class TeamComponent implements OnInit {
   }
 
   save() {
+    if (this.freezed) {
+      this.openSnackBar('Aufstellung darf derzeit nicht geändert werden.', '')
+      return
+    }
+
     var valid = true
     this.firebaseService.positions.forEach(position => {
       this.lineup[position].forEach(player => {
