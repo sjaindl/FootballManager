@@ -70,17 +70,22 @@ export class FirebaseService {
     return this.getTeam(league, team).collection('/players/')
   }
 
-  changePlayerPoints(league, player) {
-    this.getPlayers(league, player.team).doc(player.playerId).set({
-      name: player.player,
-      marketValue: player.marketValue,
-      position: player.position,
-      playerId: player.playerId,
-      points: +player.points + +player.pointsCurrentRound
+  changePlayerPoints(league, players) {
+    players.forEach(player => {
+      if (player.pointsCurrentRound != null || player.newMarketValue != null) {
+        this.getPlayers(league, player.team).doc(player.playerId).set({
+          name: player.player,
+          marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
+          position: player.position,
+          playerId: player.playerId,
+          points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
+        })
+      }
     })
 
     var userSubsc = this.getUsers().valueChanges().subscribe((users) => {
       userSubsc.unsubscribe()
+
       users.forEach(user => {
         var anyUser: any = user
         var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
@@ -92,9 +97,13 @@ export class FirebaseService {
             var subsc2 = this.getLineUp(league, foundedLeague.name, anyUser.uid).valueChanges().subscribe((linedUps) => {
               subsc2.unsubscribe()
               
-              linedUps.forEach(linedUp => {
-                if (linedUp.player == player.player.split(' ').join('')) {
-                  userPoints += +player.pointsCurrentRound
+              players.forEach(player => {
+                if (player.pointsCurrentRound != null) {
+                  linedUps.forEach(linedUp => {
+                    if (linedUp.player == player.player.split(' ').join('')) {
+                      userPoints += +player.pointsCurrentRound
+                    }
+                  })
                 }
               })
               
@@ -102,14 +111,12 @@ export class FirebaseService {
               if (foundedLeague.points != null) {
                 currentUserPoints += foundedLeague.points
               }
-
-              console.log(league + ', ' + foundedLeague.name + ', ' + anyUser.uid + ', ' + (currentUserPoints + userPoints))
+              
               this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).set({
                 name: foundedLeague.name,
                 balance: foundedLeague.balance,
                 points: currentUserPoints + userPoints
               })
-
               
             })
           })

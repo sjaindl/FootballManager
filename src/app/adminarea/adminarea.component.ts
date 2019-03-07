@@ -12,10 +12,10 @@ export class AdminareaComponent implements OnInit {
 
   teams: any[]
   players: Player[] = []
-  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'pointsCurrentRound']
+  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'pointsCurrentRound', 'newMarketValue']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
-
+  
   constructor(public firebaseService: FirebaseService, public authService: AuthService) { 
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
@@ -76,12 +76,7 @@ export class AdminareaComponent implements OnInit {
   }
 
   save() {
-    this.players.forEach(player => {
-      if (player.pointsCurrentRound != null) {
-        console.log(player.player + ' ' + player.pointsCurrentRound)
-        this.firebaseService.changePlayerPoints("grenzlandcup", player)
-      }
-    })
+    this.firebaseService.changePlayerPoints("grenzlandcup", this.players)
   }
 
 }
