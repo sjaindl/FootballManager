@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service';
 import { AuthService } from '../services/auth.service';
 import { Player } from '../shared/player';
@@ -16,7 +16,7 @@ export class AdminareaComponent implements OnInit {
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
   
-  constructor(public firebaseService: FirebaseService, public authService: AuthService) { 
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, public changeDetectorRefs: ChangeDetectorRef) { 
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
@@ -59,6 +59,8 @@ export class AdminareaComponent implements OnInit {
                 }
               }
             })
+
+            this.changeDetectorRefs.detectChanges()
         })
       })
     })
@@ -77,6 +79,17 @@ export class AdminareaComponent implements OnInit {
 
   save() {
     this.firebaseService.changePlayerPoints("grenzlandcup", this.players)
+
+    this.players.forEach(player => {
+      if (player.pointsCurrentRound != null || player.newMarketValue != null) {
+          player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
+          player.points = player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
+          player.pointsCurrentRound = null
+          player.newMarketValue = null
+        }
+      })
+
+    this.changeDetectorRefs.detectChanges()
   }
 
 }
