@@ -12,7 +12,7 @@ export class AdminareaComponent implements OnInit {
 
   teams: any[]
   players: Player[] = []
-  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'pointsCurrentRound', 'newMarketValue']
+  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'pointsCurrentRound', 'newMarketValue', 'sold', 'bought']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
   freezed: boolean = false
@@ -41,6 +41,9 @@ export class AdminareaComponent implements OnInit {
               let player = new Player()
               player.init(p, team.id)
               player.playerId = p.playerId
+              player.sold = p.sold
+              player.bought = p.bought
+
               this.players.push(player)
             })
 
@@ -66,7 +69,6 @@ export class AdminareaComponent implements OnInit {
               }
             })
 
-            this.changeDetectorRefs.detectChanges()
         })
       })
     })
@@ -83,19 +85,77 @@ export class AdminareaComponent implements OnInit {
     return p
   }
 
-  save() {
-    this.firebaseService.changePlayerPoints("grenzlandcup", this.players)
+  playersInTeamCount() {
+    this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
+      this.teams = teamsArray
 
-    this.players.forEach(player => {
-      if (player.pointsCurrentRound != null || player.newMarketValue != null) {
-          player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
-          player.points = player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
-          player.pointsCurrentRound = null
-          player.newMarketValue = null
-        }
+      teamsArray.forEach(team => {
+        console.log(team.id)
+        var subsc = this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
+          subsc.unsubscribe()
+          
+          playersArray.forEach(p => {
+            var bought = 0
+
+            var usub = this.firebaseService.getUsers().valueChanges().subscribe((users) => {
+              usub.unsubscribe()
+              let numberOfUsersToCheck = users.length
+              var currentUser = 0
+        
+              users.forEach(user => {
+                var anyUser: any = user
+
+                var lsub = this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid).valueChanges().subscribe((leaguesArray) => {
+                  lsub.unsubscribe()
+                  
+                  leaguesArray.forEach(liga => {
+                    
+                    var psub = this.firebaseService.getPlayersOfTeam("grenzlandcup", liga.name, anyUser.uid).valueChanges().subscribe((playersOfTeamArray) => {
+                      psub.unsubscribe()
+
+                      playersOfTeamArray.forEach(pteam => {
+                        if (p.name.split(' ').join('') == pteam.player.split(' ').join('')) {
+                          bought += 1
+                          console.log(pteam.player + ', ' + bought + ', liga: ' + liga.name + ', spieler: ' + anyUser.displayName)
+                        }
+                      })
+                      this.firebaseService.getPlayers("grenzlandcup", 'hvtdp').doc(p.playerId).ref.update({
+                        bought: bought
+                      })
+                    })
+                  })
+                  
+                })
+                currentUser += 1
+                if (currentUser == numberOfUsersToCheck) {
+                  console.log('finished')
+                }
+              })
+            })
+          })
+
+        })
       })
+    })
+  }
 
-    this.changeDetectorRefs.detectChanges()
+  save() {
+    this.firebaseService.changePlayerPoints("grenzlandcup", this.players).then((res) => {
+      this.players.forEach(player => {
+        if (player.pointsCurrentRound != null || player.newMarketValue != null) {
+            this.firebaseService.getPlayers("grenzlandcup", player.team).doc(player.playerId).ref.update({
+              marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
+              points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
+            })
+
+            player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
+            player.points = +player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
+            player.pointsCurrentRound = null
+            player.newMarketValue = null
+          }
+        })
+      })
+    
   }
 
   freezeDesc() {
