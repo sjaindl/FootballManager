@@ -1,10 +1,9 @@
 import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 // import { DeviceDetectorService } from '../../../node_modules/ngx-device-detector';
 // import { baseUrlImages } from '../shared/baseurls';
-// import { MysqlService } from '../services/mysql.service';
 import { Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser'
-import { AngularFirestore, DocumentData } from 'angularfire2/firestore';
+import { DocumentData } from 'angularfire2/firestore';
 import { AuthProvider } from 'ngx-auth-firebaseui';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AuthService } from '../services/auth.service';
@@ -36,11 +35,9 @@ export class HomeComponent implements OnInit {
   username: string
 
   leagues: League[] = []
-  // players: any[]
   
-  //private deviceService: DeviceDetectorService, private mysqlService: MysqlService, 
-  constructor(db: AngularFirestore, 
-    public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, 
+  //private deviceService: DeviceDetectorService
+  constructor(public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, 
     private metaTagService: Meta, private angularFireAuth: AngularFireAuth, 
     public authService : AuthService, public firebaseService: FirebaseService,
     private dialog: MatDialog,
@@ -68,6 +65,8 @@ export class HomeComponent implements OnInit {
 
     this.angularFireAuth.auth.onAuthStateChanged((user) => {
       if (user) {
+        this.openSnackBar('Anmeldung erfolgreich!', user.displayName)
+
         console.log("user signed in: " + user.displayName)
 
         this.firebaseService.getUserFoundedLeagues("grenzlandcup").valueChanges().subscribe((leaguesArray) => {
@@ -91,7 +90,7 @@ export class HomeComponent implements OnInit {
   }
 
   showNewLeagueDialog() {
-    let dialogRef = this.dialog.open(NewleagueDialogComponent, {
+    this.dialog.open(NewleagueDialogComponent, {
       width: '350px',
       data: {  }
     })
