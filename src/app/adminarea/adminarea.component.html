@@ -34,6 +34,18 @@
                 <td mat-cell *matCellDef="let element"> {{element.points}} </td>
         </ng-container>
 
+        <!-- Bought Column -->
+        <ng-container matColumnDef="bought">
+                <th mat-header-cell *matHeaderCellDef> Anzahl gekauft </th>
+                <td mat-cell *matCellDef="let element"> {{element.bought}} </td>
+        </ng-container>
+
+        <!-- Sold Column -->
+        <ng-container matColumnDef="sold">
+                <th mat-header-cell *matHeaderCellDef> Anzahl verkauft </th>
+                <td mat-cell *matCellDef="let element"> {{element.sold}} </td>
+        </ng-container>
+
         <ng-container matColumnDef="pointsCurrentRound">
                 <th mat-header-cell *matHeaderCellDef> Punkte für Runde </th>
                 <td mat-cell *matCellDef="let element">

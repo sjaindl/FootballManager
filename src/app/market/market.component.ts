@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { MatSnackBar } from '@angular/material'
+import { Player } from '../shared/player';
 
 @Component({
   selector: 'app-market',
@@ -36,8 +37,9 @@ export class MarketComponent implements OnInit {
 
       teamsArray.forEach(team => {
         console.log(team.id)
-        this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
-
+        var subsc = this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
+          subsc.unsubscribe()
+          
           playersArray.forEach(p => {
             let player = new Player()
             player.init(p, team.id)
@@ -52,7 +54,9 @@ export class MarketComponent implements OnInit {
   }
 
   fetchPlayersOfTeam(teamId) {
-    this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
+    var subsc = this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
+      subsc.unsubscribe()
+
       this.playersOfTeam = []
 
       playersOfTeamArray.forEach(p => {
@@ -128,6 +132,9 @@ export class MarketComponent implements OnInit {
           this.playersOfTeam.splice(index, 1)
         }
       })
+
+      //set player stats
+      this.firebaseService.playerSold("grenzlandcup", player)
     } else {
       this.firebaseService.addPlayerOfTeam("grenzlandcup", this.authService.currentLeague.name, player.player)
       
@@ -137,6 +144,8 @@ export class MarketComponent implements OnInit {
       playerOfTeam.player = player.player
       this.playersOfTeam.push(playerOfTeam)
 
+      //set player stats
+      this.firebaseService.playerBought("grenzlandcup", player)
     }
     // this.fetchPlayersOfTeam(player.team)
   }
@@ -160,21 +169,5 @@ export class MarketComponent implements OnInit {
     this.snackBar.open(message, action, {
       duration: 2000,
     })
-  }
-}
-
-export class Player {
-  team: string
-  player: string
-  points: number
-  marketValue: number
-  position: string
-
-  init(json, team) {
-    this.player = json.name
-    this.marketValue = json.marketValue
-    this.points = json.points
-    this.position = json.position
-    this.team = team
   }
 }

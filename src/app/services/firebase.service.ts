@@ -51,15 +51,6 @@ export class FirebaseService {
     })
   }
 
-  //Standing
-  getStanding(league, foundedLeague) {
-    return this.getFoundedLeague(league, foundedLeague).collection('members')
-  }
-
-  getUserStanding(league, foundedLeague) {
-    return this.getStanding(league, foundedLeague).doc(this.auth.userId())
-  }
-
   //Teams
   getTeams(league) {
     return this.getLeague(league).collection('/teams/')
@@ -70,63 +61,70 @@ export class FirebaseService {
     return this.getTeam(league, team).collection('/players/')
   }
 
-  changePlayerPoints(league, players) {
-    players.forEach(player => {
-      if (player.pointsCurrentRound != null || player.newMarketValue != null) {
-        this.getPlayers(league, player.team).doc(player.playerId).set({
-          name: player.player,
-          marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
-          position: player.position,
-          playerId: player.playerId,
-          points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
-        })
-      }
-    })
-
-    var userSubsc = this.getUsers().valueChanges().subscribe((users) => {
-      userSubsc.unsubscribe()
-
-      users.forEach(user => {
-        var anyUser: any = user
-        var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
-          subsc.unsubscribe()
-
-          foundedLeagues.forEach(foundedLeague => {
-
-            var userPoints = 0
-            var subsc2 = this.getLineUp(league, foundedLeague.name, anyUser.uid).valueChanges().subscribe((linedUps) => {
-              subsc2.unsubscribe()
-              
-              players.forEach(player => {
-                if (player.pointsCurrentRound != null) {
-                  linedUps.forEach(linedUp => {
-                    if (linedUp.player == player.player.split(' ').join('')) {
-                      userPoints += +player.pointsCurrentRound
-                    }
-                  })
-                }
-              })
-              
-              var currentUserPoints = 0
-              if (foundedLeague.points != null) {
-                currentUserPoints += foundedLeague.points
-              }
-              
-              this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).set({
-                name: foundedLeague.name,
-                balance: foundedLeague.balance,
-                points: currentUserPoints + userPoints
-              })
-              
-            })
-          })
-        })    
-      })
-      
+  playerSold(league, player) {
+    this.getPlayers(league, player.team).doc(player.playerId).ref.update({
+      sold: player.sold + 1
     })
   }
 
-  //Games: TODO
+  playerBought(league, player) {
+    this.getPlayers(league, player.team).doc(player.playerId).ref.update({
+      bought: player.bought + 1
+    })
+  }
+
+  changePlayerPoints(league, players) {
+    return new Promise((resolve) => {
+      var userSubsc = this.getUsers().valueChanges().subscribe((users) => {
+        userSubsc.unsubscribe()
+        let numberOfUsersToCheck = users.length
+        var currentUser = 0
+
+        if (numberOfUsersToCheck == 0) {
+          resolve(0)
+        }
+
+        users.forEach(user => {
+          var anyUser: any = user
+          var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
+            subsc.unsubscribe()
+
+            foundedLeagues.forEach(foundedLeague => {
+
+              var userPoints = 0
+              var subsc2 = this.getLineUp(league, foundedLeague.name, anyUser.uid).valueChanges().subscribe((linedUps) => {
+                subsc2.unsubscribe()
+                
+                players.forEach(player => {
+                  if (player.pointsCurrentRound != null) {
+                    linedUps.forEach(linedUp => {
+                      if (linedUp.player == player.player.split(' ').join('')) {
+                        userPoints += +player.pointsCurrentRound
+                      }
+                    })
+                  }
+                })
+                
+                var currentUserPoints = 0
+                if (foundedLeague.points != null) {
+                  currentUserPoints += foundedLeague.points
+                }
+                
+                this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).ref.update({
+                  points: currentUserPoints + userPoints
+                }).then(() => {
+                  if (currentUser == numberOfUsersToCheck) {
+                    resolve(numberOfUsersToCheck)
+                  }
+                  currentUser += 1
+                })
+              })
+            })
+          })    
+        })
+      })
+    })
+  }
 
   //User
   getUsers() {
@@ -163,30 +161,21 @@ export class FirebaseService {
   }
 
   addUserLeague(league, foundedLeague) {
-    //Add user ref to league
-    this.getUserStanding(league, foundedLeague).set({
-      uid: this.auth.userId(),
-      points: 0
-    })
-    
     //Create league
     return this.getUserFoundedLeague(league, foundedLeague).set({
       name: foundedLeague,
-      balance: this.initialBalance
+      balance: this.initialBalance,
+      points: 0,
+      formation: '4-4-2'
     })
   }
 
   changeBalance(league, foundedLeague, value) {
     this.getUserFoundedLeague(league, foundedLeague).get().subscribe((doc) => {
       var currentBalance = doc.get('balance')
-      var currentFormation = doc.get('formation')
-      
-      this.getUserFoundedLeague(league, foundedLeague).set({
-        name: foundedLeague,
-        balance: currentBalance + value,
-        formation: currentFormation
+      doc.ref.update({
+        balance: currentBalance + value
       })
-
     })
   }
 
@@ -227,21 +216,14 @@ export class FirebaseService {
   
   //Formation
   setFormation(league, foundedLeague, formation) {
-    this.getUserFoundedLeague(league, foundedLeague).get().subscribe((doc) => {
-      var currentBalance = doc.get('balance')
-      
-      this.getUserFoundedLeague(league, foundedLeague).set({
-        name: foundedLeague,
-        balance: currentBalance,
-        formation: formation
-      })
-
+    this.getUserFoundedLeague(league, foundedLeague).ref.update({
+      formation: formation
     })
   }
 
   //Players of team
-  getPlayersOfTeam(league, foundedLeague) {
-    return this.getUserFoundedLeague(league, foundedLeague).collection('teamPlayers')
+  getPlayersOfTeam(league, foundedLeague, uid = null) {
+    return this.getUserFoundedLeague(league, foundedLeague, uid).collection('teamPlayers')
   }
 
   addPlayerOfTeam(league, foundedLeague, player) {
