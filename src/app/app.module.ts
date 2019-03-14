@@ -26,6 +26,7 @@ import { FirebaseConfig } from './shared/firebase.config';
 import { NewleagueDialogComponent } from './newleague.dialog/newleague.dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminareaComponent } from './adminarea/adminarea.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { AdminareaComponent } from './adminarea/adminarea.component';
     ContactComponent,
     FaqComponent,
     NewleagueDialogComponent,
-    AdminareaComponent
+    AdminareaComponent,
+    PrivacyPolicyComponent
   ],
   entryComponents: [
     NewleagueDialogComponent
