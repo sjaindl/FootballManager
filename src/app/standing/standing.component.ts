@@ -23,33 +23,50 @@ export class StandingComponent implements OnInit {
       name: 'description', content: "Spiele auf fussballmanager.at mit deinen Lieblingsspielern aus dem Grenzlandcup in eigenen Ligen gegen deine Freunde. Checke hier in der Tabelle deine Platzierung!"
     })
 
-    this.fetchStandings()
+    this.fetchStandings().then((res) => {
+      console.log('Standings fetched:' + res )
+      this.setDataSource()
+    }).catch((err) => {
+      console.log('err: ' + err)
+    })
+
   }
 
   fetchStandings() {
-    var subsc = this.firebaseService.getStanding("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((standingsArray) => {
-      subsc.unsubscribe()
-      var numberOfUsers = standingsArray.length
-      var currentUser = 0
-
+    return new Promise((resolve) => {
+      
       this.firebaseService.getUsers().valueChanges().subscribe((users) => {
+        let numberOfUsersToCheck = users.length
+        var currentUser = 0
+
+        if (numberOfUsersToCheck == 0) {
+          resolve(0)
+        }
+
         users.forEach(user => {
           var anyUser: any = user
 
-          this.firebaseService.getUserFoundedLeague("grenzlandcup",this.authService.currentLeague.name, anyUser.uid).get().subscribe((leagueDoc) => {
-            var name = anyUser.displayName
-            let standing = new Standing()
-            standing.uid = anyUser.uid
-            standing.userName = name
-            standing.points = leagueDoc.get('points') != null ? leagueDoc.get('points') : 0
+          var leagueSusc = this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid).valueChanges().subscribe((leaguesArray) => {
+            leagueSusc.unsubscribe()
+  
+            leaguesArray.forEach(element => {
+              if (element.name == this.authService.currentLeague.name) {
+                var name = anyUser.displayName
+                let standing = new Standing()
+                standing.uid = anyUser.uid
+                standing.userName = name
+                standing.points = element.points != null ? element.points : 0
 
-            this.standings.push(standing)
+                this.standings.push(standing)
+              }
+            })
 
-            currentUser++
-            if (currentUser == numberOfUsers) {
-              this.setDataSource()
+            currentUser += 1
+            if (currentUser == numberOfUsersToCheck) {
+              resolve(this.standings.length)
             }
           })
+
         })
       })
     })
@@ -57,10 +74,10 @@ export class StandingComponent implements OnInit {
 
   setDataSource() {
     this.dataSource = this.standings.sort((a, b) => {
-      if (a.points < b.points) {
+      if (b.points < a.points) {
         return -1
       } 
-      else if (a.points > b.points) {
+      else if (b.points > a.points) {
         return 1
       }
       else {
