@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core'
+import { FirebaseService } from '../services/firebase.service'
 
 @Component({
   selector: 'app-faq',
@@ -7,8 +8,13 @@ import { Component, OnInit } from '@angular/core'
 })
 export class FaqComponent implements OnInit {
 
-  constructor() { }
+  faqs: any[]
+
+  constructor(public firebaseService: FirebaseService) { }
 
   ngOnInit() {
+    this.firebaseService.getFaq().valueChanges().subscribe((faqArray) => {
+      this.faqs = faqArray
+    })
   }
 }

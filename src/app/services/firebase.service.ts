@@ -15,7 +15,7 @@ export class FirebaseService {
 
   //FAQ
   getFaq() {
-    return this.db.collection('/faq/').valueChanges()
+    return this.db.collection('/faq/')
   }
 
   //Leagues
