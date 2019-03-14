@@ -34,7 +34,7 @@
 <mat-select class="player" placeholder="Tormann wählen" (selectionChange)="selectPlayer($event.value, 0, 'Tormann')" [(value)]="lineup['Tormann'][0]">
   <div *ngFor="let player of playersOfTeam">
     <mat-option *ngIf="player.position == 'Tormann'" value="{{ player.player.split(' ').join('') }}">
-      {{player.player}}
+      {{player.player}} ({{ player.pointsLastRound }})
     </mat-option>
   </div>
 </mat-select>
@@ -49,7 +49,7 @@
       <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'Verteidigung1')" [(value)]="lineup['Verteidigung1'][i]">
         <div *ngFor="let player of playersOfTeam">
           <mat-option *ngIf="player.position == 'Verteidigung'" value="{{ player.player.split(' ').join('') }}">
-              {{player.player}}
+              {{player.player}} ({{ player.pointsLastRound }})
           </mat-option>
         </div>
       </mat-select>
@@ -67,7 +67,7 @@
       <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'Verteidigung2')" [(value)]="lineup['Verteidigung2'][i]">
         <div *ngFor="let player of playersOfTeam">
           <mat-option *ngIf="player.position == 'Verteidigung'" value="{{ player.player.split(' ').join('') }}">
-              {{player.player}}
+              {{player.player}} ({{ player.pointsLastRound }})
           </mat-option>
         </div>
       </mat-select>
@@ -85,7 +85,7 @@
       <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'Mittelfeld1')" [(value)]="lineup['Mittelfeld1'][i]">
         <div *ngFor="let player of playersOfTeam">
           <mat-option *ngIf="player.position == 'Mittelfeld'" value="{{ player.player.split(' ').join('') }}">
-              {{player.player}}
+              {{player.player}} ({{ player.pointsLastRound }})
           </mat-option>
         </div>
       </mat-select>
@@ -102,7 +102,7 @@
       <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'Mittelfeld2')" [(value)]="lineup['Mittelfeld2'][i]">
         <div *ngFor="let player of playersOfTeam">
           <mat-option *ngIf="player.position == 'Mittelfeld'" value="{{ player.player.split(' ').join('') }}">
-              {{player.player}}
+              {{player.player}} ({{ player.pointsLastRound }})
           </mat-option>
         </div>
       </mat-select>
@@ -119,7 +119,7 @@
       <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'Angriff1')" [(value)]="lineup['Angriff1'][i]">
         <div *ngFor="let player of playersOfTeam">
           <mat-option *ngIf="player.position == 'Angriff'" value="{{ player.player.split(' ').join('') }}">
-              {{player.player}}
+              {{player.player}} ({{ player.pointsLastRound }})
           </mat-option>
         </div>
       </mat-select>
@@ -136,7 +136,7 @@
       <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'Angriff2')" [(value)]="lineup['Angriff2'][i]">
         <div *ngFor="let player of playersOfTeam">
           <mat-option *ngIf="player.position == 'Angriff'" value="{{ player.player.split(' ').join('') }}">
-              {{player.player}}
+              {{player.player}} ({{ player.pointsLastRound }})
           </mat-option>
         </div>
       </mat-select>
@@ -186,7 +186,7 @@
     <!-- Points Column -->
     <ng-container matColumnDef="points">
       <th mat-header-cell *matHeaderCellDef> Punkte </th>
-      <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.points}} ({{ element.pointsLastRound }}) </td>
     </ng-container>
   
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
