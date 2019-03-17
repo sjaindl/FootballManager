@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service'
 import { MatSnackBar } from '@angular/material'
 import { Lineup } from '../shared/lineup';
 import { Player } from '../shared/player';
+import { AngularFireStorage } from 'angularfire2/storage';
 
 @Component({
   selector: 'app-team',
@@ -35,11 +36,11 @@ export class TeamComponent implements OnInit {
 
   freezed: boolean = false
 
-  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points']
+  displayedColumns: string[] = ['position', /* 'team', */ 'playerImage', 'player', 'marketValue', 'points']
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) { 
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private snackBar: MatSnackBar) { 
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
@@ -68,17 +69,18 @@ export class TeamComponent implements OnInit {
           this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
   
             playersArray.forEach(p => {
-              let player = new Player()
+              let player = new Player(null)
               player.init(p, team.id)
               this.players.push(player)
             })
             
             this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
               playersOfTeamArray.forEach(p => {
-              let playerOfTeam = new Player()
+              let playerOfTeam = new Player(this.storage)
               let player = this.getPlayerByName(p.player)
               playerOfTeam.init(player, team.id)
               playerOfTeam.player = player.player
+              playerOfTeam.loadImageRef()
               this.playersOfTeam.push(playerOfTeam)
               console.log('player of team: ' + playerOfTeam.player)
 

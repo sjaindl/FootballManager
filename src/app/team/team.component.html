@@ -170,7 +170,13 @@
       <th mat-header-cell *matHeaderCellDef> Team </th>
       <td mat-cell *matCellDef="let element"> {{element.team}} </td>
     </ng-container> -->
-  
+ 
+    <!-- Player image Column -->
+    <ng-container matColumnDef="playerImage">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"> <img *ngIf="element.loadedImageRef" [src]="element.loadedImageRef | async" /> </td>
+    </ng-container>
+
     <!-- Player name Column -->
     <ng-container matColumnDef="player">
       <th mat-header-cell *matHeaderCellDef> Spieler </th>

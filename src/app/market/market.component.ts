@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { MatSnackBar } from '@angular/material'
-import { Player } from '../shared/player';
+import { Player } from '../shared/player'
+import { AngularFireStorage } from 'angularfire2/storage'
 
 @Component({
   selector: 'app-market',
@@ -18,9 +19,9 @@ export class MarketComponent implements OnInit {
 
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
-  displayedColumns: string[] = ['position', /* 'team', */ 'player', 'marketValue', 'points', 'buy']
+  displayedColumns: string[] = ['position', /* 'team', */ 'playerImage', 'player', 'marketValue', 'points', 'buy']
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private snackBar: MatSnackBar) {
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private snackBar: MatSnackBar) {
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
@@ -41,8 +42,10 @@ export class MarketComponent implements OnInit {
           subsc.unsubscribe()
           
           playersArray.forEach(p => {
-            let player = new Player()
+            let player = new Player(this.storage)
             player.init(p, team.id)
+            player.loadImageRef()
+
             this.players.push(player)
           })
 
@@ -60,7 +63,7 @@ export class MarketComponent implements OnInit {
       this.playersOfTeam = []
 
       playersOfTeamArray.forEach(p => {
-        let playerOfTeam = new Player()
+        let playerOfTeam = new Player(null)
         let player = this.getPlayerByName(p.player)
         playerOfTeam.init(player, teamId)
         playerOfTeam.player = player.player
@@ -139,7 +142,7 @@ export class MarketComponent implements OnInit {
       this.firebaseService.addPlayerOfTeam("grenzlandcup", this.authService.currentLeague.name, player.player)
       
       //Add new player to team
-      let playerOfTeam = new Player()
+      let playerOfTeam = new Player(null)
       playerOfTeam.init(player, player.teamId)
       playerOfTeam.player = player.player
       this.playersOfTeam.push(playerOfTeam)

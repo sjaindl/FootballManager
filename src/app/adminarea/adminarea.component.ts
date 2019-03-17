@@ -38,7 +38,7 @@ export class AdminareaComponent implements OnInit {
           this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
   
             playersArray.forEach(p => {
-              let player = new Player()
+              let player = new Player(null)
               player.init(p, team.id)
               player.playerId = p.playerId
               player.sold = p.sold

@@ -5,6 +5,7 @@ import { CookieLawModule } from 'angular2-cookie-law'
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFireStorageModule } from 'angularfire2/storage'
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 
 import { AppComponent } from './app.component';
@@ -71,6 +72,7 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    AngularFireStorageModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
