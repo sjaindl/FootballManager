@@ -42,8 +42,7 @@
 
   <mat-list fxLayout="column" fxLayout.gt-sm="row">
     <mat-list-item class="listImage" *ngFor="let chef of chefs">
-      <!-- <img mat-list-avatar class='img-preview' alt="{{chef.firstName}} {{chef.lastName | uppercase}}" > -->
-      <!-- TODO img src="{{imageBaseUrl.concat(chef.imagePath)}} fetch from firestore" -->
+      <img *ngIf="chef.loadedImageRef" mat-list-avatar class='img-preview' alt="{{chef.firstName}} {{chef.lastName | uppercase}}" [src]="chef.loadedImageRef | async">
       <h1 mat-line>{{chef.firstName}} {{chef.lastName | uppercase}}</h1>
       <h1 mat-line>{{chef.function}}</h1>
     </mat-list-item>
