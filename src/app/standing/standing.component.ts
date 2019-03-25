@@ -56,6 +56,7 @@ export class StandingComponent implements OnInit {
                 standing.uid = anyUser.uid
                 standing.userName = name
                 standing.points = element.points != null ? element.points : 0
+                standing.pointsLastRound = element.pointsLastRound != null ? element.pointsLastRound : 0
 
                 this.standings.push(standing)
               }
@@ -92,12 +93,11 @@ export class StandingComponent implements OnInit {
       }
     })
   }
-
-
 }
 
 export class Standing {
   uid: string
   userName: string
   points: number
+  pointsLastRound: number
 }

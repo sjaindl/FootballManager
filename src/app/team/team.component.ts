@@ -176,6 +176,7 @@ export class TeamComponent implements OnInit {
     } else {
       this.firebaseService.setLineup("grenzlandcup", this.authService.currentLeague.name, this.lineup, this.originalLineup)
       this.firebaseService.setFormation("grenzlandcup", this.authService.currentLeague.name, this.formation)
+      this.openSnackBar('Aufstellung gespeichert', '')
     }
   }
 

@@ -145,9 +145,10 @@ export class AdminareaComponent implements OnInit {
         if (player.pointsCurrentRound != null || player.newMarketValue != null) {
             this.firebaseService.getPlayers("grenzlandcup", player.team).doc(player.playerId).ref.update({
               marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
-              points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
+              points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points,
+              pointsCurrentRound: player.pointsCurrentRound ? player.pointsCurrentRound : 0
             })
-
+            
             player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
             player.points = +player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
             player.pointsCurrentRound = null

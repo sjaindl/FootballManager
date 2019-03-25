@@ -77,13 +77,13 @@ export class FirebaseService {
     return new Promise((resolve) => {
       var userSubsc = this.getUsers().valueChanges().subscribe((users) => {
         userSubsc.unsubscribe()
-        let numberOfUsersToCheck = users.length
-        var currentUser = 0
 
-        if (numberOfUsersToCheck == 0) {
+        if (users.length == 0) {
           resolve(0)
         }
-
+        
+        var lastUser: any = users[users.length - 1]
+        var lastUserUid = lastUser.uid
         users.forEach(user => {
           var anyUser: any = user
           var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
@@ -111,12 +111,12 @@ export class FirebaseService {
                 }
                 
                 this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).ref.update({
-                  points: currentUserPoints + userPoints
+                  points: currentUserPoints + userPoints,
+                  pointsLastRound: userPoints
                 }).then(() => {
-                  if (currentUser == numberOfUsersToCheck) {
-                    resolve(numberOfUsersToCheck)
+                  if (lastUserUid == anyUser.uid) {
+                    resolve(users.length)
                   }
-                  currentUser += 1
                 })
               })
             })
