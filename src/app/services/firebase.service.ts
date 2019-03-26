@@ -31,6 +31,12 @@ export class FirebaseService {
     return this.getLeague(league).collection('news')
   }
 
+  setLeagueNews(league, news) {
+    return this.getLeagueNews(league).doc('newsLine').ref.update({
+      newsLine: news
+    })
+  }
+
   getTeam(league, team) {
     return this.getTeams(league).doc(team)
   }

@@ -1,7 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core'
-import { FirebaseService } from '../services/firebase.service';
-import { AuthService } from '../services/auth.service';
-import { Player } from '../shared/player';
+import { FirebaseService } from '../services/firebase.service'
+import { AuthService } from '../services/auth.service'
+import { Player } from '../shared/player'
+import { MatSnackBar } from '@angular/material'
 
 @Component({
   selector: 'app-adminarea',
@@ -16,8 +17,9 @@ export class AdminareaComponent implements OnInit {
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
   freezed: boolean = false
+  news: string
   
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, public changeDetectorRefs: ChangeDetectorRef) { 
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, public changeDetectorRefs: ChangeDetectorRef, private snackBar: MatSnackBar) { 
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
@@ -28,6 +30,11 @@ export class AdminareaComponent implements OnInit {
     this.firebaseService.isFreezed().subscribe((doc) => {
       var isFreezed = doc.get('freeze')
       this.freezed = isFreezed
+    })
+
+    this.firebaseService.getLeagueNews("grenzlandcup").valueChanges().subscribe(news => {
+      let anyNews: any = news
+      this.news = anyNews[0].newsLine
     })
 
     this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
@@ -155,8 +162,14 @@ export class AdminareaComponent implements OnInit {
             player.newMarketValue = null
           }
         })
-      })
-    
+        this.openSnackBar('Punkteberechnung abgeschlossen!', '')
+      }) 
+  }
+
+  saveNews() {
+    this.firebaseService.setLeagueNews('grenzlandcup', this.news).then( () => {
+      this.openSnackBar('News aktualisiert', 'News')
+    })
   }
 
   freezeDesc() {
@@ -166,5 +179,11 @@ export class AdminareaComponent implements OnInit {
   freeze() {
     this.freezed = !this.freezed
     this.firebaseService.freeze(this.freezed)
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    })
   }
 }

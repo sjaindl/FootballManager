@@ -76,3 +76,14 @@
 
 <br>
 <br>
+
+<div style="margin-left: 15px; font-size: 20px;">
+        <input [ngModel]="news" (ngModelChange)="news = $event" style="width: 100%;"> 
+        <br>
+        <button mat-button class="background-primary" (click)="saveNews()">
+                News speichern
+        </button> 
+</div>
+
+<br>
+<br>
