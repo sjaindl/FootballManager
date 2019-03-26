@@ -52,4 +52,39 @@
     <button style="font-size: 20px" mat-button class="background-primary" (click)="joinLeague()">beitreten</button>
 </div>
 
+<div *ngIf="this.authService.currentLeague" style="margin-left: 15px; margin-top: 20px; font-size: 20px">
+    <br>
+    <div *ngIf="this.newsLine">
+        {{newsLine}}
+    </div>
+
+    <br>
+
+    <b><u>Top 11 der Runde:</u></b>
+    <div *ngFor="let mvp of this.topEleven">
+        {{mvp.name}} ({{mvp.points}})
+        <br>
+    </div>
+
+    <br>
+
+    <b><u>MVP's (Punkte):</u></b>
+    <div *ngFor="let mvp of this.mvpPlayersByPoints">
+        {{mvp.name}} ({{mvp.points}})
+        <br>
+    </div>
+
+    <br>
+
+    <b><u>MVP's (Marktwert):</u></b>
+    <div *ngFor="let mvp of this.mvpPlayersByMarketValue">
+        {{mvp.name}} ({{mvp.marketValue | number: '2.'}})
+        <br>
+    </div>
+    <br>
+    <br>
+
+</div>
+<br>
+
 <cookie-law></cookie-law>

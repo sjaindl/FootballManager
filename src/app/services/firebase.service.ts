@@ -27,12 +27,29 @@ export class FirebaseService {
     return this.getLeagues().doc(league)
   }
 
+  getLeagueNews(league) {
+    return this.getLeague(league).collection('news')
+  }
+
   getTeam(league, team) {
     return this.getTeams(league).doc(team)
   }
 
   getPlayer(league, team, player) {
     return this.getPlayers(league, team).doc(player)
+  }
+
+  //MVP's - TODO: when there is more than one team, all teams need to be queried!
+  getMvpsOfTeamByPoints(league, team) {
+    return this.getPlayers(league, team).ref.orderBy('points', 'desc').limit(5)
+  }
+
+  getMvpsOfTeamByMarketValue(league, team) {
+    return this.getPlayers(league, team).ref.orderBy('marketValue', 'desc').limit(5)
+  }
+
+  getTopElevenPlayersOfLastRound(league, team) {
+    return this.getPlayers(league, team).ref.orderBy('pointsLastRound', 'desc').limit(11)
   }
   
   //Founded leagues

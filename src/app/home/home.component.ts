@@ -36,6 +36,11 @@ export class HomeComponent implements OnInit {
 
   leagues: League[] = []
   
+  newsLine: string
+  mvpPlayersByPoints: MVP[] = []
+  mvpPlayersByMarketValue: MVP[] = []
+  topEleven: MVP[] = []
+  
   //private deviceService: DeviceDetectorService
   constructor(public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, 
     private metaTagService: Meta, private angularFireAuth: AngularFireAuth, 
@@ -71,7 +76,7 @@ export class HomeComponent implements OnInit {
 
         this.firebaseService.getUserFoundedLeagues("grenzlandcup").valueChanges().subscribe((leaguesArray) => {
           this.leagues = []
-
+          
           leaguesArray.forEach(element => {
             let league = new League()
             league.init(element)
@@ -87,6 +92,7 @@ export class HomeComponent implements OnInit {
 
   selectLeague(league: League) {
     this.authService.currentLeague = league
+    this.fetchLeagueDetail()
   }
 
   showNewLeagueDialog() {
@@ -112,11 +118,57 @@ export class HomeComponent implements OnInit {
           let league = new League()
           league.name = this.joinleaguename
           this.authService.currentLeague = league
+          this.fetchLeagueDetail()
         }).catch(error =>  {
           console.log(error)
           this.openSnackBar(error, '')
         })
       }
+    })
+  }
+
+  fetchLeagueDetail() {
+    // this.authService.currentLeague
+    this.firebaseService.getLeagueNews("grenzlandcup").valueChanges().subscribe(news => {
+      let anyNews: any = news
+      this.newsLine = anyNews[0].newsLine
+    })
+
+    this.mvpPlayersByPoints = []
+    this.mvpPlayersByMarketValue = []
+    this.topEleven = []
+
+    this.firebaseService.getMvpsOfTeamByPoints("grenzlandcup", "hvtdp").get().then( querySnapshot => {
+      querySnapshot.docs.forEach(element => {
+
+        console.log(element.data())
+        let mvp = new MVP()
+        mvp.name = element.data().name
+        mvp.points = element.data().points
+        this.mvpPlayersByPoints.push(mvp)
+      })
+    })
+
+    this.firebaseService.getMvpsOfTeamByMarketValue("grenzlandcup", "hvtdp").get().then( querySnapshot => {
+      querySnapshot.docs.forEach(element => {
+
+        console.log(element.data())
+        let mvp = new MVP()
+        mvp.name = element.data().name
+        mvp.marketValue = element.data().marketValue
+        this.mvpPlayersByMarketValue.push(mvp)
+      })
+    })
+
+    this.firebaseService.getTopElevenPlayersOfLastRound("grenzlandcup", "hvtdp").get().then( querySnapshot => {
+      querySnapshot.docs.forEach(element => {
+
+        console.log(element.data())
+        let mvp = new MVP()
+        mvp.name = element.data().name
+        mvp.points = element.data().pointsLastRound
+        this.topEleven.push(mvp)
+      })
     })
   }
 
@@ -151,4 +203,10 @@ export class HomeComponent implements OnInit {
       duration: 2000,
     })
   }
+}
+
+class MVP {
+  name: string
+  points: number
+  marketValue: number
 }
