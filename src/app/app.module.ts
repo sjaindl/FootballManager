@@ -1,3 +1,4 @@
+import { AgmCoreModule } from '@agm/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -7,11 +8,12 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireStorageModule } from 'angularfire2/storage'
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
+import 'hammerjs'
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { TransferHttpCacheModule } from '@nguniversal/common';
-import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatSnackBarModule, MatGridListModule, MatTableModule } from '@angular/material';
+import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatSnackBarModule, MatGridListModule, MatTableModule, MatSlideToggleModule, MatCheckboxModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
@@ -60,15 +62,20 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
     MatSidenavModule,
     MatListModule,
     MatIconModule,
+    MatCheckboxModule,
     MatToolbarModule,
     MatFormFieldModule,
     MatGridListModule,
     MatInputModule,
     MatSelectModule,
+    MatSlideToggleModule,
     MatTableModule,
     MatOptionModule,
     MatSnackBarModule,
     CookieLawModule,
+    AgmCoreModule.forRoot({
+      apiKey: environment.googleMapsApiKey
+    }),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,

@@ -14,5 +14,6 @@ export const environment = {
     projectId: FirebaseConfig.projectId,
     storageBucket: FirebaseConfig.storageBucket,
     messagingSenderId: FirebaseConfig.messagingSenderId
-  }
-};
+  },
+  googleMapsApiKey: FirebaseConfig.googleMapsApiKey
+}
