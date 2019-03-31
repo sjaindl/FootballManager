@@ -148,22 +148,27 @@ export class AdminareaComponent implements OnInit {
 
   save() {
     this.firebaseService.changePlayerPoints("grenzlandcup", this.players).then((res) => {
-      this.players.forEach(player => {
-        if (player.pointsCurrentRound != null || player.newMarketValue != null) {
-            this.firebaseService.getPlayers("grenzlandcup", player.team).doc(player.playerId).ref.update({
-              marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
-              points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points,
-              pointsCurrentRound: player.pointsCurrentRound ? player.pointsCurrentRound : 0
-            })
-            
-            player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
-            player.points = +player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
-            player.pointsCurrentRound = null
-            player.newMarketValue = null
-          }
-        })
         this.openSnackBar('Punkteberechnung abgeschlossen!', '')
       }) 
+  }
+
+  setPlayerPointsLastRound() {
+    this.players.forEach(player => {
+      if (player.pointsCurrentRound != null || player.newMarketValue != null) {
+          this.firebaseService.getPlayers("grenzlandcup", player.team).doc(player.playerId).ref.update({
+            marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
+            points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points,
+            pointsCurrentRound: player.pointsCurrentRound ? player.pointsCurrentRound : 0
+          })
+          
+          player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
+          player.points = +player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
+          player.pointsCurrentRound = null
+          player.newMarketValue = null
+        }
+      })
+      
+      this.openSnackBar('Spielerpunkte gesetzt!', '')
   }
 
   saveNews() {
