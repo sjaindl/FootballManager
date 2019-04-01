@@ -161,6 +161,22 @@ export class FirebaseService {
   getCurrentUser() {
     return this.getUsers().doc(this.auth.userId())
   }
+
+  changeUserName(name) {
+    this.getCurrentUser().get().subscribe((doc) => {
+      doc.ref.update({
+        displayName: name
+      })
+    })
+  }
+
+  changeUserProfilePicture(photoRef) {
+    this.getCurrentUser().get().subscribe((doc) => {
+      doc.ref.update({
+        photoRef: photoRef
+      })
+    })
+  }
   
   //User Leagues
   getUserLeagues(uid = null) {

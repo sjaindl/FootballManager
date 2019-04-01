@@ -30,6 +30,7 @@ import { NewleagueDialogComponent } from './newleague.dialog/newleague.dialog.co
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminareaComponent } from './adminarea/adminarea.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
     FaqComponent,
     NewleagueDialogComponent,
     AdminareaComponent,
-    PrivacyPolicyComponent
+    PrivacyPolicyComponent,
+    ProfileComponent
   ],
   entryComponents: [
     NewleagueDialogComponent

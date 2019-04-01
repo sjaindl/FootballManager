@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { Title, Meta } from '@angular/platform-browser'
+import { AngularFireStorage } from 'angularfire2/storage';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-standing',
@@ -12,9 +14,9 @@ export class StandingComponent implements OnInit {
 
   standings: Standing[] = []
   dataSource: Standing[]
-  displayedColumns: string[] = ['userName', 'points']
+  displayedColumns: string[] = ['image', 'userName', 'points']
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private titleService: Title, 
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private titleService: Title, 
     private metaTagService: Meta) { }
 
   ngOnInit() {
@@ -58,6 +60,14 @@ export class StandingComponent implements OnInit {
                 standing.points = element.points != null ? element.points : 0
                 standing.pointsLastRound = element.pointsLastRound != null ? element.pointsLastRound : 0
 
+                if (anyUser.photoRef != null) {
+                  this.loadImageRef(standing, anyUser.photoRef)
+                } else if (anyUser.photoURL != null) {
+                  standing.imageUrl = anyUser.photoURL
+                } else {
+                  this.loadImageRef(standing, 'players/no_photo.jpg')
+                }
+
                 this.standings.push(standing)
               }
             })
@@ -71,6 +81,10 @@ export class StandingComponent implements OnInit {
         })
       })
     })
+  }
+
+  loadImageRef(standing, photoRef) {
+    standing.photoRef = this.storage.ref(photoRef).getDownloadURL()
   }
 
   setDataSource() {
@@ -100,4 +114,6 @@ export class Standing {
   userName: string
   points: number
   pointsLastRound: number
+  imageUrl: string
+  imageRef: Observable<string | null>
 }

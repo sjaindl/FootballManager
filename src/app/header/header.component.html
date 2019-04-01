@@ -48,6 +48,10 @@
             <span class="fa fa-list-ol fa-sm"></span>
             &nbsp;Datenschutzrichtlinie
           </a>
+          <a (click)="sidenav.toggle();" md-button routerLink="/profile" routerLinkActive="active" mat-list-item>
+            <span class="fas fa-user fa-sm"></span>
+            &nbsp;Profil
+          </a>
           <a (click)="sidenav.toggle();" md-button routerLink="/admin" routerLinkActive="active" mat-list-item>
             <span class="fas fa-lock fa-sm"></span>
             &nbsp;Admin

@@ -9,8 +9,9 @@ import { ContactComponent } from '../contact/contact.component'
 import { FaqComponent } from '../faq/faq.component'
 import { AuthService } from '../services/auth.service'
 import { AdminareaComponent } from '../adminarea/adminarea.component'
-import { AdminService } from '../services/admin.service';
-import { PrivacyPolicyComponent } from '../privacy-policy/privacy-policy.component';
+import { AdminService } from '../services/admin.service'
+import { PrivacyPolicyComponent } from '../privacy-policy/privacy-policy.component'
+import { ProfileComponent } from '../profile/profile.component'
 
 export const routes : Routes = [
     { path: "home", component: HomeComponent },
@@ -22,5 +23,6 @@ export const routes : Routes = [
     { path: "contact", component: ContactComponent },
     { path: "faq", component: FaqComponent },
     { path: "privacy", component: PrivacyPolicyComponent },
-    { path: "admin", component: AdminareaComponent, canActivate: [AdminService] }
+    { path: "admin", component: AdminareaComponent, canActivate: [AdminService] },
+    { path: "profile", component: ProfileComponent, canActivate: [AuthService] },
 ]
