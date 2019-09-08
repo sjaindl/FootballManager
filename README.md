@@ -56,4 +56,4 @@ ng generate component componentName --module=app.module
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 # License
-TODO
+This project is under exclusive copyright, see https://github.com/sjaindl/FootballManager/blob/master/LICENSE for license notes.
