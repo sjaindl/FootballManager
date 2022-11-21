@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { AngularFireStorage } from 'angularfire2/storage'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Observable } from 'rxjs'
 
 @Component({

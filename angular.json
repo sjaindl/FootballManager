@@ -96,7 +96,7 @@
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
-          "options": {            
+          "options": {
             "tsConfig": [
               "src/tsconfig.app.json"
             ],
@@ -150,7 +150,9 @@
       }
     }
   },
-  "cli": {},
+  "cli": {
+    "analytics": "facd9263-3ad9-4a4b-b63f-92f5a24458f0"
+  },
   "schematics": {
     "@schematics/angular:class": {
       "spec": false

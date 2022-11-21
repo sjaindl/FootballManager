@@ -1,17 +1,6 @@
 <!doctype html>
 <html lang="en">
 
-<!-- Google Analytics -->
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131887258-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-131887258-1');
-</script>
-
 <head>
   <meta charset="utf-8">
   <title>Starting Eleven</title>
@@ -26,8 +15,35 @@
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=placeholder">
   </script>
+
+  <!-- cookieconsent dependency-->
+  <link rel="stylesheet" type="text/css" href="node_modules/cookieconsent/build/cookieconsent.min.css"/>
+  <script src="node_modules/cookieconsent/build/cookieconsent.min.js"></script>
   
 </head>
+
+<!-- Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131887258-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131887258-1');
+</script>
+
+<!-- Google Analytics 4 -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V3TNDLYCWE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V3TNDLYCWE');
+</script>
+
 <body>
   <app-root></app-root>
 </body>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Player } from '../shared/player'
 import { AngularFireStorage } from 'angularfire2/storage'
 

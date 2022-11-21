@@ -10,9 +10,9 @@ import { AuthService } from '../services/auth.service';
 import { FirebaseService } from '../services/firebase.service';
 import { League } from '../shared/League';
 import { NewleagueDialogComponent } from '../newleague.dialog/newleague.dialog.component';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Md5 } from 'ts-md5';
-
 
 export interface Player {
   firstName: string
