@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -7,30 +6,17 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
-
-   @ViewChild(MatSidenav)
-    private sidenav: MatSidenav;
-
-    ngAfterContentInit() {
-        this.sidenav._animationStarted.subscribe(() => {
-          this.setSideNavigationWidth();
-        });
-    }
+export class HeaderComponent {
 
    width = '0px'
 
-   setSideNavigationWidth() {
-    this.width = this.sidenav.opened ? '100%' : '0px';
-   }
-
   constructor(public authService: AuthService) { }
-
-  ngOnInit() {
-  }
 
   signOut() {
     this.authService.signOut()
   }
 
+  navChanged(opened: boolean) {
+    this.width = opened ? '100%' : '0px'
+  }
 }

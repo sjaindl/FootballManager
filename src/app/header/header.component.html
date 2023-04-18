@@ -1,75 +1,28 @@
 <div>
-    <mat-toolbar color="primary">
-      <mat-toolbar-row>
-        <button mat-icon-button (click)="sidenav.toggle(); setSideNavigationWidth();" fxShow="true" fxHide.gt-sm>
-          <mat-icon>menu</mat-icon>
-        </button>
-        &nbsp;
-        <div class="center" *ngIf="authService.currentLeague">
-          {{ authService.currentLeague.name }}
-        </div>
-      </mat-toolbar-row>
-    </mat-toolbar>
-  
-    <mat-sidenav-container #sidenavContainer style="position: absolute;top: 1;left: 0;height: 100%;z-index: 10;background-color: rgba(1,0,0,0.0); min-width: 1%;" [ngStyle]="{'width': width}">
-   
-    <!-- <mat-sidenav-container #sidenavContainer fxFlexFill> -->
-      <mat-sidenav #sidenav>
-        <mat-nav-list>
-          <a (click)="sidenav.toggle();" md-button routerLink="/home" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-home fa-sm"></span>
-            &nbsp;Home
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/team" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-portrait fa-sm"></span>
-            &nbsp;Starting Eleven
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/market" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-shopping-cart fa-sm"></span>
-            &nbsp;Kaufen/Verkaufen
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/standings" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-award fa-sm"></span>
-            &nbsp;Tabelle
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/aboutus" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-info fa-sm"></span>
-            &nbsp;Über uns
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/contact" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-users fa-sm"></span>
-            &nbsp;Kontakt
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/faq" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-list-ol fa-sm"></span>
-            &nbsp;FAQ
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/privacy" routerLinkActive="active" mat-list-item>
-            <span class="fa fa-list-ol fa-sm"></span>
-            &nbsp;Datenschutzrichtlinie
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/profile" routerLinkActive="active" mat-list-item>
-            <span class="fas fa-user fa-sm"></span>
-            &nbsp;Profil
-          </a>
-          <a (click)="sidenav.toggle();" md-button routerLink="/admin" routerLinkActive="active" mat-list-item>
-            <span class="fas fa-lock fa-sm"></span>
-            &nbsp;Admin
-          </a>
-          <a (click)="sidenav.toggle(); signOut();" md-button routerLink="/home" routerLinkActive="active" mat-list-item>
-            <span class="fas fa-sign-out-alt fa-sm"></span>
-            &nbsp;Logout
-          </a>
-          <a (click)="sidenav.toggle(); setSideNavigationWidth();" mat-list-item>
-              <mat-icon>close</mat-icon> Close
-          </a>
-        </mat-nav-list>
-      </mat-sidenav>
-      <mat-sidenav-content fxFlexFill></mat-sidenav-content>
-    </mat-sidenav-container>
-  </div>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <!-- Mobile nav -->
+      <button mat-menu-item [matMenuTriggerFor]="mobile" fxShow="true" fxHide.gt-sm><mat-icon>menu</mat-icon></button>
+      <mat-menu #mobile="matMenu">
+        <button mat-menu-item routerLink="/home" routerLinkActive="active"><span class="fa fa-users fa-sm"></span> Home</button>
+        <button mat-menu-item routerLink="/team" routerLinkActive="active"><span class="fa fa-portrait fa-sm"></span> Starting Eleven</button>
+        <button mat-menu-item routerLink="/market" routerLinkActive="active"><span class="fa fa-shopping-cart fa-sm"></span> Kaufen/Verkaufen</button>
+        <button mat-menu-item routerLink="/standings" routerLinkActive="active"><span class="fa fa-award fa-sm"></span> Tabelle</button>
+        <button mat-menu-item routerLink="/aboutus" routerLinkActive="active"><span class="fa fa-info fa-sm"></span> Über uns</button>
+        <button mat-menu-item routerLink="/contact" routerLinkActive="active"><span class="fa fa-users fa-sm"></span> Kontakt</button>
+        <button mat-menu-item routerLink="/faq" routerLinkActive="active"><span class="fa fa-list-ol fa-sm"></span> FAQ</button>
+        <button mat-menu-item routerLink="/privacy" routerLinkActive="active"><span class="ffa fa-list-ol fa-sm"></span> Datenschutzrichtlinie</button>
+        <button mat-menu-item routerLink="/profile" routerLinkActive="active"><span class="fas fa-user fa-sm"></span> Profil</button>
+        <button mat-menu-item routerLink="/admin" routerLinkActive="active"><span class="fas fa-lock fa-sm"></span> Admin</button>
+        <button mat-menu-item routerLink="/home" routerLinkActive="active"><span class="fas fa-sign-out-alt fa-sm"></span> Logout</button>
+      </mat-menu>
+      <div class="center" *ngIf="authService.currentLeague">
+        {{ authService.currentLeague.name }}
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
 
-  <div>
-      <img src="/assets/StartingEleven.jpg" height="250px">
-  </div>
-  
+<div>
+    <img src="/assets/StartingEleven.jpg" height="250px">
+</div>
