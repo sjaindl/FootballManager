@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from '../services/firebase.service';
+import { docData, getDoc } from '@angular/fire/firestore';
 // import { StatisticsService } from '../services/statistics.service';
 
 @Component({
@@ -14,12 +15,16 @@ export class FooterComponent implements OnInit {
   constructor(private firebaseService: FirebaseService) { }
 
   ngOnInit() {
-    this.firebaseService.getVisitorCount().subscribe((doc) => {
-      var visitorCount = doc.get('visitorCount')
-      this.sessions = visitorCount
-      if (visitorCount != null) {
-        this.firebaseService.setVisitorCount(visitorCount + 1)
-      }
-    })
+      getDoc(this.firebaseService.getVisitorCount()).then((value) => {
+        if(value.exists) {
+          let data = value.data()
+
+          let visitorCount = data['visitorCount']
+          this.sessions = visitorCount
+          if (visitorCount != null) {
+            this.firebaseService.setVisitorCount(visitorCount + 1)
+          }
+        }
+      })
   }
 }
