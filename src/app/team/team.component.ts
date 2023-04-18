@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Lineup } from '../shared/lineup';
 import { Player } from '../shared/player';
-import { AngularFireStorage } from 'angularfire2/storage';
+import { Storage } from '@angular/fire/storage';
+import { collectionData, docData, getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-team',
@@ -12,7 +13,6 @@ import { AngularFireStorage } from 'angularfire2/storage';
   styleUrls: ['./team.component.css']
 })
 export class TeamComponent implements OnInit {
-
   teams: any[]
   players: Player[] = []
   playersOfTeam: Player[] = []
@@ -40,7 +40,9 @@ export class TeamComponent implements OnInit {
   dataSource: Player[]
   teamPositionSortOrder = new Map<string, number>()
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private snackBar: MatSnackBar) { 
+  log = false
+
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar) { 
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
@@ -48,67 +50,97 @@ export class TeamComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.firebaseService.isFreezed().subscribe((doc) => {
-      var isFreezed = doc.get('freeze')
+    docData(this.firebaseService.isFreezed()).forEach((doc) => {
+      var isFreezed = doc['freeze']
+      if(this.log) {
+        console.log("isFreezed: " + JSON.stringify(isFreezed))
+      }
+      
       this.freezed = isFreezed
     })
     
     this.initLineupArray() 
     //this.setFormation('4-4-2')
 
-    this.firebaseService.getUserFoundedLeague("grenzlandcup", this.authService.currentLeague.name).get().subscribe((doc) => {
-      var formation = doc.get('formation')
+    let teamRef = this.firebaseService.getUserFoundedLeague("grenzlandcup", this.authService.currentLeague.name)
+
+    getDoc(teamRef).then((teamsSnapshot) => {
+      let doc = teamsSnapshot.data()
+      var formation = doc['formation']
       this.formation = formation
       this.setFormation(formation)
 
-      this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
+      let teams = this.firebaseService.getTeams("grenzlandcup")
+
+      if(this.log) {
+        console.log("receive league data: " + JSON.stringify(doc))
+        console.log("Got formation: " + JSON.stringify(formation))
+        console.log("teams data: " + JSON.stringify(teams))
+      }
+
+      collectionData(teams).forEach((teamsArray) => {
         this.teams = teamsArray
   
         teamsArray.forEach(team => {
-          console.log(team.id)
-          this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
-  
+          if(this.log) {
+            console.log(team.id)
+          }
+
+          collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).forEach((playersArray) => {
             playersArray.forEach(p => {
-              let player = new Player(null)
+              if(this.log) {
+                console.log("init player: " + JSON.stringify(p))
+              }
+              let player = new Player()
               player.init(p, team.id)
               this.players.push(player)
             })
             
-            this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
+            collectionData(this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name)).forEach((playersOfTeamArray) => {
+              if(this.log) {
+                console.log("receive playersOfTeamArray data: " + JSON.stringify(playersOfTeamArray.length))
+              }
               playersOfTeamArray.forEach(p => {
-              let playerOfTeam = new Player(this.storage)
-              let player = this.getPlayerByName(p.player)
-              playerOfTeam.init(player, team.id)
-              playerOfTeam.player = player.player
-              playerOfTeam.loadImageRef()
-              this.playersOfTeam.push(playerOfTeam)
-              console.log('player of team: ' + playerOfTeam.player)
+                let playerOfTeam = new Player()
+                let player = this.getPlayerByName(p.player)
+                playerOfTeam.init(player, team.id)
+                playerOfTeam.player = player.player
+                playerOfTeam.loadImageRef(this.storage)
+                this.playersOfTeam.push(playerOfTeam)
 
-              this.dataSource = this.playersOfTeam.sort((a, b) => {
-                  var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
-                  var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
-            
-                  if (aPositionSortOrder < bPositionSortOrder) {
-                    return -1
-                  } 
-                  else if (aPositionSortOrder > bPositionSortOrder) {
-                    return 1
-                  }
-                  else {
-                    if (a.player < b.player) {
+                if(this.log) {
+                  console.log('player of team: ' + playerOfTeam.player.length)
+                }
+
+                this.dataSource = this.playersOfTeam.sort((a, b) => {
+                    var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
+                    var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
+              
+                    if (aPositionSortOrder < bPositionSortOrder) {
                       return -1
                     } 
-                    else if (a.player > b.player) {
+                    else if (aPositionSortOrder > bPositionSortOrder) {
                       return 1
-                    } else {
-                      return 0
                     }
-                  }
+                    else {
+                      if (a.player < b.player) {
+                        return -1
+                      } 
+                      else if (a.player > b.player) {
+                        return 1
+                      } else {
+                        return 0
+                      }
+                    }
                 })
               })
   
-              this.firebaseService.getLineUp("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((LineupArray) => {
-                LineupArray.forEach(p => {
+              collectionData(this.firebaseService.getLineUp("grenzlandcup", this.authService.currentLeague.name)).forEach((lineupArray) => {
+                if(this.log) {
+                  console.log("receive LineupArray data: " + JSON.stringify(lineupArray.length))
+                }
+
+                lineupArray.forEach(p => {
                   let linedUpPlayer = new Lineup()
                   let player = this.getPlayerByName(p.player)
                   linedUpPlayer.player = player.player
@@ -160,7 +192,6 @@ export class TeamComponent implements OnInit {
       this.lineup[position].forEach(player => {
         var equalCount = 0
         this.lineup[position].forEach(player2 => {
-          console.log('check: ' + player + ', ' + player2)
           if (player == player2) {
             equalCount++ 
           }
@@ -174,8 +205,8 @@ export class TeamComponent implements OnInit {
     if (!valid) {
       this.openSnackBar('Spieler dürfen nicht öfter als einmal aufgestellt werden.', 'Nicht gespeichert.')
     } else {
-      this.firebaseService.setLineup("grenzlandcup", this.authService.currentLeague.name, this.lineup, this.originalLineup)
       this.firebaseService.setFormation("grenzlandcup", this.authService.currentLeague.name, this.formation)
+      this.firebaseService.setLineup("grenzlandcup", this.authService.currentLeague.name, this.lineup, this.originalLineup)
       this.openSnackBar('Aufstellung gespeichert', '')
     }
   }
@@ -200,8 +231,6 @@ export class TeamComponent implements OnInit {
   }
 
   setFormation(formation: string) {
-    console.log(formation)
-
     this.formation = formation
     this.firebaseService.clearLineup("grenzlandcup", this.authService.currentLeague.name, this.originalLineup)
 
@@ -266,13 +295,6 @@ export class TeamComponent implements OnInit {
   }
 
   selectPlayer(player, index, pos) {
-
-    console.log('select: ')
-    console.log(player)
-    console.log(index)
-    console.log(pos)
-    console.log('select end')
-
     //new player
     let linedUpPlayer = new Lineup()
     let p = this.getPlayerByName(player)

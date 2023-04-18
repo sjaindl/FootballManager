@@ -1,11 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
+import {  MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SignInErrorStateMatcher } from '../shared/SignInErrorStateMatcher';
 import { FirebaseService } from '../services/firebase.service';
 import { AuthService } from '../services/auth.service';
 import { League } from '../shared/League';
-import { SELECT_VALUE_ACCESSOR } from '@angular/forms/src/directives/select_control_value_accessor';
+//import { SELECT_VALUE_ACCESSOR } from '@angular/forms/src/directives/select_control_value_accessor';
+import { docData } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-newleague-dialog',
@@ -38,7 +40,7 @@ export class NewleagueDialogComponent implements OnInit {
   
   createLeague() {
     var exists = true
-    this.firebaseService.getFoundedLeague("grenzlandcup", this.leagueFormControl.value).valueChanges().subscribe(league => {
+    docData(this.firebaseService.getFoundedLeague("grenzlandcup", this.leagueFormControl.value)).subscribe(league => {
       if (league == null && exists == true) {
         exists = false
       }

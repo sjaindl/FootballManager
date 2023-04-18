@@ -2,7 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { Player } from '../shared/player'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { collectionData, doc, docData, updateDoc } from '@angular/fire/firestore'
 
 @Component({
   selector: 'app-adminarea',
@@ -27,25 +28,24 @@ export class AdminareaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.firebaseService.isFreezed().subscribe((doc) => {
-      var isFreezed = doc.get('freeze')
+    docData(this.firebaseService.isFreezed()).subscribe(doc => {
+      var isFreezed = doc['freeze']
       this.freezed = isFreezed
     })
 
-    this.firebaseService.getLeagueNews("grenzlandcup").valueChanges().subscribe(news => {
+    collectionData(this.firebaseService.getLeagueNews("grenzlandcup")).subscribe(news => {
       let anyNews: any = news
       this.news = anyNews[0].newsLine
     })
 
-    this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
+    collectionData(this.firebaseService.getTeams("grenzlandcup")).subscribe(teamsArray => {
         this.teams = teamsArray
   
         teamsArray.forEach(team => {
           console.log(team.id)
-          this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
-  
+          collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).subscribe(playersArray => {
             playersArray.forEach(p => {
-              let player = new Player(null)
+              let player = new Player()
               player.init(p, team.id)
               player.playerId = p.playerId
               player.sold = p.sold
@@ -93,18 +93,19 @@ export class AdminareaComponent implements OnInit {
   }
 
   playersInTeamCount() {
-    this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
+    
+    collectionData(this.firebaseService.getTeams("grenzlandcup")).subscribe(teamsArray => {
       this.teams = teamsArray
 
       teamsArray.forEach(team => {
         console.log(team.id)
-        var subsc = this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
+        var subsc = collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).subscribe((playersArray) => {
           subsc.unsubscribe()
           
           playersArray.forEach(p => {
             var bought = 0
 
-            var usub = this.firebaseService.getUsers().valueChanges().subscribe((users) => {
+            var usub = collectionData(this.firebaseService.getUsers()).subscribe((users) => {
               usub.unsubscribe()
               let numberOfUsersToCheck = users.length
               var currentUser = 0
@@ -112,12 +113,12 @@ export class AdminareaComponent implements OnInit {
               users.forEach(user => {
                 var anyUser: any = user
 
-                var lsub = this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid).valueChanges().subscribe((leaguesArray) => {
+                var lsub = collectionData(this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid)).subscribe((leaguesArray) => {
                   lsub.unsubscribe()
                   
                   leaguesArray.forEach(liga => {
                     
-                    var psub = this.firebaseService.getPlayersOfTeam("grenzlandcup", liga.name, anyUser.uid).valueChanges().subscribe((playersOfTeamArray) => {
+                    var psub = collectionData(this.firebaseService.getPlayersOfTeam("grenzlandcup", liga.name, anyUser.uid)).subscribe((playersOfTeamArray) => {
                       psub.unsubscribe()
 
                       playersOfTeamArray.forEach(pteam => {
@@ -126,7 +127,8 @@ export class AdminareaComponent implements OnInit {
                           console.log(pteam.player + ', ' + bought + ', liga: ' + liga.name + ', spieler: ' + anyUser.displayName)
                         }
                       })
-                      this.firebaseService.getPlayers("grenzlandcup", 'hvtdp').doc(p.playerId).ref.update({
+                      let players = this.firebaseService.getPlayers("grenzlandcup", 'hvtdp')
+                      updateDoc(doc(players, p.playerId), {
                         bought: bought
                       })
                     })
@@ -155,7 +157,9 @@ export class AdminareaComponent implements OnInit {
   setPlayerPointsLastRound() {
     this.players.forEach(player => {
       if (player.pointsCurrentRound != null || player.newMarketValue != null) {
-          this.firebaseService.getPlayers("grenzlandcup", player.team).doc(player.playerId).ref.update({
+          let playersCol = this.firebaseService.getPlayers("grenzlandcup", player.team)
+          let playersDoc = doc(playersCol, player.playerId)
+          updateDoc(playersDoc, {
             marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
             points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points,
             pointsLastRound: player.pointsCurrentRound ? player.pointsCurrentRound : 0

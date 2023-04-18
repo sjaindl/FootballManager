@@ -3,16 +3,16 @@ import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/cor
 // import { baseUrlImages } from '../shared/baseurls';
 import { Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser'
-import { DocumentData } from 'angularfire2/firestore';
+import { DocumentData, collectionData, docData, getDocs } from '@angular/fire/firestore';
 import { AuthProvider } from 'ngx-auth-firebaseui';
-import { AngularFireAuth } from 'angularfire2/auth';
+import { Auth } from '@angular/fire/auth';
 import { AuthService } from '../services/auth.service';
 import { FirebaseService } from '../services/firebase.service';
 import { League } from '../shared/League';
 import { NewleagueDialogComponent } from '../newleague.dialog/newleague.dialog.component';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
 import { Md5 } from 'ts-md5';
-
 
 export interface Player {
   firstName: string
@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
   
   //private deviceService: DeviceDetectorService
   constructor(public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, 
-    private metaTagService: Meta, private angularFireAuth: AngularFireAuth, 
+    private metaTagService: Meta, private angularFireAuth: Auth, 
     public authService : AuthService, public firebaseService: FirebaseService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar) { 
@@ -68,13 +68,13 @@ export class HomeComponent implements OnInit {
       name: 'description', content: "Spiele auf fussballmanager.at mit deinen Lieblingsspielern aus dem Grenzlandcup in eigenen Ligen gegen deine Freunde. Schlag noch heute am Transfermarkt zu und erstelle deine persönliche Aufstellung."
     })
 
-    this.angularFireAuth.auth.onAuthStateChanged((user) => {
+    this.angularFireAuth.onAuthStateChanged((user) => {
       if (user) {
         this.openSnackBar('Anmeldung erfolgreich!', user.displayName)
 
         console.log("user signed in: " + user.displayName)
 
-        this.firebaseService.getUserFoundedLeagues("grenzlandcup").valueChanges().subscribe((leaguesArray) => {
+        collectionData(this.firebaseService.getUserFoundedLeagues("grenzlandcup")).subscribe((leaguesArray) => {
           this.leagues = []
           
           leaguesArray.forEach(element => {
@@ -104,7 +104,7 @@ export class HomeComponent implements OnInit {
 
   joinLeague() {
     console.log(this.joinleaguename)
-    this.firebaseService.getFoundedLeague("grenzlandcup", this.joinleaguename).valueChanges().subscribe(league => {
+    docData(this.firebaseService.getFoundedLeague("grenzlandcup", this.joinleaguename)).subscribe(league => {
       let anyLeague: any = league
 
       if (league == null) {
@@ -129,7 +129,7 @@ export class HomeComponent implements OnInit {
 
   fetchLeagueDetail() {
     // this.authService.currentLeague
-    this.firebaseService.getLeagueNews("grenzlandcup").valueChanges().subscribe(news => {
+    collectionData(this.firebaseService.getLeagueNews("grenzlandcup")).subscribe(news => {
       let anyNews: any = news
       this.newsLine = anyNews[0].newsLine
     })
@@ -138,9 +138,9 @@ export class HomeComponent implements OnInit {
     this.mvpPlayersByMarketValue = []
     this.topEleven = []
 
-    this.firebaseService.getMvpsOfTeamByPoints("grenzlandcup", "hvtdp").get().then( querySnapshot => {
+    let mvpQuery = this.firebaseService.getMvpsOfTeamByPoints("grenzlandcup", "hvtdp")
+    getDocs(mvpQuery).then( querySnapshot => {
       querySnapshot.docs.forEach(element => {
-
         console.log(element.data())
         let mvp = new MVP()
         mvp.name = element.data().name
@@ -149,9 +149,9 @@ export class HomeComponent implements OnInit {
       })
     })
 
-    this.firebaseService.getMvpsOfTeamByMarketValue("grenzlandcup", "hvtdp").get().then( querySnapshot => {
+    let marketValueQuery = this.firebaseService.getMvpsOfTeamByMarketValue("grenzlandcup", "hvtdp")
+    getDocs(marketValueQuery).then( querySnapshot => {
       querySnapshot.docs.forEach(element => {
-
         console.log(element.data())
         let mvp = new MVP()
         mvp.name = element.data().name
@@ -160,9 +160,9 @@ export class HomeComponent implements OnInit {
       })
     })
 
-    this.firebaseService.getTopElevenPlayersOfLastRound("grenzlandcup", "hvtdp").get().then( querySnapshot => {
+    let topElevenQuery = this.firebaseService.getTopElevenPlayersOfLastRound("grenzlandcup", "hvtdp")
+    getDocs(topElevenQuery).then( querySnapshot => {
       querySnapshot.docs.forEach(element => {
-
         console.log(element.data())
         let mvp = new MVP()
         mvp.name = element.data().name

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
-import { MatSnackBar } from '@angular/material'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Player } from '../shared/player'
-import { AngularFireStorage } from 'angularfire2/storage'
+import { Storage } from '@angular/fire/storage'
+import { collectionData, docData, getDocs } from '@angular/fire/firestore'
 
 @Component({
   selector: 'app-market',
@@ -12,7 +13,6 @@ import { AngularFireStorage } from 'angularfire2/storage'
 })
 export class MarketComponent implements OnInit {
 
-  teams: any[]
   players: Player[] = []
   playersOfTeam: Player[] = []
   balance = 0
@@ -21,7 +21,9 @@ export class MarketComponent implements OnInit {
   teamPositionSortOrder = new Map<string, number>()
   displayedColumns: string[] = ['position', /* 'team', */ 'playerImage', 'player', 'marketValue', 'points', 'buy']
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private snackBar: MatSnackBar) {
+  log = false
+
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar) {
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
@@ -29,22 +31,32 @@ export class MarketComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.firebaseService.getUserFoundedLeague("grenzlandcup",this.authService.currentLeague.name).get().subscribe((leagueDoc) => {
-      this.balance = leagueDoc.get('balance')
+    docData(this.firebaseService.getUserFoundedLeague("grenzlandcup",this.authService.currentLeague.name)).forEach((leagueDoc) => {
+      if(this.log) {
+        console.log('leagueDoc with balance: ' + JSON.stringify(leagueDoc))
+      }
+      this.balance = leagueDoc['balance']
     })
 
-    this.firebaseService.getTeams("grenzlandcup").valueChanges().subscribe((teamsArray) => {
-      this.teams = teamsArray
+    getDocs(this.firebaseService.getTeams("grenzlandcup")).then((teamsSnapshot) => {
+      teamsSnapshot.forEach((team) => {
+        
+        if(this.log) {
+          console.log('team: ' + JSON.stringify(team.data()))
+          console.log(team.id)
+        }
 
-      teamsArray.forEach(team => {
-        console.log(team.id)
-        var subsc = this.firebaseService.getPlayers("grenzlandcup", team.id).valueChanges().subscribe((playersArray) => {
-          subsc.unsubscribe()
-          
-          playersArray.forEach(p => {
-            let player = new Player(this.storage)
-            player.init(p, team.id)
-            player.loadImageRef()
+        getDocs(this.firebaseService.getPlayers("grenzlandcup", team.id)).then((playersSnapshot) => {
+          playersSnapshot.forEach(p => {
+            let player = new Player()
+            let data = p.data()
+
+            if(this.log) {
+              console.log("init player: " + JSON.stringify(data))
+            }
+
+            player.init(data, team.id)
+            player.loadImageRef(this.storage)
 
             this.players.push(player)
           })
@@ -53,18 +65,28 @@ export class MarketComponent implements OnInit {
           this.fetchPlayersOfTeam(team.id)
         })
       })
-    })
+    }) 
   }
 
   fetchPlayersOfTeam(teamId) {
-    var subsc = this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name).valueChanges().subscribe((playersOfTeamArray) => {
-      subsc.unsubscribe()
+    collectionData(this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name)).subscribe(playersOfTeamArray => {
+      if(this.log) {
+        console.dir(playersOfTeamArray)
+      }
 
       this.playersOfTeam = []
 
       playersOfTeamArray.forEach(p => {
-        let playerOfTeam = new Player(null)
-        let player = this.getPlayerByName(p.player)
+        let playerData = p
+        let playerOfTeam = new Player()
+
+        let player = this.getPlayerByName(playerData["player"])
+
+        if(this.log) {
+          console.log("check player: " + playerData["player"])
+          console.log("got player" + player)
+        }
+
         playerOfTeam.init(player, teamId)
         playerOfTeam.player = player.player
         this.playersOfTeam.push(playerOfTeam)
@@ -116,6 +138,11 @@ export class MarketComponent implements OnInit {
       change *= -1
     }
 
+    if(this.log) {
+      console.log('buy: ' + change)
+      console.dir(player)
+    }
+
     //Balance after buy < 0 not allowed - not enough money.
     if (this.balance + change < 0) {
       this.openSnackBar('Kontostand nicht ausreichend.', 'Transfer abgebrochen.')
@@ -142,7 +169,7 @@ export class MarketComponent implements OnInit {
       this.firebaseService.addPlayerOfTeam("grenzlandcup", this.authService.currentLeague.name, player.player)
       
       //Add new player to team
-      let playerOfTeam = new Player(null)
+      let playerOfTeam = new Player()
       playerOfTeam.init(player, player.teamId)
       playerOfTeam.player = player.player
       this.playersOfTeam.push(playerOfTeam)

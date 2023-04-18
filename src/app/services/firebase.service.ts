@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core'
-import { AngularFirestore } from 'angularfire2/firestore'
+import { Firestore, addDoc, deleteDoc, docData, getDoc, getDocs, limit, orderBy, query, where } from '@angular/fire/firestore'
+import { collection, doc, setDoc, onSnapshot, updateDoc } from '@angular/fire/firestore'
 import { AuthService } from './auth.service'
-import {Md5} from 'ts-md5/dist/md5'
+import { Md5 } from 'ts-md5/dist/md5'
 
 @Injectable({
   providedIn: 'root'
@@ -9,66 +10,73 @@ import {Md5} from 'ts-md5/dist/md5'
 export class FirebaseService {
 
   positions = ['Tormann', 'Verteidigung1', 'Verteidigung2', 'Mittelfeld1', 'Mittelfeld2', 'Angriff1', 'Angriff2']
-  initialBalance = 4000000
-
-  constructor(private db: AngularFirestore, private auth: AuthService) { }
+  initialBalance = 4_000_000
+  
+  constructor(private db: Firestore, private auth: AuthService) { }
 
   //FAQ
   getFaq() {
-    return this.db.collection('/faq/')
+
+    return collection(this.db, '/faq/')
   }
 
   //Leagues
   getLeagues() {
-    return this.db.collection('/leagues/')
+    return collection(this.db, '/leagues/');
   }
 
   getLeague(league) {
-    return this.getLeagues().doc(league)
+    return doc(this.getLeagues(), league)
   }
 
   getLeagueNews(league) {
-    return this.getLeague(league).collection('news')
+    return collection(this.getLeague(league), 'news')
   }
 
   setLeagueNews(league, news) {
-    return this.getLeagueNews(league).doc('newsLine').ref.update({
+    let newsDoc = doc(this.getLeagueNews(league), 'newsLine')
+    return updateDoc(newsDoc, {
       newsLine: news
     })
   }
 
   getTeam(league, team) {
-    return this.getTeams(league).doc(team)
+    let teams = this.getTeams(league)
+    return doc(teams, team)
   }
 
   getPlayer(league, team, player) {
-    return this.getPlayers(league, team).doc(player)
+    return doc(this.getPlayers(league, team), player)
   }
 
   //MVP's - TODO: when there is more than one team, all teams need to be queried!
   getMvpsOfTeamByPoints(league, team) {
-    return this.getPlayers(league, team).ref.orderBy('points', 'desc').limit(5)
+    let players = this.getPlayers(league, team)
+    return query(players, orderBy("desc"), limit(5));
   }
 
   getMvpsOfTeamByMarketValue(league, team) {
-    return this.getPlayers(league, team).ref.orderBy('marketValue', 'desc').limit(5)
+    let players = this.getPlayers(league, team)
+    return query(players, orderBy("marketValue", "desc"), limit(5));
   }
 
   getTopElevenPlayersOfLastRound(league, team) {
-    return this.getPlayers(league, team).ref.orderBy('pointsLastRound', 'desc').limit(11)
+    let players = this.getPlayers(league, team)
+    return query(players, orderBy("pointsLastRound", "desc"), limit(11));
   }
   
   //Founded leagues
   getFoundedLeagues(league) {
-    return this.getLeague(league).collection('/foundedLeagues/')
+    return collection(this.getLeague(league), '/foundedLeagues/')
   }
 
   getFoundedLeague(league, foundedLeague) {
-    return this.getFoundedLeagues(league).doc(foundedLeague)
+    return doc(this.getFoundedLeagues(league), foundedLeague)
   }
 
   addFoundedLeague(league, foundedLeague, password) {
-    return this.getFoundedLeague(league, foundedLeague).set({
+    let newLeague = this.getFoundedLeague(league, foundedLeague)
+    return setDoc(newLeague, {
       name: foundedLeague,
       hashedPassword: Md5.hashStr(password)
     })
@@ -76,132 +84,144 @@ export class FirebaseService {
 
   //Teams
   getTeams(league) {
-    return this.getLeague(league).collection('/teams/')
+    let leagueDoc = this.getLeague(league)
+    return collection(leagueDoc, '/teams/')
   }
 
   //Players
   getPlayers(league, team) {
-    return this.getTeam(league, team).collection('/players/')
+    let teamDoc = this.getTeam(league, team)
+    return collection(teamDoc, '/players/')
   }
 
   playerSold(league, player) {
-    this.getPlayers(league, player.team).doc(player.playerId).ref.update({
+    let players = this.getPlayers(league, player.team)
+    let playerDoc = doc(players, player.playerId)
+    updateDoc(playerDoc, {
       sold: player.sold + 1
     })
   }
 
   playerBought(league, player) {
-    this.getPlayers(league, player.team).doc(player.playerId).ref.update({
-      bought: player.bought + 1
+    let players = this.getPlayers(league, player.team)
+    let playerDoc = doc(players, player.playerId)
+    updateDoc(playerDoc, {
+      sold: player.bought + 1
     })
   }
 
   changePlayerPoints(league, players) {
     return new Promise((resolve) => {
-      var userSubsc = this.getUsers().valueChanges().subscribe((users) => {
-        userSubsc.unsubscribe()
+      getDocs(this.getUsers()).then((usersSnapshot) => {
+        let numUsers = usersSnapshot.docs.length
+        let curUser = 0
+        usersSnapshot.forEach((user) => {
+          let userData = user.data()
+          let uid = userData['uid']
+          curUser++
 
-        if (users.length == 0) {
-          resolve(0)
-        }
-        
-        var lastUser: any = users[users.length - 1]
-        var lastUserUid = lastUser.uid
-        users.forEach(user => {
-          var anyUser: any = user
-          var subsc = this.getUserFoundedLeagues(league, anyUser.uid).valueChanges().subscribe((foundedLeagues) => {
-            subsc.unsubscribe()
+          getDocs(this.getUserFoundedLeagues(league, uid)).then((foundedLeaguesSnapshot) => {
+            foundedLeaguesSnapshot.docs.forEach(foundedLeague => {
 
-            foundedLeagues.forEach(foundedLeague => {
+            let leagueName = foundedLeague.data['name']
+            var userPoints = 0
 
-              var userPoints = 0
-              var subsc2 = this.getLineUp(league, foundedLeague.name, anyUser.uid).valueChanges().subscribe((linedUps) => {
-                subsc2.unsubscribe()
-                
-                players.forEach(player => {
-                  if (player.pointsCurrentRound != null) {
-                    linedUps.forEach(linedUp => {
-                      if (linedUp.player == player.player.split(' ').join('')) {
-                        userPoints += +player.pointsCurrentRound
-                      }
-                    })
-                  }
-                })
-                
-                var currentUserPoints = 0
-                if (foundedLeague.points != null) {
-                  currentUserPoints += foundedLeague.points
+            getDocs(this.getLineUp(league, leagueName, uid)).then((lineupSnapshot) => {
+              players.forEach(player => {
+                if (player.pointsCurrentRound != null) {
+                  lineupSnapshot.docs.forEach(linedUp => {
+                    
+                    let player = linedUp.data()['player']
+                    
+                    if (player == player.player.split(' ').join('')) {
+                      userPoints += +player.pointsCurrentRound
+                    }
+                  })
                 }
-                
-                this.getUserFoundedLeague(league, foundedLeague.name, anyUser.uid).ref.update({
-                  points: currentUserPoints + userPoints,
-                  pointsLastRound: userPoints
-                }).then(() => {
-                  if (lastUserUid == anyUser.uid) {
-                    resolve(users.length)
-                  }
-                })
+              })
+              
+              let points = foundedLeague.data['points']
+
+              var currentUserPoints = 0
+              if (points != null) {
+                currentUserPoints += points
+              }
+              
+              updateDoc(this.getUserFoundedLeague(league, leagueName, uid), {
+                points: currentUserPoints + userPoints,
+                pointsLastRound: userPoints
+              }).then(() => {
+                if (curUser == numUsers) {
+                  resolve(numUsers)
+                }
               })
             })
-          })    
+          })
         })
       })
     })
+  })
   }
-
+  
   //User
   getUsers() {
-    return this.db.collection('/users/')
+    return collection(this.db, '/users/')
   }
 
   getUser(uid) {
-    return this.db.collection('/users/').doc(uid)
+    let userCollection = collection(this.db, '/users/')
+    return doc(userCollection, uid)
   }
 
   getCurrentUser() {
-    return this.getUsers().doc(this.auth.userId())
+    return doc(this.getUsers(), this.auth.userId())
   }
 
   changeUserName(name) {
-    this.getCurrentUser().get().subscribe((doc) => {
-      doc.ref.update({
-        displayName: name
-      })
+    let userDoc = this.getCurrentUser()
+    updateDoc(userDoc, {
+      displayName: name
     })
   }
 
   changeUserProfilePicture(photoRef) {
-    this.getCurrentUser().get().subscribe((doc) => {
-      doc.ref.update({
+    var userSubsc = onSnapshot(this.getCurrentUser(), { includeMetadataChanges: true }, (user) => {
+      let userDoc = doc(this.getUsers(), this.auth.userId()) // let userDoc = doc(this.getUsers(), user.id)
+      updateDoc(userDoc, {
         photoRef: photoRef
       })
     })
+
+    userSubsc()
   }
   
   //User Leagues
   getUserLeagues(uid = null) {
     if (uid == null) {
-      return this.getCurrentUser().collection('/userLeagues/')
+      return collection(this.db, this.getCurrentUser().path, "/userLeagues/")
     } else {
-      return this.getUser(uid).collection('/userLeagues/')
+      return collection(this.db, this.getUser(uid).path, "/userLeagues/")
     }
   }
 
   getUserLeague(league, uid = null) {
-    return this.getUserLeagues(uid).doc(league)
+    let userCollection = this.getUserLeagues(uid)
+    return doc(userCollection, league)
   }
 
   getUserFoundedLeagues(league, uid = null) {
-    return this.getUserLeague(league, uid).collection('foundedLeagues')
+    let userLeague = this.getUserLeague(league, uid)
+    return collection(userLeague, "foundedLeagues")
   }
 
   getUserFoundedLeague(league, foundedLeague, uid = null) {
-    return this.getUserFoundedLeagues(league, uid).doc(foundedLeague)
+    let userLeagues = this.getUserFoundedLeagues(league, uid)
+    return doc(userLeagues, foundedLeague)
   }
 
   addUserLeague(league, foundedLeague) {
     //Create league
-    return this.getUserFoundedLeague(league, foundedLeague).set({
+    return updateDoc(this.getUserFoundedLeague(league, foundedLeague), {
       name: foundedLeague,
       balance: this.initialBalance,
       points: 0,
@@ -209,23 +229,44 @@ export class FirebaseService {
     })
   }
 
-  changeBalance(league, foundedLeague, value) {
-    this.getUserFoundedLeague(league, foundedLeague).get().subscribe((doc) => {
-      var currentBalance = doc.get('balance')
-      doc.ref.update({
-        balance: currentBalance + value
+  changeBalance(league, foundedLeague, change) {
+    let leagueDoc = this.getUserFoundedLeague(league, foundedLeague) //.withConverter(this.userFoundedLeagueConverter)
+
+    getDoc(leagueDoc).then( snapshot => {
+      let data = snapshot.data()
+      let currentBalance = data["balance"]
+
+      return updateDoc(leagueDoc, {
+          balance: currentBalance + change
       })
     })
   }
 
+  // Firestore data converter
+  userFoundedLeagueConverter = {
+    toFirestore: (foundedLeague) => {
+        return {
+            balance: foundedLeague.balance,
+            formation: foundedLeague.formation,
+            name: foundedLeague.name,
+            points: foundedLeague.points,
+            pointsLastRound: foundedLeague.pointsLastRound
+            };
+    },
+    fromFirestore: (snapshot, options) => {
+        const data = snapshot.data(options);
+        return new UserFoundedLeague(data.balance, data.formation, data.name, data.points, data.pointsLastRound);
+    }
+  };
+
   //Chefs
   getChefs() {
-    return this.db.collection('chefs')
+    return collection(this.db, 'chefs')
   }
 
   //Lineup
   getLineUp(league, foundedLeague, user = null) {
-    return this.getUserFoundedLeague(league, foundedLeague, user).collection('lineup')
+    return collection(this.getUserFoundedLeague(league, foundedLeague, user), 'lineup')
   }
 
   clearLineup(league, foundedLeague, originalLineup) {
@@ -233,7 +274,8 @@ export class FirebaseService {
     this.positions.forEach(position => {
       originalLineup[position].forEach(player => {
         console.log('del:' + player)
-        this.getLineUp(league, foundedLeague).doc(player).delete()
+        let lineup = doc(this.getLineUp(league, foundedLeague), player)
+        deleteDoc(lineup)
       })
     })
   }
@@ -243,8 +285,10 @@ export class FirebaseService {
     
     this.positions.forEach(position => {
       lineup[position].forEach(player => {
-        console.log('add: ' + player)
-        this.getLineUp(league, foundedLeague).doc(player).set({
+        let lineupCol = this.getLineUp(league, foundedLeague)
+        let playerDoc = doc(lineupCol, player)
+        
+        setDoc(playerDoc, {
           index: lineup[position].indexOf(player),
           player: player,
           position: position
@@ -255,29 +299,33 @@ export class FirebaseService {
   
   //Formation
   setFormation(league, foundedLeague, formation) {
-    this.getUserFoundedLeague(league, foundedLeague).ref.update({
+    updateDoc(this.getUserFoundedLeague(league, foundedLeague), {
       formation: formation
     })
   }
 
   //Players of team
   getPlayersOfTeam(league, foundedLeague, uid = null) {
-    return this.getUserFoundedLeague(league, foundedLeague, uid).collection('teamPlayers')
+    return collection(this.getUserFoundedLeague(league, foundedLeague, uid), 'teamPlayers')
   }
 
-  addPlayerOfTeam(league, foundedLeague, player) {
-    this.getPlayersOfTeam(league, foundedLeague).add({
+  addPlayerOfTeam(league, foundedLeague, player) { 
+    let players = this.getPlayersOfTeam(league, foundedLeague)
+    addDoc(players, {
       player: player
     })
   }
 
   removePlayerOfTeam(league, foundedLeague, player) {
-    let players = this.getPlayersOfTeam(league, foundedLeague).ref
-    players.where("player", "==", player.player).get().then( querySnapshot => {
-      querySnapshot.docs.forEach(element => {
+    let players = this.getPlayersOfTeam(league, foundedLeague)
+    const q = query(players, where("player", "==", player.player));
+    getDocs(q).then( snapshot => {
+      snapshot.docs.forEach(element => {
         console.log('delete ' + element.id)
-        players.doc(element.id).delete().then(() => {
-          this.getLineUp(league, foundedLeague).doc(player.player.split(' ').join('')).delete().catch(error =>  {
+        deleteDoc(doc(players, element.id)).then(() => {
+          let lineup = this.getLineUp(league, foundedLeague)
+          let lineupDoc = doc(lineup, player.player.split(' ').join(''))
+          deleteDoc(lineupDoc).catch(error =>  {
             console.log(error)
           }).then(() =>  {
             console.log("successfully removed from lineup")
@@ -291,28 +339,51 @@ export class FirebaseService {
 
   //Visitor Count
   setVisitorCount(count) {
-    return this.db.collection('stats').doc('stats').set({
+    let statsCollection = collection(this.db, 'stats')
+    return setDoc(doc(statsCollection, 'stats'), {
       visitorCount: count
     })
   }
   
   getVisitorCount() {
-    return this.db.collection('stats').doc('stats').get()
+    let statsCollection = collection(this.db, 'stats')
+    return doc(statsCollection, 'stats')
   }
 
   //Freeze
   freeze(freeze) {
-    return this.db.collection('freeze').doc('freeze').set({
+    let freezeCollection = collection(this.db, 'freeze')
+    return setDoc(doc(freezeCollection, 'freeze'), {
       freeze: freeze
     })
   }
 
   isFreezed() {
-    return this.db.collection('freeze').doc('freeze').get()
+    let freezeCollection = collection(this.db, 'freeze')
+    return doc(freezeCollection, 'freeze')
   }
 }
 
 export class Player {
   name: string
   value: number
+}
+
+class UserFoundedLeague {
+  balance: number
+  formation: string
+  name: string
+  points: number
+  pointsLastRound: number
+
+  constructor (balance, formation, name, points, pointsLastRound) {
+      this.balance = balance;
+      this.formation = formation;
+      this.name = name;
+      this.points = points;
+      this.pointsLastRound = pointsLastRound;
+  }
+  toString() {
+      return this.balance + this.formation + this.name + ', ' + this.points + ', ' + this.pointsLastRound;
+  }
 }
