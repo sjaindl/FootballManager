@@ -1,4 +1,4 @@
-import { AngularFireStorage } from "angularfire2/storage"
+import { getDownloadURL, ref, Storage } from '@angular/fire/storage'
 import { Observable } from "rxjs"
 
 export class Chef {
@@ -6,11 +6,12 @@ export class Chef {
     lastName: String
     function: String
     imagePath: String
-
     imageRef: string
-    loadedImageRef: Observable<string | null>
+    loadedImageRef: Promise<string>
 
-    constructor(private storage: AngularFireStorage) {
+    storageRef = ref(this.storage)
+
+    constructor(private storage: Storage) {
     }
     
     init(object) {
@@ -23,6 +24,7 @@ export class Chef {
 
     loadImageRef() {
         console.log(this.imageRef)
-        this.loadedImageRef = this.storage.ref(this.imageRef).getDownloadURL()
-      }
+        let storageRef = ref(this.storage, this.imageRef)
+        this.loadedImageRef = getDownloadURL(storageRef)
+    }
 }

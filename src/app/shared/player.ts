@@ -1,5 +1,5 @@
 import { Observable } from "rxjs"
-import { AngularFireStorage } from "angularfire2/storage"
+import { Storage, getDownloadURL, ref } from "@angular/fire/storage"
 
 export class Player {
     team: string
@@ -10,7 +10,7 @@ export class Player {
     position: string
     playerId: string
     imageRef: string
-    loadedImageRef: Observable<string | null>
+    loadedImageRef: Promise<string>
 
     //admin area properties:
     pointsCurrentRound: number
@@ -18,23 +18,24 @@ export class Player {
     sold: number
     bought: number
 
-    constructor(private storage: AngularFireStorage) {
+    constructor() {
     }
   
     init(json, team) {
-      this.player = json.name
-      this.playerId = json.playerId
-      this.marketValue = json.marketValue
-      this.points = json.points
-      this.pointsLastRound = json.pointsLastRound
-      this.position = json.position
+      this.player = json['name']
+      this.playerId = json['playerId']
+      this.marketValue = json['marketValue']
+      this.points = json['points']
+      this.pointsLastRound = json['pointsLastRound']
+      this.position = json['position']
       this.team = team
-      this.sold = json.sold
-      this.bought = json.bought
-      this.imageRef = json.imageRef
+      this.sold = json['sold']
+      this.bought = json['bought']
+      this.imageRef = json['imageRef']
     }
 
-    loadImageRef() {
-      this.loadedImageRef = this.storage.ref(this.imageRef).getDownloadURL()
+    loadImageRef(storage: Storage) {
+      let storageRef = ref(storage, this.imageRef)
+      this.loadedImageRef = getDownloadURL(storageRef)
     }
 }

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
-import { AngularFireStorage } from 'angularfire2/storage'
-import { MatSnackBar } from '@angular/material'
+import { ref, Storage, uploadBytes, getDownloadURL } from '@angular/fire/storage'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Observable } from 'rxjs'
+import { docData } from '@angular/fire/firestore'
 
 @Component({
   selector: 'app-profile',
@@ -15,18 +16,21 @@ export class ProfileComponent implements OnInit {
   email: string
   displayName: string
   photoUrl: string
-  photoRef: Observable<string | null>
+  photoRef: Promise<string>
   editMode: boolean
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private snackBar: MatSnackBar) { }
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar) { }
+
+  storageRef = ref(this.storage);
 
   ngOnInit() {
-    this.firebaseService.getCurrentUser().get().subscribe((doc) => {
-      this.displayName = doc.get('displayName')
-      this.email = doc.get('email')
+    docData(this.firebaseService.getCurrentUser()).subscribe((doc) => {
+      this.displayName = doc['displayName']
+      this.email = doc['email']
       
-      var url = doc.get('photoURL')
-      var photoRef = doc.get('photoRef')
+      var url = doc['photoURL']
+      
+      var photoRef = doc['photoRef']
       if (photoRef != null) {
         this.loadImageRef(photoRef)
       } else if (url != null) {
@@ -48,16 +52,18 @@ export class ProfileComponent implements OnInit {
   }
 
   loadImageRef(photoRef) {
-    this.photoRef = this.storage.ref(photoRef).getDownloadURL()
+    let photo = ref(this.storage, photoRef)
+    
+    this.photoRef = getDownloadURL(photo)
   }
-
+  
   upload(event) {
     var storageLocation = '/users/' + this.authService.userId()
     console.log(storageLocation)
-    this.storage.upload(storageLocation, event.target.files[0]).then(() => {
+    let storageRef = ref(this.storage, storageLocation)
+    uploadBytes(storageRef, event.target.files[0]).then(() => {
       this.firebaseService.changeUserProfilePicture(storageLocation)
       this.loadImageRef(storageLocation)
     })
-
   }
 }

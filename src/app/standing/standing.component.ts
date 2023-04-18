@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
 import { AuthService } from '../services/auth.service'
 import { Title, Meta } from '@angular/platform-browser'
-import { AngularFireStorage } from 'angularfire2/storage';
+import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
+import { collectionData } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-standing',
@@ -16,7 +17,7 @@ export class StandingComponent implements OnInit {
   dataSource: Standing[]
   displayedColumns: string[] = ['image', 'userName', 'points']
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: AngularFireStorage, private titleService: Title, 
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private titleService: Title, 
     private metaTagService: Meta) { }
 
   ngOnInit() {
@@ -37,7 +38,7 @@ export class StandingComponent implements OnInit {
   fetchStandings() {
     return new Promise((resolve) => {
       
-      this.firebaseService.getUsers().valueChanges().subscribe((users) => {
+      collectionData(this.firebaseService.getUsers()).subscribe((users) => {
         let numberOfUsersToCheck = users.length
         var currentUser = 0
 
@@ -48,7 +49,7 @@ export class StandingComponent implements OnInit {
         users.forEach(user => {
           var anyUser: any = user
 
-          var leagueSusc = this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid).valueChanges().subscribe((leaguesArray) => {
+          var leagueSusc = collectionData(this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid)).subscribe((leaguesArray) => {
             leagueSusc.unsubscribe()
   
             leaguesArray.forEach(element => {
@@ -84,7 +85,8 @@ export class StandingComponent implements OnInit {
   }
 
   loadImageRef(standing, photoRef) {
-    standing.photoRef = this.storage.ref(photoRef).getDownloadURL()
+    let storageRef = ref(this.storage, photoRef)
+    standing.photoRef = getDownloadURL(storageRef)
   }
 
   setDataSource() {
