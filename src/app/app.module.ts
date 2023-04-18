@@ -1,19 +1,36 @@
-import { AgmCoreModule } from '@agm/core';
+import { GoogleMapsModule } from '@angular/google-maps'
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { CookieLawModule } from 'angular2-cookie-law'
-import { AngularFirestoreModule } from 'angularfire2/firestore';
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireAuthModule } from 'angularfire2/auth';
-import { AngularFireStorageModule } from 'angularfire2/storage'
+
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import 'hammerjs'
 
+import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent'
+
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { TransferHttpCacheModule } from '@nguniversal/common';
-import { MatListModule, MatSidenavModule, MatIconModule, MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatSnackBarModule, MatGridListModule, MatTableModule, MatSlideToggleModule, MatCheckboxModule } from '@angular/material';
+//import { TransferHttpCacheModule } from '@nguniversal/common';
+
+import { MatIconModule } from '@angular/material/icon'
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatListModule } from '@angular/material/list'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatGridListModule } from '@angular/material/grid-list'
+import { MatInputModule } from '@angular/material/input'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSelectModule } from '@angular/material/select'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatTableModule } from '@angular/material/table'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatMenuModule } from '@angular/material/menu'
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
@@ -31,6 +48,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminareaComponent } from './adminarea/adminarea.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { ProfileComponent } from './profile/profile.component';
+
+const cookieConfig: NgcCookieConsentConfig = {
+  cookie: {
+    domain: 'starting-eleven-2019.firebaseapp.com'
+  },
+  palette: {
+    popup: {
+      background: '#c2185b'
+    },
+    button: {
+      background: '#f1d600'
+    }
+  },
+  theme: 'edgeless',
+  type: 'opt-out'
+}
 
 @NgModule({
   declarations: [
@@ -55,12 +88,8 @@ import { ProfileComponent } from './profile/profile.component';
   imports: [
     BrowserModule.withServerTransition({appId: 'football-manager'}),
     BrowserAnimationsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full'},
-      { path: 'lazy', loadChildren: './lazy/lazy.module#LazyModule'},
-      { path: 'lazy/nested', loadChildren: './lazy/lazy.module#LazyModule'}
-    ]),
-    TransferHttpCacheModule,
+   
+    //TransferHttpCacheModule,
     MatSidenavModule,
     MatListModule,
     MatIconModule,
@@ -72,16 +101,17 @@ import { ProfileComponent } from './profile/profile.component';
     MatSelectModule,
     MatSlideToggleModule,
     MatTableModule,
-    MatOptionModule,
+    MatSelectModule,
     MatSnackBarModule,
-    CookieLawModule,
-    AgmCoreModule.forRoot({
-      apiKey: environment.googleMapsApiKey
-    }),
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
-    AngularFireStorageModule,
+    MatMenuModule,
+    NgcCookieConsentModule.forRoot(cookieConfig),
+    GoogleMapsModule,
+
+    provideFirebaseApp(() => initializeApp( environment.firebase )),
+    provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
+    provideStorage(() => getStorage() ),
+
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
