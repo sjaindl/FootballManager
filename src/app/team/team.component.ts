@@ -80,6 +80,10 @@ export class TeamComponent implements OnInit {
 
       collectionData(teams).forEach((teamsArray) => {
         this.teams = teamsArray
+
+        if(this.log) {
+          console.log("receive teams data: " + JSON.stringify(teamsArray.length))
+        }
   
         teamsArray.forEach(team => {
           if(this.log) {
@@ -87,6 +91,10 @@ export class TeamComponent implements OnInit {
           }
 
           collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).forEach((playersArray) => {
+            if(this.log) {
+              console.log("receive players data: " + JSON.stringify(playersArray.length))
+            }
+  
             playersArray.forEach(p => {
               if(this.log) {
                 console.log("init player: " + JSON.stringify(p))
