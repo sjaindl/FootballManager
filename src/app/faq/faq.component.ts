@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { FirebaseService } from '../services/firebase.service'
+import { collectionData } from '@angular/fire/firestore'
 
 @Component({
   selector: 'app-faq',
@@ -13,7 +14,7 @@ export class FaqComponent implements OnInit {
   constructor(public firebaseService: FirebaseService) { }
 
   ngOnInit() {
-    this.firebaseService.getFaq().valueChanges().subscribe((faqArray) => {
+    collectionData(this.firebaseService.getFaq()).subscribe((faqArray) => {
       this.faqs = faqArray
     })
   }

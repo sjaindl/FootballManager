@@ -16,6 +16,8 @@ import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsen
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 //import { TransferHttpCacheModule } from '@nguniversal/common';
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http'
+import { LocationStrategy, HashLocationStrategy } from '@angular/common'
 
 import { MatIconModule } from '@angular/material/icon'
 import { MatToolbarModule } from '@angular/material/toolbar'
@@ -106,6 +108,8 @@ const cookieConfig: NgcCookieConsentConfig = {
     MatMenuModule,
     NgcCookieConsentModule.forRoot(cookieConfig),
     GoogleMapsModule,
+    HttpClientModule,
+    HttpClientJsonpModule,
 
     provideFirebaseApp(() => initializeApp( environment.firebase )),
     provideFirestore(() => getFirestore()),
@@ -124,7 +128,9 @@ const cookieConfig: NgcCookieConsentConfig = {
       messagingSenderId: FirebaseConfig.messagingSenderId
   }),
   ],
-  providers: [],
+  providers: [
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
