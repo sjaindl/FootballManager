@@ -14,7 +14,8 @@ export class AboutusComponent implements OnInit {
 
   chefs: Chef[] = []
   constructor(public firebaseService: FirebaseService, 
-    private titleService: Title, private metaTagService: Meta,
+    private titleService: Title, 
+    private metaTagService: Meta,
     private storage: Storage) { }
 
   ngOnInit() {
