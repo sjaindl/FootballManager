@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { Title, Meta } from '@angular/platform-browser'
 import { FirebaseService } from '../services/firebase.service'
 import { Chef } from '../shared/chefs'
-import { AngularFireStorage } from 'angularfire2/storage';
+import { Storage } from '@angular/fire/storage';
+import { collectionData } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-aboutus',
@@ -14,7 +15,7 @@ export class AboutusComponent implements OnInit {
   chefs: Chef[] = []
   constructor(public firebaseService: FirebaseService, 
     private titleService: Title, private metaTagService: Meta,
-    private storage: AngularFireStorage) { }
+    private storage: Storage) { }
 
   ngOnInit() {
     this.titleService.setTitle("Fußball Manager: Über uns")
@@ -22,7 +23,8 @@ export class AboutusComponent implements OnInit {
       name: 'description', content: "Informationen rund über den Fußball Manager"
     })
 
-    this.firebaseService.getChefs().valueChanges().subscribe((chefArray) => {
+    let data = collectionData(this.firebaseService.getChefs())
+    data.forEach(chefArray => {
       chefArray.forEach(element => {
         let chef = new Chef(this.storage)
         chef.init(element)
