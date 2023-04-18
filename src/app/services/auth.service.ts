@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from 'angularfire2/auth';
+import { Auth } from '@angular/fire/auth';
 // import * as firebase from 'firebase/app';
 import { CanActivate, Router } from '@angular/router';
 import { League } from '../shared/League';
@@ -13,13 +13,13 @@ export class AuthService implements CanActivate {
 
     userId(): string {
       if (this.isSignedIn()) {
-        return this.angularFireAuth.auth.currentUser.uid
+        return this.angularFireAuth.currentUser.uid
       }
       return ''
     }
 
     isSignedIn(): boolean {
-        return this.angularFireAuth.auth.currentUser != null
+        return this.angularFireAuth.currentUser != null
     }
 
     isLeagueSelected(): boolean {
@@ -27,7 +27,7 @@ export class AuthService implements CanActivate {
     }
 
     signOut() {
-      this.angularFireAuth.auth.signOut()
+      this.angularFireAuth.signOut()
       this.currentLeague = null
     }
 
@@ -42,8 +42,8 @@ export class AuthService implements CanActivate {
       return true
     }
 
-    constructor(public angularFireAuth: AngularFireAuth, public router: Router) {
-      angularFireAuth.auth.onAuthStateChanged(function(user) {
+    constructor(public angularFireAuth: Auth, public router: Router) {
+      angularFireAuth.onAuthStateChanged(function(user) {
         if (user) {
           // User is signed in.
           console.log("user signed in")
