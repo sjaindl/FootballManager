@@ -3,7 +3,7 @@ import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/cor
 // import { baseUrlImages } from '../shared/baseurls';
 import { Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser'
-import { DocumentData, collectionData, docData, getDocs } from '@angular/fire/firestore';
+import { DocumentData, collectionData, docData, getDocs, getDoc } from '@angular/fire/firestore';
 import { AuthProvider } from 'ngx-auth-firebaseui';
 import { Auth } from '@angular/fire/auth';
 import { AuthService } from '../services/auth.service';
@@ -13,6 +13,7 @@ import { NewleagueDialogComponent } from '../newleague.dialog/newleague.dialog.c
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
 import { Md5 } from 'ts-md5';
+import { Config } from '../shared/config';
 
 export interface Player {
   firstName: string
@@ -74,7 +75,7 @@ export class HomeComponent implements OnInit {
 
         console.log("user signed in: " + user.displayName)
 
-        collectionData(this.firebaseService.getUserFoundedLeagues("grenzlandcup")).subscribe((leaguesArray) => {
+        collectionData(this.firebaseService.getUserFoundedLeagues(Config.curLeague)).subscribe((leaguesArray) => {
           this.leagues = []
           
           leaguesArray.forEach(element => {
@@ -104,7 +105,12 @@ export class HomeComponent implements OnInit {
 
   joinLeague() {
     console.log(this.joinleaguename)
-    docData(this.firebaseService.getFoundedLeague("grenzlandcup", this.joinleaguename)).subscribe(league => {
+
+    let leagueRef = this.firebaseService.getFoundedLeague(Config.curLeague, this.joinleaguename)
+
+    getDoc(leagueRef).then((snapshot) => {
+      let league = snapshot.data()
+      
       let anyLeague: any = league
 
       if (league == null) {
@@ -112,7 +118,7 @@ export class HomeComponent implements OnInit {
       } else if (anyLeague.hashedPassword != Md5.hashStr(this.joinpasswordname)) {
         this.openSnackBar('Falsches Passwort.', '')
       } else {
-          this.firebaseService.addUserLeague("grenzlandcup", this.joinleaguename).then( param => {
+          this.firebaseService.addUserLeague(Config.curLeague, this.joinleaguename).then( param => {
 
           console.log(param)
           let league = new League()
@@ -129,7 +135,7 @@ export class HomeComponent implements OnInit {
 
   fetchLeagueDetail() {
     // this.authService.currentLeague
-    collectionData(this.firebaseService.getLeagueNews("grenzlandcup")).subscribe(news => {
+    collectionData(this.firebaseService.getLeagueNews(Config.curLeague)).subscribe(news => {
       let anyNews: any = news
       this.newsLine = anyNews[0].newsLine
     })
@@ -138,7 +144,7 @@ export class HomeComponent implements OnInit {
     this.mvpPlayersByMarketValue = []
     this.topEleven = []
 
-    let mvpQuery = this.firebaseService.getMvpsOfTeamByPoints("grenzlandcup", "hvtdp")
+    let mvpQuery = this.firebaseService.getMvpsOfTeamByPoints(Config.curLeague, "hvtdp")
     getDocs(mvpQuery).then( querySnapshot => {
       querySnapshot.docs.forEach(element => {
         console.log(element.data())
@@ -149,7 +155,7 @@ export class HomeComponent implements OnInit {
       })
     })
 
-    let marketValueQuery = this.firebaseService.getMvpsOfTeamByMarketValue("grenzlandcup", "hvtdp")
+    let marketValueQuery = this.firebaseService.getMvpsOfTeamByMarketValue(Config.curLeague, "hvtdp")
     getDocs(marketValueQuery).then( querySnapshot => {
       querySnapshot.docs.forEach(element => {
         console.log(element.data())
@@ -160,7 +166,7 @@ export class HomeComponent implements OnInit {
       })
     })
 
-    let topElevenQuery = this.firebaseService.getTopElevenPlayersOfLastRound("grenzlandcup", "hvtdp")
+    let topElevenQuery = this.firebaseService.getTopElevenPlayersOfLastRound(Config.curLeague, "hvtdp")
     getDocs(topElevenQuery).then( querySnapshot => {
       querySnapshot.docs.forEach(element => {
         console.log(element.data())
