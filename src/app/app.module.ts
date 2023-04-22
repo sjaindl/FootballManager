@@ -106,7 +106,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     MatSelectModule,
     MatSnackBarModule,
     MatMenuModule,
-    NgcCookieConsentModule.forRoot(cookieConfig),
+    //NgcCookieConsentModule.forRoot(cookieConfig),
     GoogleMapsModule,
     HttpClientModule,
     HttpClientJsonpModule,
