@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { Player } from '../shared/player'
 import { Storage } from '@angular/fire/storage'
 import { collectionData, docData, getDocs } from '@angular/fire/firestore'
+import { Config } from '../shared/config'
 
 @Component({
   selector: 'app-market',
@@ -31,14 +32,14 @@ export class MarketComponent implements OnInit {
   }
 
   ngOnInit() {
-    docData(this.firebaseService.getUserFoundedLeague("grenzlandcup",this.authService.currentLeague.name)).forEach((leagueDoc) => {
+    docData(this.firebaseService.getUserFoundedLeague(Config.curLeague,this.authService.currentLeague.name)).forEach((leagueDoc) => {
       if(this.log) {
         console.log('leagueDoc with balance: ' + JSON.stringify(leagueDoc))
       }
       this.balance = leagueDoc['balance']
     })
 
-    getDocs(this.firebaseService.getTeams("grenzlandcup")).then((teamsSnapshot) => {
+    getDocs(this.firebaseService.getTeams(Config.curLeague)).then((teamsSnapshot) => {
       teamsSnapshot.forEach((team) => {
         
         if(this.log) {
@@ -46,7 +47,7 @@ export class MarketComponent implements OnInit {
           console.log(team.id)
         }
 
-        getDocs(this.firebaseService.getPlayers("grenzlandcup", team.id)).then((playersSnapshot) => {
+        getDocs(this.firebaseService.getPlayers(Config.curLeague, team.id)).then((playersSnapshot) => {
           playersSnapshot.forEach(p => {
             let player = new Player()
             let data = p.data()
@@ -69,7 +70,7 @@ export class MarketComponent implements OnInit {
   }
 
   fetchPlayersOfTeam(teamId) {
-    collectionData(this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name)).subscribe(playersOfTeamArray => {
+    collectionData(this.firebaseService.getPlayersOfTeam(Config.curLeague, this.authService.currentLeague.name)).subscribe(playersOfTeamArray => {
       if(this.log) {
         console.dir(playersOfTeamArray)
       }
@@ -149,11 +150,11 @@ export class MarketComponent implements OnInit {
       return
     }
 
-    this.firebaseService.changeBalance("grenzlandcup", this.authService.currentLeague.name, change)
+    this.firebaseService.changeBalance(Config.curLeague, this.authService.currentLeague.name, change)
     this.balance += change
 
     if (isInTeam) {
-      this.firebaseService.removePlayerOfTeam("grenzlandcup", this.authService.currentLeague.name, player)
+      this.firebaseService.removePlayerOfTeam(Config.curLeague, this.authService.currentLeague.name, player)
 
       //Delete player from team
       this.playersOfTeam.forEach(element => {
@@ -164,9 +165,9 @@ export class MarketComponent implements OnInit {
       })
 
       //set player stats
-      this.firebaseService.playerSold("grenzlandcup", player)
+      this.firebaseService.playerSold(Config.curLeague, player)
     } else {
-      this.firebaseService.addPlayerOfTeam("grenzlandcup", this.authService.currentLeague.name, player.player)
+      this.firebaseService.addPlayerOfTeam(Config.curLeague, this.authService.currentLeague.name, player.player)
       
       //Add new player to team
       let playerOfTeam = new Player()
@@ -175,7 +176,7 @@ export class MarketComponent implements OnInit {
       this.playersOfTeam.push(playerOfTeam)
 
       //set player stats
-      this.firebaseService.playerBought("grenzlandcup", player)
+      this.firebaseService.playerBought(Config.curLeague, player)
     }
     // this.fetchPlayersOfTeam(player.team)
   }

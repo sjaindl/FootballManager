@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service'
 import { Player } from '../shared/player'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { collectionData, doc, docData, updateDoc } from '@angular/fire/firestore'
+import { Config } from '../shared/config'
 
 @Component({
   selector: 'app-adminarea',
@@ -33,17 +34,17 @@ export class AdminareaComponent implements OnInit {
       this.freezed = isFreezed
     })
 
-    collectionData(this.firebaseService.getLeagueNews("grenzlandcup")).subscribe(news => {
+    collectionData(this.firebaseService.getLeagueNews(Config.curLeague)).subscribe(news => {
       let anyNews: any = news
       this.news = anyNews[0].newsLine
     })
 
-    collectionData(this.firebaseService.getTeams("grenzlandcup")).subscribe(teamsArray => {
+    collectionData(this.firebaseService.getTeams(Config.curLeague)).subscribe(teamsArray => {
         this.teams = teamsArray
   
         teamsArray.forEach(team => {
           console.log(team.id)
-          collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).subscribe(playersArray => {
+          collectionData(this.firebaseService.getPlayers(Config.curLeague, team.id)).subscribe(playersArray => {
             playersArray.forEach(p => {
               let player = new Player()
               player.init(p, team.id)
@@ -94,12 +95,12 @@ export class AdminareaComponent implements OnInit {
 
   playersInTeamCount() {
     
-    collectionData(this.firebaseService.getTeams("grenzlandcup")).subscribe(teamsArray => {
+    collectionData(this.firebaseService.getTeams(Config.curLeague)).subscribe(teamsArray => {
       this.teams = teamsArray
 
       teamsArray.forEach(team => {
         console.log(team.id)
-        var subsc = collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).subscribe((playersArray) => {
+        var subsc = collectionData(this.firebaseService.getPlayers(Config.curLeague, team.id)).subscribe((playersArray) => {
           subsc.unsubscribe()
           
           playersArray.forEach(p => {
@@ -113,12 +114,12 @@ export class AdminareaComponent implements OnInit {
               users.forEach(user => {
                 var anyUser: any = user
 
-                var lsub = collectionData(this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid)).subscribe((leaguesArray) => {
+                var lsub = collectionData(this.firebaseService.getUserFoundedLeagues(Config.curLeague, anyUser.uid)).subscribe((leaguesArray) => {
                   lsub.unsubscribe()
                   
                   leaguesArray.forEach(liga => {
                     
-                    var psub = collectionData(this.firebaseService.getPlayersOfTeam("grenzlandcup", liga.name, anyUser.uid)).subscribe((playersOfTeamArray) => {
+                    var psub = collectionData(this.firebaseService.getPlayersOfTeam(Config.curLeague, liga.name, anyUser.uid)).subscribe((playersOfTeamArray) => {
                       psub.unsubscribe()
 
                       playersOfTeamArray.forEach(pteam => {
@@ -127,7 +128,7 @@ export class AdminareaComponent implements OnInit {
                           console.log(pteam.player + ', ' + bought + ', liga: ' + liga.name + ', spieler: ' + anyUser.displayName)
                         }
                       })
-                      let players = this.firebaseService.getPlayers("grenzlandcup", 'hvtdp')
+                      let players = this.firebaseService.getPlayers(Config.curLeague, 'hvtdp')
                       updateDoc(doc(players, p.playerId), {
                         bought: bought
                       })
@@ -149,7 +150,7 @@ export class AdminareaComponent implements OnInit {
   }
 
   save() {
-    this.firebaseService.changePlayerPoints("grenzlandcup", this.players).then((res) => {
+    this.firebaseService.changePlayerPoints(Config.curLeague, this.players).then((res) => {
         this.openSnackBar('Punkteberechnung abgeschlossen!', '')
       }) 
   }
@@ -157,7 +158,7 @@ export class AdminareaComponent implements OnInit {
   setPlayerPointsLastRound() {
     this.players.forEach(player => {
       if (player.pointsCurrentRound != null || player.newMarketValue != null) {
-          let playersCol = this.firebaseService.getPlayers("grenzlandcup", player.team)
+          let playersCol = this.firebaseService.getPlayers(Config.curLeague, player.team)
           let playersDoc = doc(playersCol, player.playerId)
           updateDoc(playersDoc, {
             marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,

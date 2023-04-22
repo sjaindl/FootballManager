@@ -8,6 +8,7 @@ import { AuthService } from '../services/auth.service';
 import { League } from '../shared/League';
 //import { SELECT_VALUE_ACCESSOR } from '@angular/forms/src/directives/select_control_value_accessor';
 import { docData } from '@angular/fire/firestore';
+import { Config } from '../shared/config';
 
 @Component({
   selector: 'app-newleague-dialog',
@@ -40,7 +41,7 @@ export class NewleagueDialogComponent implements OnInit {
   
   createLeague() {
     var exists = true
-    docData(this.firebaseService.getFoundedLeague("grenzlandcup", this.leagueFormControl.value)).subscribe(league => {
+    docData(this.firebaseService.getFoundedLeague(Config.curLeague, this.leagueFormControl.value)).subscribe(league => {
       if (league == null && exists == true) {
         exists = false
       }
@@ -48,9 +49,9 @@ export class NewleagueDialogComponent implements OnInit {
       if (exists) {
         this.openSnackBar('Liga existiert bereits. Wähle einen anderen Liganamen', '')
       } else {
-        this.firebaseService.addFoundedLeague("grenzlandcup", this.leagueFormControl.value, this.passwordFormControl.value).then(SELECT_VALUE_ACCESSOR => {
+        this.firebaseService.addFoundedLeague(Config.curLeague, this.leagueFormControl.value, this.passwordFormControl.value).then(SELECT_VALUE_ACCESSOR => {
           console.log(SELECT_VALUE_ACCESSOR)
-          this.firebaseService.addUserLeague("grenzlandcup", this.leagueFormControl.value)
+          this.firebaseService.addUserLeague(Config.curLeague, this.leagueFormControl.value)
           
           let league = new League()
           league.name = this.leagueFormControl.value

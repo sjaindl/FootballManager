@@ -10,7 +10,7 @@ import { Md5 } from 'ts-md5/dist/md5'
 export class FirebaseService {
 
   positions = ['Tormann', 'Verteidigung1', 'Verteidigung2', 'Mittelfeld1', 'Mittelfeld2', 'Angriff1', 'Angriff2']
-  initialBalance = 4_000_000
+  initialBalance = 1_200_000
   
   constructor(private db: Firestore, private auth: AuthService) { }
 
@@ -106,7 +106,7 @@ export class FirebaseService {
     let players = this.getPlayers(league, player.team)
     let playerDoc = doc(players, player.playerId)
     updateDoc(playerDoc, {
-      sold: player.bought + 1
+      bought: player.bought + 1
     })
   }
 
@@ -221,7 +221,7 @@ export class FirebaseService {
 
   addUserLeague(league, foundedLeague) {
     //Create league
-    return updateDoc(this.getUserFoundedLeague(league, foundedLeague), {
+    return setDoc(this.getUserFoundedLeague(league, foundedLeague), {
       name: foundedLeague,
       balance: this.initialBalance,
       points: 0,

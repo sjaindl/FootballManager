@@ -6,6 +6,7 @@ import { Lineup } from '../shared/lineup';
 import { Player } from '../shared/player';
 import { Storage } from '@angular/fire/storage';
 import { collectionData, docData, getDoc } from '@angular/fire/firestore';
+import { Config } from '../shared/config';
 
 @Component({
   selector: 'app-team',
@@ -62,7 +63,7 @@ export class TeamComponent implements OnInit {
     this.initLineupArray() 
     //this.setFormation('4-4-2')
 
-    let teamRef = this.firebaseService.getUserFoundedLeague("grenzlandcup", this.authService.currentLeague.name)
+    let teamRef = this.firebaseService.getUserFoundedLeague(Config.curLeague, this.authService.currentLeague.name)
 
     getDoc(teamRef).then((teamsSnapshot) => {
       let doc = teamsSnapshot.data()
@@ -70,7 +71,7 @@ export class TeamComponent implements OnInit {
       this.formation = formation
       this.setFormation(formation)
 
-      let teams = this.firebaseService.getTeams("grenzlandcup")
+      let teams = this.firebaseService.getTeams(Config.curLeague)
 
       if(this.log) {
         console.log("receive league data: " + JSON.stringify(doc))
@@ -90,7 +91,7 @@ export class TeamComponent implements OnInit {
             console.log(team.id)
           }
 
-          collectionData(this.firebaseService.getPlayers("grenzlandcup", team.id)).forEach((playersArray) => {
+          collectionData(this.firebaseService.getPlayers(Config.curLeague, team.id)).forEach((playersArray) => {
             if(this.log) {
               console.log("receive players data: " + JSON.stringify(playersArray.length))
             }
@@ -104,7 +105,7 @@ export class TeamComponent implements OnInit {
               this.players.push(player)
             })
             
-            collectionData(this.firebaseService.getPlayersOfTeam("grenzlandcup", this.authService.currentLeague.name)).forEach((playersOfTeamArray) => {
+            collectionData(this.firebaseService.getPlayersOfTeam(Config.curLeague, this.authService.currentLeague.name)).forEach((playersOfTeamArray) => {
               if(this.log) {
                 console.log("receive playersOfTeamArray data: " + JSON.stringify(playersOfTeamArray.length))
               }
@@ -143,7 +144,7 @@ export class TeamComponent implements OnInit {
                 })
               })
   
-              collectionData(this.firebaseService.getLineUp("grenzlandcup", this.authService.currentLeague.name)).forEach((lineupArray) => {
+              collectionData(this.firebaseService.getLineUp(Config.curLeague, this.authService.currentLeague.name)).forEach((lineupArray) => {
                 if(this.log) {
                   console.log("receive LineupArray data: " + JSON.stringify(lineupArray.length))
                 }
@@ -213,8 +214,8 @@ export class TeamComponent implements OnInit {
     if (!valid) {
       this.openSnackBar('Spieler dürfen nicht öfter als einmal aufgestellt werden.', 'Nicht gespeichert.')
     } else {
-      this.firebaseService.setFormation("grenzlandcup", this.authService.currentLeague.name, this.formation)
-      this.firebaseService.setLineup("grenzlandcup", this.authService.currentLeague.name, this.lineup, this.originalLineup)
+      this.firebaseService.setFormation(Config.curLeague, this.authService.currentLeague.name, this.formation)
+      this.firebaseService.setLineup(Config.curLeague, this.authService.currentLeague.name, this.lineup, this.originalLineup)
       this.openSnackBar('Aufstellung gespeichert', '')
     }
   }
@@ -240,7 +241,7 @@ export class TeamComponent implements OnInit {
 
   setFormation(formation: string) {
     this.formation = formation
-    this.firebaseService.clearLineup("grenzlandcup", this.authService.currentLeague.name, this.originalLineup)
+    this.firebaseService.clearLineup(Config.curLeague, this.authService.currentLeague.name, this.originalLineup)
 
     if (formation == '3-4-3') {
       this.setGridColumns(1, 2, 2, 2, 2, 1)

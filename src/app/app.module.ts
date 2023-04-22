@@ -11,7 +11,7 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
 import 'hammerjs'
 
-import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent'
+//import { NgcCookieConsentModule, NgcCookieConsentConfig } from 'ngx-cookieconsent'
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -50,7 +50,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminareaComponent } from './adminarea/adminarea.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { ProfileComponent } from './profile/profile.component';
-
+/*
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
     domain: 'starting-eleven-2019.firebaseapp.com'
@@ -66,6 +66,7 @@ const cookieConfig: NgcCookieConsentConfig = {
   theme: 'edgeless',
   type: 'opt-out'
 }
+*/
 
 @NgModule({
   declarations: [

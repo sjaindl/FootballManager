@@ -5,6 +5,7 @@ import { Title, Meta } from '@angular/platform-browser'
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
 import { collectionData } from '@angular/fire/firestore';
+import { Config } from '../shared/config';
 
 @Component({
   selector: 'app-standing',
@@ -49,7 +50,7 @@ export class StandingComponent implements OnInit {
         users.forEach(user => {
           var anyUser: any = user
 
-          var leagueSusc = collectionData(this.firebaseService.getUserFoundedLeagues("grenzlandcup", anyUser.uid)).subscribe((leaguesArray) => {
+          var leagueSusc = collectionData(this.firebaseService.getUserFoundedLeagues(Config.curLeague, anyUser.uid)).subscribe((leaguesArray) => {
             leagueSusc.unsubscribe()
   
             leaguesArray.forEach(element => {
