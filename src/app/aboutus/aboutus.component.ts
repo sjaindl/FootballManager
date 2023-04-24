@@ -32,6 +32,16 @@ export class AboutusComponent implements OnInit {
         chef.loadImageRef()
         this.chefs.push(chef)
       })
+      this.chefs = this.chefs.sort((a, b) => {
+        if (a.order < b.order) {
+          return -1
+        } 
+        else if (a.order > b.order) {
+          return 1
+        } else {
+          return 0
+        }
+      })
     })
   }
 }

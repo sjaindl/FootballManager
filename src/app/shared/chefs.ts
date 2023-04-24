@@ -2,6 +2,7 @@ import { getDownloadURL, ref, Storage } from '@angular/fire/storage'
 import { Observable } from "rxjs"
 
 export class Chef {
+    order: number
     firstName: String
     lastName: String
     function: String
@@ -15,6 +16,7 @@ export class Chef {
     }
     
     init(object) {
+        this.order = object.order
         this.firstName = object.firstName
         this.lastName = object.lastName
         this.function = object.function
