@@ -24,7 +24,7 @@ export class MarketComponent implements OnInit {
   dataSourceAttackers: Player[]
 
   teamPositionSortOrder = new Map<string, number>()
-  displayedColumns: string[] = ['position', /* 'team', */ 'playerImage', 'player', 'marketValue', 'points', 'buy']
+  displayedColumns: string[] = [/*'position',  'team', */ 'playerImage', 'player', 'marketValue', 'points', 'buy']
 
   log = false
 
