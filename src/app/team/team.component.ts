@@ -37,8 +37,11 @@ export class TeamComponent implements OnInit {
 
   freezed: boolean = false
 
-  displayedColumns: string[] = ['position', /* 'team', */ 'playerImage', 'player', 'marketValue', 'points']
-  dataSource: Player[]
+  displayedColumns: string[] = [/*'position',  'team', */ 'playerImage', 'player', 'marketValue', 'points']
+  dataSourceGoalkeepers: Player[]
+  dataSourceDefenders: Player[]
+  dataSourceMidfielders: Player[]
+  dataSourceAttackers: Player[]
   teamPositionSortOrder = new Map<string, number>()
 
   log = false
@@ -121,7 +124,7 @@ export class TeamComponent implements OnInit {
                   console.log('player of team: ' + playerOfTeam.player.length)
                 }
 
-                this.dataSource = this.playersOfTeam.sort((a, b) => {
+                let sortedData = this.playersOfTeam.sort((a, b) => {
                     var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
                     var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
               
@@ -141,6 +144,22 @@ export class TeamComponent implements OnInit {
                         return 0
                       }
                     }
+                })
+
+                this.dataSourceGoalkeepers = sortedData.filter((player) => {
+                  return player.position == 'Tormann'
+                })
+
+                this.dataSourceDefenders = sortedData.filter((player) => {
+                  return player.position == 'Verteidigung'
+                })
+
+                this.dataSourceMidfielders = sortedData.filter((player) => {
+                  return player.position == 'Mittelfeld'
+                })
+
+                this.dataSourceAttackers = sortedData.filter((player) => {
+                  return player.position == 'Angriff'
                 })
               })
   
