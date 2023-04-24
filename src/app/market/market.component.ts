@@ -18,7 +18,11 @@ export class MarketComponent implements OnInit {
   playersOfTeam: Player[] = []
   balance = 0
 
-  dataSource: Player[]
+  dataSourceGoalkeepers: Player[]
+  dataSourceDefenders: Player[]
+  dataSourceMidfielders: Player[]
+  dataSourceAttackers: Player[]
+
   teamPositionSortOrder = new Map<string, number>()
   displayedColumns: string[] = ['position', /* 'team', */ 'playerImage', 'player', 'marketValue', 'points', 'buy']
 
@@ -98,7 +102,7 @@ export class MarketComponent implements OnInit {
   }
 
   setDataSource() {
-    this.dataSource = this.players.sort((a, b) => {
+    let sortedData = this.players.sort((a, b) => {
       var aPositionSortOrder = this.teamPositionSortOrder.get(a.position)
       var bPositionSortOrder = this.teamPositionSortOrder.get(b.position)
 
@@ -118,6 +122,22 @@ export class MarketComponent implements OnInit {
           return 0
         }
       }
+    })
+
+    this.dataSourceGoalkeepers = sortedData.filter((player) => {
+      return player.position == 'Tormann'
+    })
+
+    this.dataSourceDefenders = sortedData.filter((player) => {
+      return player.position == 'Verteidigung'
+    })
+
+    this.dataSourceMidfielders = sortedData.filter((player) => {
+      return player.position == 'Mittelfeld'
+    })
+
+    this.dataSourceAttackers = sortedData.filter((player) => {
+      return player.position == 'Angriff'
     })
   }
 
