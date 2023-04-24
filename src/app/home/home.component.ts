@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 // import { DeviceDetectorService } from '../../../node_modules/ngx-device-detector';
 // import { baseUrlImages } from '../shared/baseurls';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser'
 import { DocumentData, collectionData, docData, getDocs, getDoc } from '@angular/fire/firestore';
 import { AuthProvider } from 'ngx-auth-firebaseui';
@@ -41,9 +41,12 @@ export class HomeComponent implements OnInit {
   mvpPlayersByPoints: MVP[] = []
   mvpPlayersByMarketValue: MVP[] = []
   topEleven: MVP[] = []
+
+  logout: string
+  private sub: any
   
   //private deviceService: DeviceDetectorService
-  constructor(public router: Router, private cdr: ChangeDetectorRef, private titleService: Title, 
+  constructor(public router: Router, private route: ActivatedRoute, private cdr: ChangeDetectorRef, private titleService: Title, 
     private metaTagService: Meta, private angularFireAuth: Auth, 
     public authService : AuthService, public firebaseService: FirebaseService,
     private dialog: MatDialog,
@@ -67,6 +70,17 @@ export class HomeComponent implements OnInit {
     this.titleService.setTitle("Fußball Manager: Home")
     this.metaTagService.updateTag({
       name: 'description', content: "Spiele auf fussballmanager.at mit deinen Lieblingsspielern aus dem Grenzlandcup in eigenen Ligen gegen deine Freunde. Schlag noch heute am Transfermarkt zu und erstelle deine persönliche Aufstellung."
+    })
+
+    this.sub = this.route.params.subscribe(params => {
+      console.log(params)
+      this.logout = params['logout']
+      if (this.logout == "logout") {
+        console.log("log out ..")
+        this.authService.currentLeague = null
+        this.angularFireAuth.signOut()
+        this.router.navigate(['home'])
+      }
     })
 
     this.angularFireAuth.onAuthStateChanged((user) => {
@@ -180,6 +194,10 @@ export class HomeComponent implements OnInit {
 
   ngAfterViewInit() {
     this.cdr.detectChanges()
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe()
   }
 
   checkDevice() {
