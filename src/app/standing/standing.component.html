@@ -7,8 +7,8 @@
   <ng-container matColumnDef="image">
       <th mat-header-cell *matHeaderCellDef> </th>
       <td mat-cell *matCellDef="let element"> 
-        <img src="{{ element.photoUrl }}" *ngIf="element.photoUrl" width="100px">
-        <img *ngIf="element.photoRef" [src]="element.photoRef | async" width="100px"/>
+        <img src="{{ element.photoUrl }}" *ngIf="element.photoUrl" width="30px">
+        <img *ngIf="element.photoRef" [src]="element.photoRef | async" width="30px"/>
       </td>
   </ng-container>
 
