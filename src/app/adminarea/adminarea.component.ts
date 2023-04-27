@@ -82,19 +82,7 @@ export class AdminareaComponent implements OnInit {
     })
   }
 
-  getPlayerByName(name): Player {
-    var p = null
-    this.players.forEach(player => {
-      if (player.player.split(' ').join('') == name.split(' ').join('')) {
-        p = player
-      }
-    })
-
-    return p
-  }
-
   playersInTeamCount() {
-    
     collectionData(this.firebaseService.getTeams(Config.curLeague)).subscribe(teamsArray => {
       this.teams = teamsArray
 
@@ -150,7 +138,11 @@ export class AdminareaComponent implements OnInit {
   }
 
   save() {
-    this.firebaseService.changePlayerPoints(Config.curLeague, this.players).then((res) => {
+    console.log("setPlayerPointsLastRound ..")
+    this.setPlayerPointsLastRound()
+    console.log("changePlayerPoints ..")
+    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, false).then((res) => {
+        this.resetData()
         this.openSnackBar('Punkteberechnung abgeschlossen!', '')
       }) 
   }
@@ -160,30 +152,70 @@ export class AdminareaComponent implements OnInit {
       if (player.pointsCurrentRound != null || player.newMarketValue != null) {
           let playersCol = this.firebaseService.getPlayers(Config.curLeague, player.team)
           let playersDoc = doc(playersCol, player.playerId)
+          let playerPoints = player.points ? player.points : 0
+
+          let newMarketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
+          let newPoints = player.pointsCurrentRound ? +playerPoints + +player.pointsCurrentRound : +playerPoints
+          let newPointsLastRound = player.pointsCurrentRound ? +player.pointsCurrentRound : 0
+
+          console.log("player: " + player.player + ", newPoints: " + newPoints + ", newPointsLastRound: " + newPointsLastRound + ", newMarketValue: " + newMarketValue)
+
           updateDoc(playersDoc, {
-            marketValue: player.newMarketValue ? +player.newMarketValue : +player.marketValue,
-            points: player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points,
-            pointsLastRound: player.pointsCurrentRound ? player.pointsCurrentRound : 0
+            marketValue: newMarketValue,
+            points: newPoints,
+            pointsLastRound: newPointsLastRound
           })
           
           player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
-          player.points = +player.pointsCurrentRound ? +player.points + +player.pointsCurrentRound : +player.points
-          player.pointsCurrentRound = null
-          player.newMarketValue = null
+          player.points = player.pointsCurrentRound ? +playerPoints + +player.pointsCurrentRound : +playerPoints
         }
       })
+      
+      console.log("setPlayerPointsLastRound done ..")
+      this.openSnackBar('Spielerpunkte gesetzt!', '')
+  }
+
+  resetPlayerPoints() {
+    console.log("changePlayerPoints ..")
+    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, true)
+    console.log("changePlayerPoints done ..")
+
+    this.players.forEach(player => {
+          let playersCol = this.firebaseService.getPlayers(Config.curLeague, player.team)
+          let playersDoc = doc(playersCol, player.playerId)
+
+          console.log("player " + player.player)
+
+          updateDoc(playersDoc, {
+            marketValue: 100000,
+            points: 0,
+            pointsLastRound: 0
+          })
+
+          console.log("player " + player.player + " done ..")
+          
+      })
+      
       
       this.openSnackBar('Spielerpunkte gesetzt!', '')
   }
 
+  resetData() {
+      console.log("reset data ..")
+      this.players.forEach(player => {
+        player.pointsCurrentRound = null
+        player.newMarketValue = null
+      })
+  }
+
   saveNews() {
-    this.firebaseService.setLeagueNews('grenzlandcup', this.news).then( () => {
+    this.firebaseService.setLeagueNews(Config.curLeague, this.news).then( () => {
       this.openSnackBar('News aktualisiert', 'News')
     })
   }
 
   freezeDesc() {
-    return this.freezed ? 'Unfreeze!' : 'Freeze!'
+    return this.freezed ? 'Entsperren!' : 'Sperren!'
   }
 
   freeze() {

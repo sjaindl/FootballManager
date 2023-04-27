@@ -110,48 +110,67 @@ export class FirebaseService {
     })
   }
 
-  changePlayerPoints(league, players) {
+  changePlayerPoints(league, playersOri, toZero) {
     return new Promise((resolve) => {
+      let players = []
+      playersOri.forEach(val => players.push(Object.assign({}, val)));
+
       getDocs(this.getUsers()).then((usersSnapshot) => {
         let numUsers = usersSnapshot.docs.length
         let curUser = 0
         usersSnapshot.forEach((user) => {
           let userData = user.data()
           let uid = userData['uid']
+          let name = userData['displayName']
           curUser++
 
           getDocs(this.getUserFoundedLeagues(league, uid)).then((foundedLeaguesSnapshot) => {
             foundedLeaguesSnapshot.docs.forEach(foundedLeague => {
 
-            let leagueName = foundedLeague.data['name']
+            let leagueName = foundedLeague.data()['name']
             var userPoints = 0
+
+            console.log("check " + leagueName + " for user " + name)
 
             getDocs(this.getLineUp(league, leagueName, uid)).then((lineupSnapshot) => {
               players.forEach(player => {
                 if (player.pointsCurrentRound != null) {
                   lineupSnapshot.docs.forEach(linedUp => {
                     
-                    let player = linedUp.data()['player']
+                    let linedUpPlayer = linedUp.data()['player']
+
+                    console.dir(player)
+                    console.dir(linedUpPlayer)
+
+                    console.log(linedUpPlayer + " == " + player.player.split(' ').join(''))
                     
-                    if (player == player.player.split(' ').join('')) {
+                    if (linedUpPlayer == player.player.split(' ').join('')) {
                       userPoints += +player.pointsCurrentRound
                     }
                   })
                 }
               })
               
-              let points = foundedLeague.data['points']
+              let points = foundedLeague.data()['points']
 
               var currentUserPoints = 0
               if (points != null) {
                 currentUserPoints += points
               }
+
+              if (toZero) {
+                currentUserPoints = 0
+                userPoints = 0
+              }
+
+              console.log("user " + name + ": cur Points: " + currentUserPoints + ", last round: " + userPoints + " (toZero: " + toZero + ")" )
               
               updateDoc(this.getUserFoundedLeague(league, leagueName, uid), {
                 points: currentUserPoints + userPoints,
                 pointsLastRound: userPoints
               }).then(() => {
                 if (curUser == numUsers) {
+                  console.log("resolve with " + curUser + " == " + numUsers)
                   resolve(numUsers)
                 }
               })
