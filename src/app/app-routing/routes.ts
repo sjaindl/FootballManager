@@ -12,6 +12,7 @@ import { AdminareaComponent } from '../adminarea/adminarea.component'
 import { AdminService } from '../services/admin.service'
 import { PrivacyPolicyComponent } from '../privacy-policy/privacy-policy.component'
 import { ProfileComponent } from '../profile/profile.component'
+import { PrizesComponent } from '../prizes/prizes.component'
 
 export const routes : Routes = [
     { path: "home", component: HomeComponent },
@@ -22,6 +23,7 @@ export const routes : Routes = [
     { path: "standings", component: StandingComponent, canActivate: [AuthService] },
     { path: "aboutus", component: AboutusComponent },
     { path: "contact", component: ContactComponent },
+    { path: "prizes", component: PrizesComponent },
     { path: "faq", component: FaqComponent },
     { path: "privacy", component: PrivacyPolicyComponent },
     { path: "admin", component: AdminareaComponent, canActivate: [AdminService] },

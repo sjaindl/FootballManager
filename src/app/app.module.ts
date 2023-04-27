@@ -50,6 +50,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminareaComponent } from './adminarea/adminarea.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { ProfileComponent } from './profile/profile.component';
+import { PrizesComponent } from './prizes/prizes.component';
 /*
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -83,7 +84,8 @@ const cookieConfig: NgcCookieConsentConfig = {
     NewleagueDialogComponent,
     AdminareaComponent,
     PrivacyPolicyComponent,
-    ProfileComponent
+    ProfileComponent,
+    PrizesComponent
   ],
   entryComponents: [
     NewleagueDialogComponent
