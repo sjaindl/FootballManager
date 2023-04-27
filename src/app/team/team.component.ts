@@ -215,22 +215,20 @@ export class TeamComponent implements OnInit {
       return
     }
 
-    var valid = true
+    let playerArr = []
     this.firebaseService.positions.forEach(position => {
       this.lineup[position].forEach(player => {
-        var equalCount = 0
-        this.lineup[position].forEach(player2 => {
-          if (player == player2) {
-            equalCount++ 
-          }
-        })
-        if (equalCount > 1) {
-          valid = false
-        }
+        playerArr.push(player)
       })
     })
+
+    let playerSet = new Set(playerArr)
+    console.dir(playerArr)
+    console.dir(playerSet)
+
+    console.log("playerArr len " + playerArr.length + ", set len " + playerSet.size)
     
-    if (!valid) {
+    if (playerArr.length != playerSet.size) {
       this.openSnackBar('Spieler dürfen nicht öfter als einmal aufgestellt werden.', 'Nicht gespeichert.')
     } else {
       this.firebaseService.setFormation(Config.curLeague, this.authService.currentLeague.name, this.formation)
