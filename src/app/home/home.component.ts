@@ -132,17 +132,26 @@ export class HomeComponent implements OnInit {
       } else if (anyLeague.hashedPassword != Md5.hashStr(this.joinpasswordname)) {
         this.openSnackBar('Falsches Passwort.', '')
       } else {
-          this.firebaseService.addUserLeague(Config.curLeague, this.joinleaguename).then( param => {
-
-          console.log(param)
-          let league = new League()
-          league.name = this.joinleaguename
-          this.authService.currentLeague = league
-          this.fetchLeagueDetail()
-        }).catch(error =>  {
-          console.log(error)
-          this.openSnackBar(error, '')
-        })
+          const docRef = this.firebaseService.getUserFoundedLeague(Config.curLeague, this.joinleaguename)
+          getDoc(docRef).then((snapshot) => {
+            const alreadyJoinedLeague = snapshot.exists()
+            console.log('league exists: ' + alreadyJoinedLeague)
+            if (alreadyJoinedLeague) {
+              this.openSnackBar('Du bist der Liga bereits beigetreten. Bitte wähle sie unter "Meine Ligen" aus.', '')
+              // TODO: this.selectLeague(this.joinleaguename)
+            } else {
+              this.firebaseService.addUserLeague(Config.curLeague, this.joinleaguename).then(param => {
+                console.log(param)
+                let league = new League()
+                league.name = this.joinleaguename
+                this.authService.currentLeague = league
+                this.fetchLeagueDetail()
+              }).catch(error =>  {
+                console.log(error)
+                this.openSnackBar(error, '')
+              })
+            }
+          })
       }
     })
   }

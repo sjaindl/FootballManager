@@ -239,6 +239,7 @@ export class FirebaseService {
   }
 
   addUserLeague(league, foundedLeague) {
+    console.log("add user league " + league + " / " + foundedLeague)
     //Create league
     return setDoc(this.getUserFoundedLeague(league, foundedLeague), {
       name: foundedLeague,
