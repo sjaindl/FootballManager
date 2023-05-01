@@ -138,6 +138,11 @@ export class AdminareaComponent implements OnInit {
   }
 
   save() {
+    console.log("check players ..")
+    if(!this.checkPlayers()) {
+      return
+    }
+
     console.log("setPlayerPointsLastRound ..")
     this.setPlayerPointsLastRound()
     console.log("changePlayerPoints ..")
@@ -147,9 +152,32 @@ export class AdminareaComponent implements OnInit {
       }) 
   }
 
+  checkPlayers() {
+    console.log("Check ..")
+    var isValid = true
+    this.players.forEach(player => {
+      console.log(player.player + ", player.pointsCurrentRound: " + player.pointsCurrentRound)
+      if (player.pointsCurrentRound != undefined) {
+        if(isNaN(+player.pointsCurrentRound)) {
+          this.openSnackBar('Ungültige Werte für Spieler ' + player.player, '')
+          isValid =  false
+        }
+      }
+
+      if (player.newMarketValue != undefined) {
+        if(isNaN(+player.newMarketValue)) {
+          this.openSnackBar('Ungültige Werte für Spieler ' + player.player, '')
+          isValid =  false
+        }
+      }
+    })
+    
+    return isValid
+  }
+
   setPlayerPointsLastRound() {
     this.players.forEach(player => {
-      if (player.pointsCurrentRound != null || player.newMarketValue != null) {
+      if (player.pointsCurrentRound != undefined || player.newMarketValue != undefined) {
           let playersCol = this.firebaseService.getPlayers(Config.curLeague, player.team)
           let playersDoc = doc(playersCol, player.playerId)
           let playerPoints = player.points ? player.points : 0
