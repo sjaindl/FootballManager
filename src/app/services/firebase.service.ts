@@ -11,12 +11,12 @@ export class FirebaseService {
 
   positions = ['Tormann', 'Verteidigung1', 'Verteidigung2', 'Mittelfeld1', 'Mittelfeld2', 'Angriff1', 'Angriff2']
   initialBalance = 1_200_000
+  numLinedupPlayers = 11
   
   constructor(private db: Firestore, private auth: AuthService) { }
 
   //FAQ
   getFaq() {
-
     return collection(this.db, '/faq/')
   }
 
@@ -52,7 +52,7 @@ export class FirebaseService {
   //MVP's - TODO: when there is more than one team, all teams need to be queried!
   getMvpsOfTeamByPoints(league, team) {
     let players = this.getPlayers(league, team)
-    return query(players, orderBy("desc"), limit(5));
+    return query(players, orderBy("points", "desc"), limit(5));
   }
 
   getMvpsOfTeamByMarketValue(league, team) {
@@ -133,19 +133,36 @@ export class FirebaseService {
             console.log("check " + leagueName + " for user " + name)
 
             getDocs(this.getLineUp(league, leagueName, uid)).then((lineupSnapshot) => {
+              let numOfLinedUpPlayers = lineupSnapshot.size
+              // penalty of -1 point for each non-lined-up position (out of numLinedupPlayers):
+              const penalty = (this.numLinedupPlayers - numOfLinedUpPlayers) * -1
+              console.log(" - penalty: " + penalty + " linedup: " + numOfLinedUpPlayers)
+              userPoints += penalty
+
               players.forEach(player => {
                 if (player.pointsCurrentRound != null) {
                   lineupSnapshot.docs.forEach(linedUp => {
                     
                     let linedUpPlayer = linedUp.data()['player']
 
-                    console.dir(player)
+                    /*
+                    let player = players.find(element => {
+                      return linedUpPlayer == element.player.split(' ').join('') && element.player.pointsCurrentRound != null
+                    })
+                    */
+
+                    //console.dir(player)
+                    //console.dir(linedUpPlayer)
+
+                    //console.log(linedUpPlayer + " == " + player.player.split(' ').join(''))
+                
+                  console.dir(player)
                     console.dir(linedUpPlayer)
 
                     console.log(linedUpPlayer + " == " + player.player.split(' ').join(''))
-                    
+                  
                     if (linedUpPlayer == player.player.split(' ').join('')) {
-                      userPoints += +player.pointsCurrentRound
+                  userPoints += +player.pointsCurrentRound
                     }
                   })
                 }
@@ -216,6 +233,7 @@ export class FirebaseService {
   
   //User Leagues
   getUserLeagues(uid = null) {
+    //uid = "ZDfIDUh45NcYWZTdfVdmWRPXAKA2"
     if (uid == null) {
       return collection(this.db, this.getCurrentUser().path, "/userLeagues/")
     } else {
