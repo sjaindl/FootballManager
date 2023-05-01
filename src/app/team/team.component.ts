@@ -7,6 +7,7 @@ import { Player } from '../shared/player';
 import { Storage } from '@angular/fire/storage';
 import { collectionData, docData, getDoc } from '@angular/fire/firestore';
 import { Config } from '../shared/config';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-team',
@@ -37,6 +38,8 @@ export class TeamComponent implements OnInit {
 
   freezed: boolean = false
 
+  isMobile = null
+
   displayedColumns: string[] = [/*'position',  'team', */ 'playerImage', 'player', 'marketValue', 'points']
   dataSourceGoalkeepers: Player[]
   dataSourceDefenders: Player[]
@@ -46,14 +49,19 @@ export class TeamComponent implements OnInit {
 
   log = false
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar) { 
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar, private deviceService: DeviceDetectorService) { 
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
     this.teamPositionSortOrder.set("Angriff", 4)
   }
 
+  checkDevice() {
+    this.isMobile = this.deviceService.isMobile()
+  }
+
   ngOnInit() {
+    this.checkDevice()
     docData(this.firebaseService.isFreezed()).forEach((doc) => {
       var isFreezed = doc['freeze']
       if(this.log) {
@@ -257,6 +265,11 @@ export class TeamComponent implements OnInit {
   }
 
   setFormation(formation: string) {
+    if (this.freezed) {
+      this.openSnackBar('Aufstellung darf derzeit nicht geändert werden.', '')
+      return
+    }
+
     this.formation = formation
     this.firebaseService.clearLineup(Config.curLeague, this.authService.currentLeague.name, this.originalLineup)
 

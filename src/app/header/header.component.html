@@ -26,6 +26,9 @@
   </mat-toolbar>
 </div>
 
-<div>
-    <img src="/assets/StartingEleven.jpg" height="250px">
+<div *ngIf="isMobile">
+    <img src="/assets/StartingEleven.jpg" width="100%">
+</div>
+<div *ngIf="!isMobile">
+  <img src="/assets/StartingEleven.jpg" height="250px">
 </div>

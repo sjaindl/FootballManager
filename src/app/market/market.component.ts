@@ -6,6 +6,7 @@ import { Player } from '../shared/player'
 import { Storage } from '@angular/fire/storage'
 import { collectionData, docData, getDocs } from '@angular/fire/firestore'
 import { Config } from '../shared/config'
+import { DeviceDetectorService } from 'ngx-device-detector'
 
 @Component({
   selector: 'app-market',
@@ -27,15 +28,23 @@ export class MarketComponent implements OnInit {
   displayedColumns: string[] = [/*'position',  'team', */ 'playerImage', 'player', 'marketValue', 'points', 'buy']
 
   log = false
+  isMobile = null
 
-  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar) {
+  constructor(public firebaseService: FirebaseService, public authService: AuthService, private storage: Storage, private snackBar: MatSnackBar, private deviceService: DeviceDetectorService) {
     this.teamPositionSortOrder.set("Tormann", 1)
     this.teamPositionSortOrder.set("Verteidigung", 2)
     this.teamPositionSortOrder.set("Mittelfeld", 3)
     this.teamPositionSortOrder.set("Angriff", 4)
   }
+  
+  checkDevice() {
+    this.isMobile = this.deviceService.isMobile()
+  }
+
 
   ngOnInit() {
+    this.checkDevice()
+
     docData(this.firebaseService.getUserFoundedLeague(Config.curLeague,this.authService.currentLeague.name)).forEach((leagueDoc) => {
       if(this.log) {
         console.log('leagueDoc with balance: ' + JSON.stringify(leagueDoc))

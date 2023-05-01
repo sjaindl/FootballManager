@@ -176,7 +176,10 @@
   <!-- Player image Column -->
   <ng-container matColumnDef="playerImage">
     <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let element"> <img *ngIf="element.loadedImageRef" [src]="element.loadedImageRef | async" width="200" /> </td>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
   </ng-container>
 
   <!-- Player name Column -->
@@ -218,7 +221,10 @@
   <!-- Player image Column -->
   <ng-container matColumnDef="playerImage">
     <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let element"> <img *ngIf="element.loadedImageRef" [src]="element.loadedImageRef | async" width="200" /> </td>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
   </ng-container>
 
   <!-- Player name Column -->
@@ -260,7 +266,10 @@
   <!-- Player image Column -->
   <ng-container matColumnDef="playerImage">
     <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let element"> <img *ngIf="element.loadedImageRef" [src]="element.loadedImageRef | async" width="200" /> </td>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
   </ng-container>
 
   <!-- Player name Column -->
@@ -303,7 +312,10 @@
   <!-- Player image Column -->
   <ng-container matColumnDef="playerImage">
     <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let element"> <img *ngIf="element.loadedImageRef" [src]="element.loadedImageRef | async" width="200" /> </td>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
   </ng-container>
 
   <!-- Player name Column -->
