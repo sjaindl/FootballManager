@@ -12,7 +12,9 @@ export class FirebaseService {
   positions = ['Tormann', 'Verteidigung1', 'Verteidigung2', 'Mittelfeld1', 'Mittelfeld2', 'Angriff1', 'Angriff2']
   initialBalance = 1_200_000
   numLinedupPlayers = 11
-  
+
+  previewData = new Map<string, string>()
+
   constructor(private db: Firestore, private auth: AuthService) { }
 
   //FAQ
@@ -110,7 +112,7 @@ export class FirebaseService {
     })
   }
 
-  changePlayerPoints(league, playersOri, toZero) {
+  changePlayerPoints(league, playersOri, toZero, preview) {
     return new Promise((resolve) => {
       let players = []
       playersOri.forEach(val => players.push(Object.assign({}, val)));
@@ -136,7 +138,7 @@ export class FirebaseService {
               let numOfLinedUpPlayers = lineupSnapshot.size
               // penalty of -1 point for each non-lined-up position (out of numLinedupPlayers):
               const penalty = (this.numLinedupPlayers - numOfLinedUpPlayers) * -1
-              console.log(" - penalty: " + penalty + " linedup: " + numOfLinedUpPlayers)
+              //console.log(" - penalty: " + penalty + " linedup: " + numOfLinedUpPlayers)
               userPoints += penalty
 
               players.forEach(player => {
@@ -153,16 +155,10 @@ export class FirebaseService {
 
                     //console.dir(player)
                     //console.dir(linedUpPlayer)
-
                     //console.log(linedUpPlayer + " == " + player.player.split(' ').join(''))
-                
-                  console.dir(player)
-                    console.dir(linedUpPlayer)
-
-                    console.log(linedUpPlayer + " == " + player.player.split(' ').join(''))
                   
                     if (linedUpPlayer == player.player.split(' ').join('')) {
-                  userPoints += +player.pointsCurrentRound
+                      userPoints += +player.pointsCurrentRound
                     }
                   })
                 }
@@ -179,18 +175,29 @@ export class FirebaseService {
                 currentUserPoints = 0
                 userPoints = 0
               }
-
-              console.log("user " + name + ": cur Points: " + currentUserPoints + ", last round: " + userPoints + " (toZero: " + toZero + ")" )
               
-              updateDoc(this.getUserFoundedLeague(league, leagueName, uid), {
-                points: currentUserPoints + userPoints,
-                pointsLastRound: userPoints
-              }).then(() => {
+              // console.log("user " + name + ": cur Points: " + currentUserPoints + ", last round: " + userPoints + " (toZero: " + toZero + ")" )
+              const finalPoints = currentUserPoints + userPoints
+
+              if (preview) {
+                this.previewData.set(name, currentUserPoints + " + " + userPoints + " (penalty: " + penalty + ") = " + finalPoints)
+
                 if (curUser == numUsers) {
                   console.log("resolve with " + curUser + " == " + numUsers)
                   resolve(numUsers)
                 }
-              })
+              } else {
+                updateDoc(this.getUserFoundedLeague(league, leagueName, uid), {
+                  points: finalPoints,
+                  pointsLastRound: userPoints
+                }).then(() => {
+                  // TODO: this is not correct .. callback triggered for every user..
+                  if (curUser == numUsers) {
+                    console.log("resolve with " + curUser + " == " + numUsers)
+                    resolve(numUsers)
+                  }
+                })
+              }              
             })
           })
         })

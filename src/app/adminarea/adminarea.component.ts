@@ -5,6 +5,7 @@ import { Player } from '../shared/player'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { collectionData, doc, docData, updateDoc } from '@angular/fire/firestore'
 import { Config } from '../shared/config'
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-adminarea',
@@ -20,6 +21,8 @@ export class AdminareaComponent implements OnInit {
   teamPositionSortOrder = new Map<string, number>()
   freezed: boolean = false
   news: string
+
+  playersPreview: Player[] = []
   
   constructor(public firebaseService: FirebaseService, public authService: AuthService, public changeDetectorRefs: ChangeDetectorRef, private snackBar: MatSnackBar) { 
     this.teamPositionSortOrder.set("Tormann", 1)
@@ -137,6 +140,43 @@ export class AdminareaComponent implements OnInit {
     })
   }
 
+  preview() {
+    console.log("preview calculation ..")
+    if(!this.checkPlayers()) {
+      return
+    }
+
+    console.log("setPlayerPointsLastRound ..")
+    this.setPlayerPointsLastRound(true)
+
+    var playersRes = ""
+    //let mapped = this.playersPreview.map(player => player.toString())
+    this.playersPreview.forEach(player => {
+      const points = player.points - player.pointsLastRound;
+      const info = player.player + ": " + +player.pointsLastRound + " => " + +player.points + " (+ " + +points + ")" + "\n";
+      playersRes += info
+    })
+    
+    console.log(playersRes)
+    alert(playersRes)
+
+    console.log("changePlayerPoints ..")
+    this.firebaseService.previewData.clear()
+    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, false, true).then((res) => {
+      this.openSnackBar('Punkteberechnung Vorschau abgeschlossen!', '')
+
+      timer(1000).subscribe(x => { 
+        var userPreview = ""
+        this.firebaseService.previewData.forEach((value, key) => {
+          userPreview += key + ": " + value + "\n"
+        })
+  
+        console.log(userPreview)
+        alert(userPreview)
+       })
+    })
+  }
+
   save() {
     console.log("check players ..")
     if(!this.checkPlayers()) {
@@ -144,12 +184,12 @@ export class AdminareaComponent implements OnInit {
     }
 
     console.log("setPlayerPointsLastRound ..")
-    this.setPlayerPointsLastRound()
+    this.setPlayerPointsLastRound(false)
     console.log("changePlayerPoints ..")
-    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, false).then((res) => {
-        this.resetData()
-        this.openSnackBar('Punkteberechnung abgeschlossen!', '')
-      }) 
+    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, false, false).then((res) => {
+      this.resetData()
+      this.openSnackBar('Punkteberechnung abgeschlossen!', '')
+    })
   }
 
   checkPlayers() {
@@ -175,9 +215,14 @@ export class AdminareaComponent implements OnInit {
     return isValid
   }
 
-  setPlayerPointsLastRound() {
-    this.players.forEach(player => {
+  setPlayerPointsLastRound(preview) {
+    this.playersPreview = []
+    //this.players.forEach(val => this.playersPreview.push(Object.assign({}, val)));
+
+    this.players.forEach((player, index) => {
       if (player.pointsCurrentRound != undefined || player.newMarketValue != undefined) {
+          this.playersPreview.push(Object.assign({}, player))
+
           let playersCol = this.firebaseService.getPlayers(Config.curLeague, player.team)
           let playersDoc = doc(playersCol, player.playerId)
           let playerPoints = player.points ? player.points : 0
@@ -188,14 +233,20 @@ export class AdminareaComponent implements OnInit {
 
           console.log("player: " + player.player + ", newPoints: " + newPoints + ", newPointsLastRound: " + newPointsLastRound + ", newMarketValue: " + newMarketValue)
 
-          updateDoc(playersDoc, {
-            marketValue: newMarketValue,
-            points: newPoints,
-            pointsLastRound: newPointsLastRound
-          })
-          
-          player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
-          player.points = player.pointsCurrentRound ? +playerPoints + +player.pointsCurrentRound : +playerPoints
+          if (!preview) {
+            updateDoc(playersDoc, {
+              marketValue: newMarketValue,
+              points: newPoints,
+              pointsLastRound: newPointsLastRound
+            })
+            
+            player.marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
+            player.points = player.pointsCurrentRound ? +playerPoints + +player.pointsCurrentRound : +playerPoints
+          } else {
+            this.playersPreview[index].marketValue = player.newMarketValue ? +player.newMarketValue : +player.marketValue
+            this.playersPreview[index].points = player.pointsCurrentRound ? +playerPoints + +player.pointsCurrentRound : +playerPoints
+            this.playersPreview[index].pointsLastRound = playerPoints
+          }
         }
       })
       
@@ -205,7 +256,7 @@ export class AdminareaComponent implements OnInit {
 
   resetPlayerPoints() {
     console.log("changePlayerPoints ..")
-    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, true)
+    this.firebaseService.changePlayerPoints(Config.curLeague, this.players, true, false)
     console.log("changePlayerPoints done ..")
 
     this.players.forEach(player => {
