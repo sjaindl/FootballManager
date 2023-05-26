@@ -271,6 +271,8 @@ export class TeamComponent implements OnInit {
     }
 
     this.formation = formation
+    
+    this.initLineupArray() 
     this.firebaseService.clearLineup(Config.curLeague, this.authService.currentLeague.name, this.originalLineup)
 
     if (formation == '3-4-3') {
@@ -285,8 +287,17 @@ export class TeamComponent implements OnInit {
     } else if (formation == '4-5-1') {
       this.setGridColumns(2, 2, 3, 2, 0, 1)
       this.initLineupSubArrays(2, 2, 3, 2, 0, 1)
+    } else if (formation == '5-4-1') {
+      this.setGridColumns(3, 2, 2, 2, 0, 1)
+      this.initLineupSubArrays(3, 2, 2, 2, 0, 1)
+    } else if (formation == '4-2-4') {
+      this.setGridColumns(2, 2, 1, 1, 2, 2)
+      this.initLineupSubArrays(2, 2, 1, 1, 2, 2)
+    } else if (formation == '5-3-2') {
+      this.setGridColumns(3, 2, 1, 2, 1, 1)
+      this.initLineupSubArrays(3, 2, 1, 2, 1, 1)
     }
-
+    
     this.initLineupArray()
   }
 
