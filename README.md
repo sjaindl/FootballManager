@@ -1,4 +1,5 @@
 # FootballManager
+
 Football manager let you create and play with your favorite players of Austrian amateur football clubs against your friends.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.2.
