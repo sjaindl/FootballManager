@@ -9,7 +9,6 @@ import { Auth } from '@angular/fire/auth';
 import { AuthService } from '../services/auth.service';
 import { FirebaseService } from '../services/firebase.service';
 import { League } from '../shared/League';
-import { NewleagueDialogComponent } from '../newleague.dialog/newleague.dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
 import { Md5 } from 'ts-md5';
@@ -108,13 +107,6 @@ export class HomeComponent implements OnInit {
   selectLeague(league: League) {
     this.authService.currentLeague = league
     this.fetchLeagueDetail()
-  }
-
-  showNewLeagueDialog() {
-    this.dialog.open(NewleagueDialogComponent, {
-      width: '350px',
-      data: {  }
-    })
   }
 
   joinLeague() {
