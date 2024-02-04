@@ -1,0 +1,54 @@
+/* Social */
+
+.icon-bar {
+  position: fixed;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+@media all and (min-width: 0px) and (max-width: 400px) {
+  .icon-bar {
+    right: 4%;
+  }
+}
+
+@media all and (min-width: 400px) and (max-width: 6000px) {
+  .icon-bar {
+    right: 1%;
+  }
+}
+
+.icon-bar a {
+  display: block;
+  text-align: center;
+  padding: 16px;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 20px;
+}
+
+.icon-bar a:hover {
+  background-color: #000;
+}
+
+.facebook {
+  background: #3b5998;
+  color: white;
+}
+
+.twitter {
+  background: #55acee;
+  color: white;
+}
+
+.mail {
+  background: #dd4b39;
+  color: white;
+}
+
+.instagram {
+  background: #e4405f;
+  color: white;
+}
