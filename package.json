@@ -26,7 +26,9 @@
     "@angular/router": "^17.1.0",
     "@angular/ssr": "^17.1.2",
     "@ngrx/signals": "^17.1.0",
+    "cookieconsent": "^3.1.1",
     "express": "^4.18.2",
+    "ngx-cookieconsent": "^6.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
