@@ -20,4 +20,17 @@
   </a>
 </div>
 
-<div style="height: 100%; width: 100%" class="s11-padding">home works!</div>
+<firebase-ui
+  *ngIf="!isSignedIn()"
+  (signInSuccessWithAuthResult)="successCallback($event)"
+  (signInFailure)="errorCallback($event)"
+  (uiShown)="uiShownCallback()"></firebase-ui>
+
+<div class="s11-padding" *ngIf="isSignedIn()">
+  Hallo, {{ authService.userName }}!
+  <br />
+  You have the UID: {{ authService.uid }}
+  <br />
+
+  <button (click)="logout()">Logout</button>
+</div>
