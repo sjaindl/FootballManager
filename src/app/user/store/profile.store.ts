@@ -32,6 +32,12 @@ export const ProfileStore = signalStore(
       }
       return '';
     }),
+    imageUrl: computed(() => {
+      if (user) {
+        return user()?.iconUrl ?? undefined;
+      }
+      return undefined;
+    }),
   })),
 
   withMethods(store => ({
