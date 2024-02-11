@@ -1,0 +1,40 @@
+<div class="dialog mat-typography">
+  <h1 mat-dialog-title>Neue Liga</h1>
+  <mat-divider></mat-divider>
+  <div mat-dialog-content>
+    
+    <div class="app-home-into-actions">
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Liganame..." [formControl]="leagueFormControl">
+         <!-- [errorStateMatcher]="matcher"> -->
+        <mat-error *ngIf="leagueFormControl.hasError('required')">
+          Liganame ist
+          <strong>verpflichtend</strong>
+        </mat-error>
+        <mat-error *ngIf="leagueFormControl.hasError('pattern')">
+          Liganame muss alphanumerisch sein
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Enter password..." [type]="hide ? 'password' : 'text'" [formControl]="passwordFormControl">
+         <!-- [errorStateMatcher]="matcher"> -->
+        <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        <mat-error *ngIf="passwordFormControl.hasError('required')">
+          Passwort ist
+          <strong>verpflichtend</strong>
+        </mat-error>
+        <mat-error *ngIf="passwordFormControl.hasError('minlength')">
+          Passwort muss mindestens 6 Zeichen haben
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+
+    <button (click)="createLeague()" mat-stroked-button color="primary">
+      Liga gründen
+    </button>
+
+  </div>
+</div>

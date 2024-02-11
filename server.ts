@@ -1,59 +1,51 @@
-import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine } from '@angular/ssr';
-import express from 'express';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
-import bootstrap from './src/main.server';
+import 'zone.js/dist/zone-node';
+import { enableProdMode } from '@angular/core';
 
-// The Express app is exported so that it can be used by serverless Functions.
-export function app(): express.Express {
-  const server = express();
-  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-  const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
+// Express Engine
+import { ngExpressEngine } from '@nguniversal/express-engine';
+// Import module map for lazy loading
+import { provideModuleMap } from '@nguniversal/module-map-ngfactory-loader';
 
-  const commonEngine = new CommonEngine();
+import * as express from 'express';
+import { join } from 'path';
 
-  server.set('view engine', 'html');
-  server.set('views', browserDistFolder);
+// Faster server renders w/ Prod mode (dev mode never needed)
+enableProdMode();
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
-  // Serve static files from /browser
-  server.get(
-    '*.*',
-    express.static(browserDistFolder, {
-      maxAge: '1y',
-    })
-  );
+// Express server
+const app = express();
 
-  // All regular routes use the Angular engine
-  server.get('*', (req, res, next) => {
-    const { protocol, originalUrl, baseUrl, headers } = req;
+const PORT = process.env.PORT || 4000;
+const DIST_FOLDER = join(process.cwd(), 'dist');
 
-    commonEngine
-      .render({
-        bootstrap,
-        documentFilePath: indexHtml,
-        url: `${protocol}://${headers.host}${originalUrl}`,
-        publicPath: browserDistFolder,
-        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
-      })
-      .then(html => res.send(html))
-      .catch(err => next(err));
-  });
+// * NOTE :: leave this as require() since this file is built Dynamically from webpack
+const { AppServerModuleNgFactory, LAZY_MODULE_MAP } = require('./server/main');
 
-  return server;
-}
+// Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
+app.engine('html', ngExpressEngine({
+  bootstrap: AppServerModuleNgFactory,
+  providers: [
+    provideModuleMap(LAZY_MODULE_MAP)
+  ]
+}));
 
-function run(): void {
-  const port = process.env['PORT'] || 4000;
+app.set('view engine', 'html');
+app.set('views', join(DIST_FOLDER, 'browser'));
 
-  // Start up the Node server
-  const server = app();
-  server.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
-  });
-}
+// Example Express Rest API endpoints
+// app.get('/api/**', (req, res) => { });
 
-run();
+// Server static files from /browser
+app.get('*.*', express.static(join(DIST_FOLDER, 'browser'), {
+  maxAge: '1y'
+}));
+
+// All regular routes use the Universal engine
+app.get('*', (req, res) => {
+  res.render('index', { req });
+});
+
+// Start up the Node server
+app.listen(PORT, () => {
+  console.log(`Node Express server listening on http://localhost:${PORT}`);
+});

@@ -1,0 +1,363 @@
+<!-- <img src="assets/field.png" class="team" alt="Paris" style="width:50%; z-index: 5;"> -->
+
+
+<br>
+<br>
+<br>
+
+<mat-select class="player" placeholder="Formation wählen" (selectionChange)="setFormation($event.value)" [(value)]="formation">
+  <mat-option [value]="'3-4-3'">
+    3-4-3
+  </mat-option>
+  <mat-option [value]="'3-5-2'">
+    3-5-2
+  </mat-option>
+  <mat-option [value]="'4-2-4'">
+    4-2-4
+  </mat-option>
+  <mat-option [value]="'4-4-2'">
+    4-4-2
+  </mat-option>
+  <mat-option [value]="'4-5-1'">
+    4-5-1
+  </mat-option>
+  <mat-option [value]="'5-3-2'">
+    5-3-2
+  </mat-option>
+  <mat-option [value]="'5-4-1'">
+    5-4-1
+  </mat-option>
+</mat-select>
+
+<br>
+<br>
+<br>
+
+<div class="team">
+
+  <br>
+  <br>
+  <br>
+  <br>
+
+<mat-select class="player" placeholder="Tormann wählen" (selectionChange)="selectPlayer($event.value, 0, 'Tormann')" [(value)]="lineup['Tormann'][0]">
+  <div *ngFor="let player of playersOfTeam">
+    <mat-option *ngIf="player.position == 'Tormann'" value="{{ player.player.split(' ').join('') }}">
+      {{player.player}} ({{ player.pointsLastRound }})
+    </mat-option>
+  </div>
+</mat-select>
+
+<br>
+<br>
+<br>
+
+<div fxFlex>
+  <mat-grid-list cols="{{gridColumnsDefenseFirstLine}}" rowHeight="{{gridImageHeight}}">
+    <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsDefenseFirstLine); let i = index;">
+      <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'Verteidigung1')" [(value)]="lineup['Verteidigung1'][i]">
+        <div *ngFor="let player of playersOfTeam">
+          <mat-option *ngIf="player.position == 'Verteidigung'" value="{{ player.player.split(' ').join('') }}">
+              {{player.player}} ({{ player.pointsLastRound }})
+          </mat-option>
+        </div>
+      </mat-select>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<br>
+<br>
+<br>
+
+<div fxFlex>
+  <mat-grid-list cols="{{gridColumnsDefenseSecondLine}}" rowHeight="{{gridImageHeight}}">
+      <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsDefenseSecondLine); let i = index;">
+      <mat-select class="player" placeholder="Verteidiger wählen" (selectionChange)="selectPlayer($event.value, i , 'Verteidigung2')" [(value)]="lineup['Verteidigung2'][i]">
+        <div *ngFor="let player of playersOfTeam">
+          <mat-option *ngIf="player.position == 'Verteidigung'" value="{{ player.player.split(' ').join('') }}">
+              {{player.player}} ({{ player.pointsLastRound }})
+          </mat-option>
+        </div>
+      </mat-select>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<br>
+<br>
+<br>
+
+<div fxFlex>
+  <mat-grid-list cols="{{gridColumnsMidfieldFirstLine}}" rowHeight="{{gridImageHeight}}">
+      <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsMidfieldFirstLine); let i = index;">
+      <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'Mittelfeld1')" [(value)]="lineup['Mittelfeld1'][i]">
+        <div *ngFor="let player of playersOfTeam">
+          <mat-option *ngIf="player.position == 'Mittelfeld'" value="{{ player.player.split(' ').join('') }}">
+              {{player.player}} ({{ player.pointsLastRound }})
+          </mat-option>
+        </div>
+      </mat-select>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<br>
+<br>
+<br>
+<div fxFlex>
+  <mat-grid-list cols="{{gridColumnsMidfieldSecondLine}}" rowHeight="{{gridImageHeight}}">
+      <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsMidfieldSecondLine); let i = index;">
+      <mat-select class="player" placeholder="Mittelfeldspieler wählen" (selectionChange)="selectPlayer($event.value, i , 'Mittelfeld2')" [(value)]="lineup['Mittelfeld2'][i]">
+        <div *ngFor="let player of playersOfTeam">
+          <mat-option *ngIf="player.position == 'Mittelfeld'" value="{{ player.player.split(' ').join('') }}">
+              {{player.player}} ({{ player.pointsLastRound }})
+          </mat-option>
+        </div>
+      </mat-select>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<br>
+<br>
+<br>
+<div fxFlex>
+  <mat-grid-list cols="{{gridColumnsAttackFirstLine}}" rowHeight="{{gridImageHeight}}">
+      <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsAttackFirstLine); let i = index;">
+      <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'Angriff1')" [(value)]="lineup['Angriff1'][i]">
+        <div *ngFor="let player of playersOfTeam">
+          <mat-option *ngIf="player.position == 'Angriff'" value="{{ player.player.split(' ').join('') }}">
+              {{player.player}} ({{ player.pointsLastRound }})
+          </mat-option>
+        </div>
+      </mat-select>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<br>
+<br>
+<br>
+<div fxFlex>
+  <mat-grid-list cols="{{gridColumnsAttackSecondLine}}" rowHeight="{{gridImageHeight}}">
+      <mat-grid-tile appHighlight *ngFor="let item of array(gridColumnsAttackSecondLine); let i = index;">
+      <mat-select class="player" placeholder="Stürmer wählen" (selectionChange)="selectPlayer($event.value, i , 'Angriff2')" [(value)]="lineup['Angriff2'][i]">
+        <div *ngFor="let player of playersOfTeam">
+          <mat-option *ngIf="player.position == 'Angriff'" value="{{ player.player.split(' ').join('') }}">
+              {{player.player}} ({{ player.pointsLastRound }})
+          </mat-option>
+        </div>
+      </mat-select>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<br>
+<br>
+<br>
+
+<button style="margin-left: 15px; font-size: 20px;" mat-button class="background-primary" (click)="save()">Speichern</button>
+
+<br>
+<br>
+<br>
+
+<table mat-table [dataSource]="dataSourceGoalkeepers" class="mat-elevation-z8">
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- Position Column -->
+  <!-- 
+  <ng-container matColumnDef="position">
+    <th mat-header-cell *matHeaderCellDef> Position </th>
+    <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+  </ng-container>
+    -->
+
+  <!-- Team Column -->
+  <!-- <ng-container matColumnDef="team">
+    <th mat-header-cell *matHeaderCellDef> Team </th>
+    <td mat-cell *matCellDef="let element"> {{element.team}} </td>
+  </ng-container> -->
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player name Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.'}} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} ({{ element.pointsLastRound }}) </td>
+  </ng-container>
+
+  <!-- Header row goalkeeper -->
+  <ng-container matColumnDef="header-row-goalkeeper-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="4"> 
+      <h1>Tormänner</h1>
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-goalkeeper-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+
+<table mat-table [dataSource]="dataSourceDefenders" class="mat-elevation-z8">
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player name Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.'}} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} ({{ element.pointsLastRound }}) </td>
+  </ng-container>
+
+  <!-- Header row defenders -->
+  <ng-container matColumnDef="header-row-defenders-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="4"> 
+      <h1>Verteidiger</h1>
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-defenders-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+
+<table mat-table [dataSource]="dataSourceMidfielders" class="mat-elevation-z8">
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player name Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.'}} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} ({{ element.pointsLastRound }}) </td>
+  </ng-container>
+
+  <!-- Header row midfielders -->
+  <ng-container matColumnDef="header-row-midfielders-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="4"> 
+        <h1>Mittelfeld</h1>
+
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-midfielders-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+
+<table mat-table [dataSource]="dataSourceAttackers" class="mat-elevation-z8">
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player name Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.'}} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} ({{ element.pointsLastRound }}) </td>
+  </ng-container>
+
+  <!-- Header row attackers -->
+  <ng-container matColumnDef="header-row-attackers-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="4"> 
+        <h1>Stürmer</h1>
+
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-attackers-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<br>
+<br>

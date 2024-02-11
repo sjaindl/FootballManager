@@ -1,0 +1,244 @@
+<br>
+<p class="center"> 
+  Kontostand: {{ balance | number: '2.'}}
+</p>
+<br>
+
+<table mat-table [dataSource]="dataSourceGoalkeepers" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+  <!-- Position Column -->
+  <!-- 
+  <ng-container matColumnDef="position">
+    <th mat-header-cell *matHeaderCellDef> Position </th>
+    <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+  </ng-container>
+  -->
+
+  <!-- Team Column -->
+  <!-- <ng-container matColumnDef="team">
+    <th mat-header-cell *matHeaderCellDef> Team </th>
+    <td mat-cell *matCellDef="let element"> {{element.team}} </td>
+  </ng-container> -->
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.' }} </td>
+  </ng-container>
+
+   <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+  </ng-container>
+
+    <!-- Symbol Column -->
+  <ng-container matColumnDef="buy">
+    <th mat-header-cell *matHeaderCellDef> Transfer </th>
+    <td mat-cell *matCellDef="let element"> 
+      <button style="margin-left: 15px; font-size: 20px;" mat-button class="background-primary" (click)="buy(element)">
+          {{desc(element)}}
+      </button> 
+    </td>
+  </ng-container>
+
+  <!-- Header row goalkeeper -->
+  <ng-container matColumnDef="header-row-goalkeeper-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="5"> 
+      <h1>Tormänner</h1>
+    </th>
+  </ng-container>
+  
+  <tr mat-header-row *matHeaderRowDef="['header-row-goalkeeper-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+
+<table mat-table [dataSource]="dataSourceDefenders" class="mat-elevation-z8">
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.' }} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+  </ng-container>
+
+    <!-- Symbol Column -->
+  <ng-container matColumnDef="buy">
+    <th mat-header-cell *matHeaderCellDef> Transfer </th>
+    <td mat-cell *matCellDef="let element"> 
+      <button style="margin-left: 15px; font-size: 20px;" mat-button class="background-primary" (click)="buy(element)">
+          {{desc(element)}}
+      </button> 
+    </td>
+  </ng-container>
+
+  <!-- Header row defenders -->
+  <ng-container matColumnDef="header-row-defenders-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="5"> 
+      <h1>Verteidiger</h1>
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-defenders-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+
+<table mat-table [dataSource]="dataSourceMidfielders" class="mat-elevation-z8">
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.' }} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+  </ng-container>
+
+    <!-- Symbol Column -->
+  <ng-container matColumnDef="buy">
+    <th mat-header-cell *matHeaderCellDef> Transfer </th>
+    <td mat-cell *matCellDef="let element"> 
+      <button style="margin-left: 15px; font-size: 20px;" mat-button class="background-primary" (click)="buy(element)">
+          {{desc(element)}}
+      </button> 
+    </td>
+  </ng-container>
+
+  <!-- Header row midfielders -->
+  <ng-container matColumnDef="header-row-midfielders-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="5"> 
+      <h1>Mittelfeld</h1>
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-midfielders-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+
+<table mat-table [dataSource]="dataSourceAttackers" class="mat-elevation-z8">
+
+  <!-- Player image Column -->
+  <ng-container matColumnDef="playerImage">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> 
+      <img *ngIf="element && element.imageRef && isMobile" [src]="element.loadedImageRef | async" width="100"/> 
+      <img *ngIf="element && element.imageRef && !isMobile" [src]="element.loadedImageRef | async" width="200"/> 
+    </td>
+  </ng-container>
+
+  <!-- Player Column -->
+  <ng-container matColumnDef="player">
+    <th mat-header-cell *matHeaderCellDef> Spieler </th>
+    <td mat-cell *matCellDef="let element"> {{element.player}} </td>
+  </ng-container>
+
+  <!-- Market Value Column -->
+  <ng-container matColumnDef="marketValue">
+    <th mat-header-cell *matHeaderCellDef> Marktwert </th>
+    <td mat-cell *matCellDef="let element"> {{element.marketValue | number: '2.' }} </td>
+  </ng-container>
+
+  <!-- Points Column -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef> Punkte </th>
+    <td mat-cell *matCellDef="let element"> {{element.points}} </td>
+  </ng-container>
+
+    <!-- Symbol Column -->
+  <ng-container matColumnDef="buy">
+    <th mat-header-cell *matHeaderCellDef> Transfer </th>
+    <td mat-cell *matCellDef="let element"> 
+      <button style="margin-left: 15px; font-size: 20px;" mat-button class="background-primary" (click)="buy(element)">
+          {{desc(element)}}
+      </button> 
+    </td>
+  </ng-container>
+
+  <!-- Header row attackers -->
+  <ng-container matColumnDef="header-row-attackers-group">
+    <th mat-header-cell *matHeaderCellDef 
+        [style.text-align]="center"
+        [attr.colspan]="5"> 
+      <h1>Stürmer</h1>
+    </th>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['header-row-attackers-group']"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<br>
+<br>
+<br>

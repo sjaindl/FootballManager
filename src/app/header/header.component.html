@@ -1,0 +1,34 @@
+<div>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <!-- Mobile nav -->
+      <button mat-menu-item [matMenuTriggerFor]="mobile" fxShow="true" fxHide.gt-sm><mat-icon>menu</mat-icon></button>
+      <mat-menu #mobile="matMenu">
+        <button mat-menu-item routerLink="/home" routerLinkActive="active"><span class="fa fa-users fa-sm"></span> Home</button>
+        <button mat-menu-item routerLink="/team" routerLinkActive="active"><span class="fa fa-portrait fa-sm"></span> Starting Eleven</button>
+        <button mat-menu-item routerLink="/market" routerLinkActive="active"><span class="fa fa-shopping-cart fa-sm"></span> Kaufen/Verkaufen</button>
+        <button mat-menu-item routerLink="/standings" routerLinkActive="active"><span class="fa fa-award fa-sm"></span> Tabelle</button>
+        <button mat-menu-item routerLink="/prizes" routerLinkActive="active"><span class="fa fa-trophy fa-sm"></span> Preise</button>
+        <!--<i class="fa-light fa-trophy"></i>
+        <button mat-menu-item routerLink="/aboutus" routerLinkActive="active"><span class="fa fa-info fa-sm"></span> Über uns</button>
+        <button mat-menu-item routerLink="/contact" routerLinkActive="active"><span class="fa fa-users fa-sm"></span> Kontakt</button>
+        -->
+        <button mat-menu-item routerLink="/faq" routerLinkActive="active"><span class="fa fa-list-ol fa-sm"></span> FAQ</button>
+        <button mat-menu-item routerLink="/privacy" routerLinkActive="active"><span class="fa fa-list-ol fa-sm"></span> Datenschutzrichtlinie</button>
+        <button mat-menu-item routerLink="/profile" routerLinkActive="active"><span class="fas fa-user fa-sm"></span> Profil</button>
+        <button mat-menu-item routerLink="/admin" routerLinkActive="active"><span class="fas fa-lock fa-sm"></span> Admin</button>
+        <button mat-menu-item routerLink="/home/logout" routerLinkActive="active"><span class="fas fa-sign-out-alt fa-sm"></span> Logout</button>
+      </mat-menu>
+      <div class="center" *ngIf="authService.currentLeague">
+        {{ authService.currentLeague.name }}
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
+
+<div *ngIf="isMobile">
+    <img src="/assets/StartingEleven.jpg" width="100%">
+</div>
+<div *ngIf="!isMobile">
+  <img src="/assets/StartingEleven.jpg" height="250px">
+</div>
