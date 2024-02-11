@@ -1,0 +1,11 @@
+<div class="faq-header" *ngFor="let faq of faqs">
+  <mat-expansion-panel [expanded]="faq.index == 0">
+    <mat-expansion-panel-header>
+      <h2>{{ faq.question }}</h2>
+    </mat-expansion-panel-header>
+
+    {{ faq.answer }}
+  </mat-expansion-panel>
+</div>
+
+<br />

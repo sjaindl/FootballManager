@@ -2,7 +2,7 @@ import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { FirebaseOptions } from '@angular/fire/app';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
     // Firebase:
     importProvidersFrom(AngularFireModule.initializeApp(firebaseOptions)),
     AngularFireAuthModule,
+    AngularFirestoreModule,
     importProvidersFrom(FirebaseUIModule.forRoot(firebaseUiAuthConfig)),
-    importProvidersFrom(provideFirestore(() => getFirestore())),
   ],
 };
