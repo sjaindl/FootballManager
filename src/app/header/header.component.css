@@ -1,0 +1,31 @@
+.absolute-sidenav {
+  position: absolute;
+  top: 1;
+  left: 0;
+  width: 165px;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0,0,0,0.0);
+}
+  
+/* Links */
+  
+/* unvisited link */
+a:link {
+  color: black;
+}
+
+/* visited link */
+a:visited {
+  color: blue;
+}
+
+/* mouse over link */
+a:hover {
+  color: hotpink;
+}
+
+/* selected link */
+a:active {
+  color: red;
+}

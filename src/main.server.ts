@@ -1,7 +1,10 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
-import { config } from './app/app.config.server';
+import { enableProdMode } from '@angular/core';
 
-const bootstrap = () => bootstrapApplication(AppComponent, config);
+import { environment } from './environments/environment';
 
-export default bootstrap;
+if (environment.production) {
+  enableProdMode();
+}
+
+export { AppServerModule } from './app/app.server.module';
+export { renderModule, renderModuleFactory } from '@angular/platform-server';
