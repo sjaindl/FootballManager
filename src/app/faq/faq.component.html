@@ -1,4 +1,4 @@
-<div class="faq-header" *ngFor="let faq of faqs">
+<div class="faq-header" *ngFor="let faq of faqs$ | async">
   <mat-expansion-panel [expanded]="faq.index == 0">
     <mat-expansion-panel-header>
       <h2>{{ faq.question }}</h2>

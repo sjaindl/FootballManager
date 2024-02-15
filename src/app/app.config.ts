@@ -1,57 +1,33 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { FirebaseOptions } from '@angular/fire/app';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
-import { FirebaseUIModule, firebase, firebaseui } from 'firebaseui-angular';
-import { FirebaseConfig } from '../app/shared/firebase.config';
+import { FirebaseUIModule } from 'firebaseui-angular';
 import { routes } from './app.routes';
+import { environment } from './environment';
+import { firebaseUiAuthConfig } from './shared/firebaseauth.config';
 
-const firebaseUiAuthConfig: firebaseui.auth.Config = {
-  signInFlow: 'popup',
-  signInOptions: [
-    {
-      scopes: ['profile', 'email'],
-      customParameters: {
-        auth_type: 'reauthenticate',
-      },
-      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    },
-    {
-      scopes: ['public_profile', 'email'],
-      customParameters: {
-        auth_type: 'reauthenticate',
-      },
-      provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-    },
-    firebase.auth.EmailAuthProvider.PROVIDER_ID,
-  ],
-  tosUrl: 'TODO: <your-tos-link>',
-  privacyPolicyUrl: 'TODO: <your-privacyPolicyUrl-link>',
-  credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
-};
-
-const firebaseOptions: FirebaseOptions = {
-  apiKey: FirebaseConfig.apiKey,
-  authDomain: FirebaseConfig.authDomain,
-  databaseURL: FirebaseConfig.databaseURL,
-  projectId: FirebaseConfig.projectId,
-  storageBucket: FirebaseConfig.storageBucket,
-  messagingSenderId: FirebaseConfig.messagingSenderId,
-};
+const db = environment.production ? 's11-prod' : 's11-test';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(),
     provideAnimationsAsync(),
-    // Firebase:
-    importProvidersFrom(AngularFireModule.initializeApp(firebaseOptions)),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
-    importProvidersFrom(FirebaseUIModule.forRoot(firebaseUiAuthConfig)),
+    { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
+    importProvidersFrom([
+      provideFirebaseApp(() => {
+        return initializeApp(environment.firebaseConfig);
+      }),
+      provideAuth(() => getAuth()),
+      provideFirestore(() => getFirestore(db)),
+      provideStorage(() => getStorage()),
+      FirebaseUIModule.forRoot(firebaseUiAuthConfig),
+    ]),
   ],
 };

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth } from '@angular/fire/auth';
 import { User } from '../shared/user';
 
 @Injectable({
@@ -15,16 +15,16 @@ export class AuthService {
   }
 
   signOut() {
-    this.angularFireAuth.signOut();
+    this.fireAuth.signOut();
   }
 
-  constructor(public angularFireAuth: AngularFireAuth) {
-    this.isUserSignedIn = angularFireAuth.currentUser != null;
+  constructor(public fireAuth: Auth) {
+    this.isUserSignedIn = fireAuth.currentUser != null;
 
-    console.log(angularFireAuth.currentUser);
-    console.log(this.isUserSignedIn);
+    console.log('Current user: ' + fireAuth.currentUser);
+    console.log('is signed in: ' + this.isUserSignedIn);
 
-    angularFireAuth.onAuthStateChanged(user => {
+    fireAuth.onAuthStateChanged(user => {
       if (user) {
         this.user = {
           uid: user.uid,
