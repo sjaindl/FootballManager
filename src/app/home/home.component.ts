@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FirebaseUIModule } from 'firebaseui-angular';
+import {
+  FirebaseUIModule,
+  FirebaseUISignInFailure,
+  FirebaseUISignInSuccessWithAuthResult,
+} from 'firebaseui-angular';
 import { AuthService } from '../service/auth.service';
 
 @Component({
@@ -12,9 +16,8 @@ import { AuthService } from '../service/auth.service';
 })
 export class HomeComponent {
   constructor(
-    public authService: AuthService
-  ) // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
-  {
+    public authService: AuthService // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
+  ) {
     //firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
   }
 
@@ -22,11 +25,11 @@ export class HomeComponent {
     return this.authService.isSignedIn();
   }
 
-  successCallback(event: any) {
+  successCallback(event: FirebaseUISignInSuccessWithAuthResult) {
     console.log(event);
   }
 
-  errorCallback(error: any) {
+  errorCallback(error: FirebaseUISignInFailure) {
     console.log(error);
   }
 
