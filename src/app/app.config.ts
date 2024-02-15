@@ -12,6 +12,8 @@ import { routes } from './app.routes';
 import { environment } from './environment';
 import { firebaseUiAuthConfig } from './shared/firebaseauth.config';
 
+const db = environment.production ? 's11-prod' : 's11-test';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -23,7 +25,7 @@ export const appConfig: ApplicationConfig = {
         return initializeApp(environment.firebaseConfig);
       }),
       provideAuth(() => getAuth()),
-      provideFirestore(() => getFirestore('s11-test')),
+      provideFirestore(() => getFirestore(db)),
       provideStorage(() => getStorage()),
       FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     ]),
