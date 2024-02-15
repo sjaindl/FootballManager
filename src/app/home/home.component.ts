@@ -12,9 +12,10 @@ import { AuthService } from '../service/auth.service';
 })
 export class HomeComponent {
   constructor(
-    public authService: AuthService // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService // public authService: AuthService,
-  ) {
-    // firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
+    public authService: AuthService
+  ) // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
+  {
+    //firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
   }
 
   isSignedIn(): boolean {

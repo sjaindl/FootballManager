@@ -15,16 +15,16 @@ export class AuthService {
   }
 
   signOut() {
-    this.foo.signOut();
+    this.fireAuth.signOut();
   }
 
-  constructor(public foo: Auth) {
-    this.isUserSignedIn = foo.currentUser != null;
+  constructor(public fireAuth: Auth) {
+    this.isUserSignedIn = fireAuth.currentUser != null;
 
-    console.log(foo.currentUser);
-    console.log(this.isUserSignedIn);
+    console.log('Current user: ' + fireAuth.currentUser);
+    console.log('is signed in: ' + this.isUserSignedIn);
 
-    foo.onAuthStateChanged(user => {
+    fireAuth.onAuthStateChanged(user => {
       if (user) {
         this.user = {
           uid: user.uid,

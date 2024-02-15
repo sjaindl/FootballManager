@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -15,43 +15,23 @@ import { Faq } from '../shared/faq';
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.scss',
 })
-export class FaqComponent implements OnInit {
-  faqs: Faq[] = [];
+export class FaqComponent {
   faqs$: Observable<Faq[]>;
 
   constructor(private firebaseService: FirebaseService) {
-    this.faqs$ = this.firebaseService.getFaq().pipe(
+    var index = 0;
+
+    this.faqs$ = this.firebaseService.getFaqs().pipe(
       map(doc => {
         return doc.map(faq => {
-          const question = faq['question'] ?? '';
           return {
-            index: 1,
+            index: index++,
             question: faq['question'] ?? '',
             answer: faq['answer'] ?? '',
           };
         });
       }),
-      tap(console.warn)
+      tap(console.info)
     );
-  }
-
-  ngOnInit() {
-    var index = 0;
-
-    this.firebaseService.getFaq().pipe(map(() => {}));
-    // .get()
-    // .forEach(() => {
-    //   // faqArray.forEach(doc => {
-    //   //   var question = doc.get('question');
-    //   //   var answer = doc.get('answer');
-    //   //   var faq: Faq = {
-    //   //     index: index,
-    //   //     question: question,
-    //   //     answer: answer,
-    //   //   };
-    //   //   index++;
-    //   //   this.faqs.push(faq);
-    //   // });
-    // });
   }
 }
