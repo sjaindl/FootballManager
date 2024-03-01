@@ -6,7 +6,12 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter } from '@angular/router';
+import {
+  PreloadAllModules,
+  provideRouter,
+  withDebugTracing,
+  withPreloading,
+} from '@angular/router';
 import { FirebaseUIModule } from 'firebaseui-angular';
 import { routes } from './app.routes';
 import { environment } from './environment';
@@ -16,7 +21,11 @@ const db = environment.production ? 's11-prod' : 's11-test';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules),
+      withDebugTracing()
+    ),
     provideClientHydration(),
     provideAnimationsAsync(),
     { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
