@@ -1,0 +1,21 @@
+<div class="player-row">
+  @if (player$().iconUrl) {
+  <img alt="user-icon" [src]="player$().iconUrl" />
+  }@else {
+  <img alt="user-icon" src="./../../../favicon.ico" />
+  }
+
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <mat-select
+      [value]="player$().playerId"
+      (valueChange)="onValueChange($event)">
+      @for (selectablePlayer of playerList$(); track selectablePlayer.playerId)
+      {
+      <mat-option [value]="selectablePlayer.playerId">{{
+        selectablePlayer.name
+      }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>

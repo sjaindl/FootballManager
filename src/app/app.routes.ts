@@ -9,5 +9,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./faq/faq.component').then(mod => mod.FaqComponent),
   },
+  {
+    path: 'lineup',
+    loadComponent: () =>
+      import('./lineup/lineup.component').then(mod => mod.LineupComponent),
+  },
   { path: '**', component: HomeComponent },
 ];
