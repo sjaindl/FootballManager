@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { FirebaseService } from '../service/firebase.service';
+import { Formation } from '../shared/formation';
 import { FormationComponent } from './formation/formation.component';
 import { LineupRowComponent } from './lineup-row/lineup-row.component';
 
 @Component({
   selector: 's11-lineup',
   standalone: true,
-  imports: [FormationComponent, LineupRowComponent],
+  imports: [FormationComponent, LineupRowComponent, CommonModule],
   templateUrl: './lineup.component.html',
   styleUrl: './lineup.component.scss',
 })
@@ -24,6 +28,12 @@ export class LineupComponent {
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfb_ZY_Ct9P_hjsfv0jw07jKjmhw84CFRskppPps47iLqIKBKPI78OB0k&usqp=CAU',
     },
   ];
+
+  formations$: Observable<Formation[]>;
+
+  constructor(private firebaseService: FirebaseService) {
+    this.formations$ = this.firebaseService.getFormations();
+  }
 }
 
 // TODO:

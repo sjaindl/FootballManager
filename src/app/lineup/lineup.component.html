@@ -1,5 +1,5 @@
-<div class="s11-full-size lineup-grid">
-  <s11-formation></s11-formation>
+<div class="lineup-grid s11-padding">
+  <s11-formation [formations]="formations$ | async"></s11-formation>
 
   <s11-lineup-row rowTitle="Tormann" [maxNumOfPlayers]="1"></s11-lineup-row>
   <s11-lineup-row
