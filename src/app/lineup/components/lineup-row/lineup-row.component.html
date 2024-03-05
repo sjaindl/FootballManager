@@ -13,8 +13,20 @@
       @for (selectablePlayer of players$(); track selectablePlayer) {
       <s11-player
         [player]="selectablePlayer"
-        [playerList]="playerList$()"></s11-player>
+        [playerList]="playerList$()"
+        (selectedPlayerChange)="onPlayerChange($event)"></s11-player>
       }
     </div>
   </mat-expansion-panel>
 </mat-accordion>
+<span>Spieler:</span>@for (player of players$(); track player) {
+<div>
+  name:
+  {{ player.name }}
+</div>
+<div>
+  url:
+  {{ player.iconUrl }}
+</div>
+<br />
+}

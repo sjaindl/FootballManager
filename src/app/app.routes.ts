@@ -12,7 +12,9 @@ export const routes: Routes = [
   {
     path: 'lineup',
     loadComponent: () =>
-      import('./lineup/lineup.component').then(mod => mod.LineupComponent),
+      import('./lineup/container/lineup/lineup.component').then(
+        mod => mod.LineupComponent
+      ),
   },
   { path: '**', component: HomeComponent },
 ];

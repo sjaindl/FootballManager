@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
-import { Formation } from '../../shared/formation';
+import { Formation } from '../../../shared/formation';
 
 @Component({
   selector: 's11-formation',

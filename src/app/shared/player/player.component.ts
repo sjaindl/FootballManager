@@ -11,7 +11,7 @@ import {
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { Player } from '../common.model';
+import { ChangePlayerRequest, Player } from '../common.model';
 
 @Component({
   selector: 's11-player',
@@ -29,7 +29,7 @@ export class PlayerComponent implements OnChanges {
   // TODO: Change to signal inputs when ready
   @Input() player: Partial<Player> = {};
   @Input() playerList: Player[] = [];
-  @Output() selectedPlayerChange = new EventEmitter<Player>();
+  @Output() selectedPlayerChange = new EventEmitter<ChangePlayerRequest>();
 
   player$: WritableSignal<Partial<Player>> = signal({});
   playerList$: WritableSignal<Player[]> = signal([]);
@@ -46,9 +46,13 @@ export class PlayerComponent implements OnChanges {
   }
 
   onValueChange(playerId: string) {
-    const selectedPlayer = this.playerList.find(p => p.playerId === playerId);
-    if (selectedPlayer) {
-      this.selectedPlayerChange.emit(selectedPlayer);
-    }
+    // const selectedPlayer = this.playerList.find(p => p.playerId === playerId);
+    // if (selectedPlayer) {
+    //   this.selectedPlayerChange.emit({selectedPlayer);
+    // }
+    this.selectedPlayerChange.emit({
+      newPlayerId: playerId,
+      oldPlayerId: this.player.playerId ?? '',
+    });
   }
 }

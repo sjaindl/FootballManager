@@ -1,22 +1,10 @@
 import { QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 
-export class Formation {
+export interface Formation {
   formation: string;
   defense: number;
   midfield: number;
   attack: number;
-
-  constructor(
-    formation: string,
-    defense: number,
-    midfield: number,
-    attack: number
-  ) {
-    this.formation = formation;
-    this.defense = defense;
-    this.midfield = midfield;
-    this.attack = attack;
-  }
 }
 
 export const formationConverter = {
@@ -34,11 +22,11 @@ export const formationConverter = {
   ) => {
     const data = snapshot.data(options);
 
-    return new Formation(
-      data['formation'],
-      data['defense'],
-      data['midfield'],
-      data['attack']
-    );
+    return {
+      formation: data['formation'],
+      defense: data['defense'],
+      midfield: data['midfield'],
+      attack: data['attack'],
+    };
   },
 };
