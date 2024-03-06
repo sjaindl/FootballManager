@@ -77,14 +77,11 @@ export const LineupStore = signalStore(
             break;
           case 'Defender':
             state.defenders = state.defenders.map(player => {
-              console.warn(
-                'changePlayer',
-                player.playerId,
-                oldPlayerId,
-                newPlayerId
-              );
               if (player.playerId === oldPlayerId) {
                 return newPlayer;
+              }
+              if (player.playerId === newPlayerId) {
+                return getUndefinedPlayer();
               }
               return player;
             });
@@ -95,6 +92,9 @@ export const LineupStore = signalStore(
               if (player.playerId === oldPlayerId) {
                 return newPlayer;
               }
+              if (player.playerId === newPlayerId) {
+                return getUndefinedPlayer();
+              }
               return player;
             });
             break;
@@ -102,6 +102,9 @@ export const LineupStore = signalStore(
             state.attacker = state.attacker.map(player => {
               if (player.playerId === oldPlayerId) {
                 return newPlayer;
+              }
+              if (player.playerId === newPlayerId) {
+                return getUndefinedPlayer();
               }
               return player;
             });
