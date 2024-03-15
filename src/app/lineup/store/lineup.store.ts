@@ -52,7 +52,7 @@ export const LineupStore = signalStore(
   //   }),
   //   imageUrl: computed(() => {
   //     if (user) {
-  //       return user()?.iconUrl ?? undefined;
+  //       return user()?.imageRef ?? undefined;
   //     }
   //     return undefined;
   //   }),

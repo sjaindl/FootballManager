@@ -1,13 +1,16 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
   WritableSignal,
   signal,
 } from '@angular/core';
+import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,6 +20,7 @@ import { ChangePlayerRequest, Player } from '../common.model';
   selector: 's11-player',
   standalone: true,
   imports: [
+    CommonModule,
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
@@ -25,7 +29,7 @@ import { ChangePlayerRequest, Player } from '../common.model';
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
 })
-export class PlayerComponent implements OnChanges {
+export class PlayerComponent implements OnChanges, OnInit {
   // TODO: Change to signal inputs when ready
   @Input() player: Partial<Player> = {};
   @Input() playerList: Player[] = [];
@@ -33,6 +37,22 @@ export class PlayerComponent implements OnChanges {
 
   player$: WritableSignal<Partial<Player>> = signal({});
   playerList$: WritableSignal<Player[]> = signal([]);
+
+  imageUrl: Promise<String> | undefined;
+
+  constructor(private storage: Storage) {}
+
+  ngOnInit(): void {
+    const playerRef = this.player.imageRef;
+
+    if (playerRef) {
+      const storageRef = ref(this.storage, playerRef);
+      this.imageUrl = getDownloadURL(storageRef);
+    } else {
+      const storageRef = ref(this.storage, 'players/no_photo.jpg');
+      this.imageUrl = getDownloadURL(storageRef);
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['player']) {

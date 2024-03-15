@@ -10,7 +10,7 @@ export type FirebaseResponse = DocumentData | (DocumentData & {});
 export interface Player {
   playerId: string;
   name: string;
-  iconUrl?: string;
+  imageRef?: string;
 }
 
 export interface ChangePlayerRequest {
@@ -27,7 +27,7 @@ export const playerConverter = {
     return {
       playerId: player.playerId,
       name: player.name,
-      iconUrl: player.iconUrl,
+      imageRef: player.imageRef,
     };
   },
   fromFirestore: (
@@ -38,7 +38,7 @@ export const playerConverter = {
     return {
       playerId: data['playerId'],
       name: data['name'],
-      iconUrl: data['iconUrl'],
+      imageRef: data['imageRef'],
     };
   },
 };

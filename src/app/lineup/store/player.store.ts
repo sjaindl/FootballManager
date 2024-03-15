@@ -14,6 +14,7 @@ import { Player } from '../../shared/common.model';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { Storage, StorageReference, ref } from '@angular/fire/storage';
 import { CoreStore } from '../../core/store/core.store';
 
 interface PlayerState {
@@ -28,11 +29,20 @@ export const PlayerStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
 
-  withComputed(({ players }) => ({
+  withComputed(({ players }, storage = inject(Storage)) => ({
     playerMap: computed(() => {
       const playerMap: Record<string, Player> = {};
       players().forEach(player => (playerMap[player.playerId] = player));
       return playerMap;
+    }),
+
+    playerImageRefs: computed(() => {
+      const playerImageMap: Record<string, StorageReference> = {};
+      players().forEach(
+        player =>
+          (playerImageMap[player.playerId] = ref(storage, player.imageRef))
+      );
+      return playerImageMap;
     }),
   })),
 

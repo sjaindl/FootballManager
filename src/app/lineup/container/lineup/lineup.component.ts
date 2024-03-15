@@ -21,21 +21,6 @@ import { PlayerStore } from '../../store/player.store';
   styleUrl: './lineup.component.scss',
 })
 export class LineupComponent {
-  selectedPlayers = [
-    {
-      playerId: '2',
-      name: 'Georg',
-      iconUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfb_ZY_Ct9P_hjsfv0jw07jKjmhw84CFRskppPps47iLqIKBKPI78OB0k&usqp=CAU',
-    },
-    {
-      playerId: '3',
-      name: 'Stefan',
-      iconUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfb_ZY_Ct9P_hjsfv0jw07jKjmhw84CFRskppPps47iLqIKBKPI78OB0k&usqp=CAU',
-    },
-  ];
-
   readonly formationStore = inject(FormationStore);
   readonly coreStore = inject(CoreStore);
   readonly playerStore = inject(PlayerStore);

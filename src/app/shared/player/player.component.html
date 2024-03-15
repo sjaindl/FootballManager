@@ -1,8 +1,9 @@
 <div class="player-row">
-  @if (player$().iconUrl) {
-  <img alt="user-icon" [src]="player$().iconUrl" />
+  @if (imageUrl) {
+  <!-- player: {{ imageUrl | async }} -->
+  <img alt="user-icon" [src]="imageUrl | async" width="100px" />
   }@else {
-  <img alt="user-icon" src="./../../../favicon.ico" />
+  <img alt="user-icon" src="./../../../assets/no_photo.jpg" width="100px" />
   }
 
   <mat-form-field>
