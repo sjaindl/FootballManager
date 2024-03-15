@@ -8,5 +8,17 @@
         "destination": "/index.html"
       }
     ]
-  }
+  },
+  "firestore": [
+    {
+      "database": "(default)",
+      "rules": "firestore.default.rules",
+      "indexes": "firestore.default.indexes.json"
+    },
+    {
+      "database": "s11-test",
+      "rules": "firestore.s11-test.rules",
+      "indexes": "firestore.s11-test.indexes.json"
+    }
+  ]
 }
