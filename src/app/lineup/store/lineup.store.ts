@@ -60,6 +60,17 @@ export const LineupStore = signalStore(
   // ),
 
   withMethods((store, playerStore = inject(PlayerStore)) => ({
+    setFormation(formation: Formation): void {
+      patchState(store, state => {
+        state.goalkeeper = getUndefinedPlayer();
+        state.defenders = Array(formation.defense).fill(getUndefinedPlayer());
+        state.midfielder = Array(formation.midfield).fill(getUndefinedPlayer());
+        state.attacker = Array(formation.attack).fill(getUndefinedPlayer());
+
+        return { ...state };
+      });
+    },
+
     setPlayer(request: ChangePlayerRequestWrapper): void {
       patchState(store, state => {
         // const playerStore = inject(PlayerStore);

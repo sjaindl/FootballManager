@@ -41,6 +41,7 @@ export class LineupComponent {
   readonly playerStore = inject(PlayerStore);
   readonly lineupStore = inject(LineupStore);
 
+  selectedFormation: Signal<Formation>;
   formations: Signal<Formation[]>;
   player: Signal<Player[]>;
 
@@ -54,6 +55,7 @@ export class LineupComponent {
     this.formationStore.loadFormations();
     this.playerStore.loadPlayers();
     this.formations = this.formationStore.formations;
+    this.selectedFormation = this.formationStore.selectedFormation;
     this.player = this.playerStore.players;
 
     this.goalkeeper = this.lineupStore.goalkeeper;
@@ -69,6 +71,7 @@ export class LineupComponent {
       console.warn(
         'Lineup',
         state.formations,
+        state.selectedFormation,
         coreState.loadingCount,
         playerState.players
       );
@@ -79,6 +82,10 @@ export class LineupComponent {
 
   onSelectedPlayerChanged($event: ChangePlayerRequestWrapper) {
     this.lineupStore.setPlayer($event);
+  }
+
+  onFormationChange($event: Formation) {
+    this.formationStore.setSelectedFormation($event);
   }
 }
 

@@ -1,4 +1,13 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { Formation } from '../../../shared/formation';
 
@@ -9,7 +18,20 @@ import { Formation } from '../../../shared/formation';
   templateUrl: './formation.component.html',
   styleUrl: './formation.component.scss',
 })
-export class FormationComponent {
-  @Input() selectedFormation: Formation | null = null;
-  @Input() formations: Formation[] | null = [];
+export class FormationComponent implements OnChanges {
+  @Input() selectedFormation: Partial<Formation> = {};
+  @Input() formations: Formation[] = [];
+  @Output() onFormationChange = new EventEmitter<Formation>();
+
+  formation$: WritableSignal<Partial<Formation>> = signal({});
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formation']) {
+      this.formation$.set(this.selectedFormation);
+    }
+  }
+
+  onValueChange(formation: Formation) {
+    this.onFormationChange.emit(formation);
+  }
 }
