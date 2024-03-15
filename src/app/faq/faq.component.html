@@ -1,4 +1,5 @@
-<div class="faq-header" *ngFor="let faq of faqs$ | async">
+<div class="faq-header">
+  @for (faq of faqs$ | async; track faq) {
   <mat-expansion-panel [expanded]="faq.index == 0">
     <mat-expansion-panel-header>
       <h2>{{ faq.question }}</h2>
@@ -6,6 +7,7 @@
 
     {{ faq.answer }}
   </mat-expansion-panel>
+  }
 </div>
 
 <br />
