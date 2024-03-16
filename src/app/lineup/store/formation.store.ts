@@ -47,15 +47,50 @@ export const FormationStore = signalStore(
                   });
                 },
                 error: () => snackBar.open('Fehler beim Laden der Formation!'), //TODO: Move to SnackbarService
-                finalize: () => coreStore.decreaseLoadingCount(),
+                finalize: () => {
+                  coreStore.decreaseLoadingCount();
+                },
               }),
               take(1)
             );
           })
         )
       ),
+
+      loadSelectedFormation: rxMethod<void>(
+        pipe(
+          distinctUntilChanged(),
+          tap(() => coreStore.increaseLoadingCount()),
+          switchMap(() => {
+            return firebaseService.getCurrentUser().pipe(
+              take(1),
+              tapResponse({
+                next: user => {
+                  patchState(store, state => {
+                    const formationId =
+                      user?.formation ?? defaultFormation.formation;
+                    const newFormation = state.formations.find(formation => {
+                      return formation.formation.trim() === formationId.trim();
+                    });
+
+                    state.selectedFormation = newFormation ?? defaultFormation;
+                    return state;
+                  });
+                },
+                error: () =>
+                  snackBar.open('Fehler beim Laden der aktuellen Formation!'), //TODO: Move to SnackbarService
+                finalize: () => {
+                  coreStore.decreaseLoadingCount();
+                },
+              })
+            );
+          })
+        )
+      ),
+
       setSelectedFormation(formation: Formation): void {
         lineupStore.setFormation(formation);
+        firebaseService.setFormation(formation.formation);
 
         patchState(store, state => {
           state.selectedFormation = formation;

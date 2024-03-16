@@ -44,7 +44,12 @@ export class LineupComponent {
 
   constructor() {
     this.formationStore.loadFormations();
-    this.formationStore.loadSelectedFormation();
+
+    // TODO: trigger request after loadFormations is completed
+    setTimeout(() => {
+      this.formationStore.loadSelectedFormation();
+    }, 1000);
+
     this.playerStore.loadPlayers();
     this.formations = this.formationStore.formations;
     this.selectedFormation = this.formationStore.selectedFormation;
