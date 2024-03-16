@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Signal, effect, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { getState } from '@ngrx/signals';
 import { CoreStore } from '../../../core/store/core.store';
 import {
@@ -16,7 +17,12 @@ import { PlayerStore } from '../../store/player.store';
 @Component({
   selector: 's11-lineup',
   standalone: true,
-  imports: [FormationComponent, LineupRowComponent, CommonModule],
+  imports: [
+    FormationComponent,
+    LineupRowComponent,
+    CommonModule,
+    MatButtonModule,
+  ],
   templateUrl: './lineup.component.html',
   styleUrl: './lineup.component.scss',
 })
@@ -38,6 +44,7 @@ export class LineupComponent {
 
   constructor() {
     this.formationStore.loadFormations();
+    this.formationStore.loadSelectedFormation();
     this.playerStore.loadPlayers();
     this.formations = this.formationStore.formations;
     this.selectedFormation = this.formationStore.selectedFormation;
@@ -71,6 +78,10 @@ export class LineupComponent {
 
   onFormationChange($event: Formation) {
     this.formationStore.setSelectedFormation($event);
+  }
+
+  save() {
+    // TODO: save lineup
   }
 }
 
