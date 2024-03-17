@@ -4,12 +4,18 @@ import {
   SnapshotOptions,
 } from 'firebase/firestore';
 
+export const goalkeeper = 'Goalkeeper';
+export const defender = 'Defender';
+export const midfielder = 'Midfielder';
+export const attacker = 'Attacker';
+
 export type Position = 'Goalkeeper' | 'Defender' | 'Midfielder' | 'Attacker';
 
 export type FirebaseResponse = DocumentData | (DocumentData & {});
 export interface Player {
   playerId: string;
   name: string;
+  position: Position;
   imageRef?: string;
 }
 
@@ -27,6 +33,7 @@ export const playerConverter = {
     return {
       playerId: player.playerId,
       name: player.name,
+      position: player.position,
       imageRef: player.imageRef,
     };
   },
@@ -38,6 +45,7 @@ export const playerConverter = {
     return {
       playerId: data['playerId'],
       name: data['name'],
+      position: data['position'],
       imageRef: data['imageRef'],
     };
   },

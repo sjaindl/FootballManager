@@ -9,28 +9,28 @@
     rowTitle="Tormann"
     [maxNumOfPlayers]="1"
     [selectedPlayers]="[goalkeeper()]"
-    [playerList]="player()"
+    [playerList]="playerStore.goalkeepers()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
   <s11-lineup-row
     position="Defender"
     rowTitle="Verteidigung"
     [maxNumOfPlayers]="selectedFormation().defense"
     [selectedPlayers]="defenders()"
-    [playerList]="player()"
+    [playerList]="playerStore.defenders()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
   <s11-lineup-row
     position="Midfielder"
     rowTitle="Mittelfeld"
     [maxNumOfPlayers]="selectedFormation().midfield"
     [selectedPlayers]="midfielder()"
-    [playerList]="player()"
+    [playerList]="playerStore.midfielders()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
   <s11-lineup-row
     position="Attacker"
     rowTitle="Stürmer"
     [maxNumOfPlayers]="selectedFormation().attack"
     [selectedPlayers]="attacker()"
-    [playerList]="player()"
+    [playerList]="playerStore.attackers()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
 
   <span>Spieler:</span>@for (player of player(); track player) {

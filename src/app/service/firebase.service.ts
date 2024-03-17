@@ -16,6 +16,8 @@ import {
   playerConverter,
 } from '../shared/common.model';
 import { Formation, formationConverter } from '../shared/formation';
+import { LinedUpPlayer } from '../shared/lineup';
+import { LineupData, lineupDataConverter } from '../shared/lineupdata';
 import { User, userConverter } from '../shared/user';
 
 @Injectable({
@@ -106,7 +108,7 @@ export class FirebaseService {
 
   setFormation(formation: string) {
     const userId = this.getCurrentUserId();
-    if (userId == null) {
+    if (!userId) {
       console.warn('User ID null when setting formation');
       return;
     }
@@ -141,11 +143,72 @@ export class FirebaseService {
     }
 
     const userId = user()?.uid;
-    if (userId == null) {
+    if (!userId) {
       console.warn('User ID is null');
       return undefined;
     }
 
     return userId;
+  }
+
+  getLineUp(): Observable<LineupData | undefined> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('Cannot get lineup - User ID is null');
+      return EMPTY;
+    }
+
+    const lineupCollection = collection(
+      this.getUserDoc(userId),
+      'lineup'
+    ).withConverter(lineupDataConverter);
+
+    const linedUpDataDoc = doc(lineupCollection, 'lineupData');
+
+    return docData(linedUpDataDoc);
+  }
+
+  setLineup(lineup: LinedUpPlayer[]) {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('Cannot set lineup - User ID is null');
+      return;
+    }
+
+    const lineupCollection = collection(this.getUserDoc(userId), 'lineup');
+
+    var goalkeeperId: string = '';
+    var defenderIds: string[] = [];
+    var midfielderIds: string[] = [];
+    var attackerIds: string[] = [];
+
+    lineup.forEach(linedUpPlayer => {
+      switch (linedUpPlayer.position) {
+        case 'Goalkeeper':
+          goalkeeperId = linedUpPlayer.playerId;
+          break;
+
+        case 'Defender':
+          defenderIds.push(linedUpPlayer.playerId);
+          break;
+        case 'Midfielder':
+          midfielderIds.push(linedUpPlayer.playerId);
+          break;
+        case 'Attacker':
+          attackerIds.push(linedUpPlayer.playerId);
+          break;
+      }
+    });
+
+    const linedUpPlayerDoc = doc(lineupCollection, 'lineupData');
+
+    const docData = {
+      goalkeeper: goalkeeperId,
+      defenders: defenderIds,
+      midfielders: midfielderIds,
+      attackers: attackerIds,
+    };
+
+    setDoc(linedUpPlayerDoc, docData, { merge: true });
   }
 }

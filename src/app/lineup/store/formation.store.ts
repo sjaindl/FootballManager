@@ -74,6 +74,8 @@ export const FormationStore = signalStore(
                     });
 
                     state.selectedFormation = newFormation ?? defaultFormation;
+                    lineupStore.setFormation(state.selectedFormation);
+
                     return state;
                   });
                 },
@@ -90,6 +92,7 @@ export const FormationStore = signalStore(
 
       setSelectedFormation(formation: Formation): void {
         lineupStore.setFormation(formation);
+        lineupStore.saveLineup();
         firebaseService.setFormation(formation.formation);
 
         patchState(store, state => {

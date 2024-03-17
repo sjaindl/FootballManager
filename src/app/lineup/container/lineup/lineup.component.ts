@@ -51,14 +51,19 @@ export class LineupComponent {
     }, 1000);
 
     this.playerStore.loadPlayers();
+
+    setTimeout(() => {
+      this.lineupStore.loadLineUp();
+    }, 2000);
+
     this.formations = this.formationStore.formations;
     this.selectedFormation = this.formationStore.selectedFormation;
     this.player = this.playerStore.players;
 
     this.goalkeeper = this.lineupStore.goalkeeper;
     this.defenders = this.lineupStore.defenders;
-    this.midfielder = this.lineupStore.midfielder;
-    this.attacker = this.lineupStore.attacker;
+    this.midfielder = this.lineupStore.midfielders;
+    this.attacker = this.lineupStore.attackers;
 
     //TODO: delete effect
     effect(() => {
@@ -86,7 +91,7 @@ export class LineupComponent {
   }
 
   save() {
-    // TODO: save lineup
+    this.lineupStore.saveLineup();
   }
 }
 

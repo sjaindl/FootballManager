@@ -10,7 +10,13 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, switchMap, take, tap } from 'rxjs';
 import { FirebaseService } from '../../service/firebase.service';
-import { Player } from '../../shared/common.model';
+import {
+  Player,
+  attacker,
+  defender,
+  goalkeeper,
+  midfielder,
+} from '../../shared/common.model';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -43,6 +49,50 @@ export const PlayerStore = signalStore(
           (playerImageMap[player.playerId] = ref(storage, player.imageRef))
       );
       return playerImageMap;
+    }),
+
+    goalkeepers: computed(() => {
+      const goalkeepers: Player[] = [];
+      players().forEach(player => {
+        if (player.position === goalkeeper) {
+          goalkeepers.push(player);
+        }
+      });
+
+      return goalkeepers;
+    }),
+
+    defenders: computed(() => {
+      const defenders: Player[] = [];
+      players().forEach(player => {
+        if (player.position === defender) {
+          defenders.push(player);
+        }
+      });
+
+      return defenders;
+    }),
+
+    midfielders: computed(() => {
+      const midfielders: Player[] = [];
+      players().forEach(player => {
+        if (player.position === midfielder) {
+          midfielders.push(player);
+        }
+      });
+
+      return midfielders;
+    }),
+
+    attackers: computed(() => {
+      const attackers: Player[] = [];
+      players().forEach(player => {
+        if (player.position === attacker) {
+          attackers.push(player);
+        }
+      });
+
+      return attackers;
     }),
   })),
 
