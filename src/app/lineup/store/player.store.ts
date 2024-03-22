@@ -20,6 +20,7 @@ import {
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { Storage, StorageReference, ref } from '@angular/fire/storage';
 import { CoreStore } from '../../core/store/core.store';
 
@@ -34,6 +35,8 @@ const initialState: PlayerState = {
 export const PlayerStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+
+  withDevtools('playerStore'),
 
   withComputed(({ players }, storage = inject(Storage)) => ({
     playerMap: computed(() => {

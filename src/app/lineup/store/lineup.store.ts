@@ -1,7 +1,14 @@
-import { inject } from '@angular/core';
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { computed, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { tapResponse } from '@ngrx/operators';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, switchMap, take, tap } from 'rxjs';
 import { CoreStore } from '../../core/store/core.store';
@@ -19,12 +26,12 @@ import {
   getUndefinedPlayer,
   isUndefinedPlayer,
 } from '../../shared/common.utils';
-import { Formation, defaultFormation } from '../../shared/formation';
+import { Formation } from '../../shared/formation';
 import { LinedUpPlayer } from '../../shared/lineup';
 import { PlayerStore } from './player.store';
 
 interface LineupState {
-  formation: Formation;
+  formation: Formation | undefined;
   goalkeeper: Player;
   defenders: Player[];
   midfielders: Player[];
@@ -32,14 +39,16 @@ interface LineupState {
 }
 
 const initialState: LineupState = {
-  formation: defaultFormation,
-  attackers: initArray(defaultFormation.attack, attacker),
-  defenders: initArray(defaultFormation.defense, defender),
-  midfielders: initArray(defaultFormation.midfield, midfielder),
+  formation: undefined,
+  attackers: [],
+  defenders: [],
+  midfielders: [],
   goalkeeper: getUndefinedPlayer(goalkeeper),
 };
 
 function initArray(count: number, position: Position): Player[] {
+  if (count === 0) return [];
+
   const players = Array(count);
   return initArrayFrom(players, 0, count, position);
 }
@@ -149,21 +158,17 @@ function setPlayer(
 export const LineupStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  // withComputed(({ user }) => ({
-  //   userName: computed(() => {
-  //     if (user) {
-  //       return user()?.name ?? '';
-  //     }
-  //     return '';
-  //   }),
-  //   imageUrl: computed(() => {
-  //     if (user) {
-  //       return user()?.imageRef ?? undefined;
-  //     }
-  //     return undefined;
-  //   }),
-  // })
-  // ),
+  withComputed(({ defenders, midfielders, attackers }) => ({
+    hasPlayers: computed(() => {
+      return (
+        defenders().length > 0 &&
+        midfielders().length > 0 &&
+        attackers().length > 0
+      );
+    }),
+  })),
+
+  withDevtools('lineupStore'),
 
   withMethods(
     (
@@ -173,12 +178,12 @@ export const LineupStore = signalStore(
       firebaseService = inject(FirebaseService),
       snackBar = inject(MatSnackBar)
     ) => ({
-      setFormation(formation: Formation): void {
+      setFormation(formation?: Formation): void {
         patchState(store, state => {
           state.goalkeeper = getUndefinedPlayer(goalkeeper);
-          state.attackers = initArray(formation.attack, attacker);
-          state.defenders = initArray(formation.defense, defender);
-          state.midfielders = initArray(formation.midfield, midfielder);
+          state.attackers = initArray(formation?.attack ?? 0, attacker);
+          state.defenders = initArray(formation?.defense ?? 0, defender);
+          state.midfielders = initArray(formation?.midfield ?? 0, midfielder);
           state.formation = formation;
 
           return { ...state };
@@ -263,7 +268,7 @@ export const LineupStore = signalStore(
                       lineupData?.defenders ?? [],
                       state,
                       defender,
-                      state.formation?.defense ?? defaultFormation.defense
+                      state.formation?.defense ?? 0
                     );
 
                     setLineUpState(
@@ -271,7 +276,7 @@ export const LineupStore = signalStore(
                       lineupData?.midfielders ?? [],
                       state,
                       midfielder,
-                      state.formation?.midfield ?? defaultFormation.midfield
+                      state.formation?.midfield ?? 0
                     );
 
                     setLineUpState(
@@ -279,7 +284,7 @@ export const LineupStore = signalStore(
                       lineupData?.attackers ?? [],
                       state,
                       attacker,
-                      state.formation?.attack ?? defaultFormation.attack
+                      state.formation?.attack ?? 0
                     );
 
                     return state;

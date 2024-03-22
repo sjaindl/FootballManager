@@ -38,7 +38,7 @@ export class AuthService {
               user.email ?? '',
               user.providerId,
               user.photoURL ?? '',
-              defaultFormation.formation,
+              defaultFormation,
               0,
               0
             );
@@ -50,7 +50,7 @@ export class AuthService {
             email: user.email ?? '',
             providerId: user.providerId ?? '',
             photoUrl: user.photoURL ?? '',
-            formation: dbUser?.formation ?? defaultFormation.formation,
+            formation: dbUser?.formation ?? defaultFormation,
             points: dbUser?.points ?? 0,
             pointsLastRound: dbUser?.pointsLastRound ?? 0,
           };

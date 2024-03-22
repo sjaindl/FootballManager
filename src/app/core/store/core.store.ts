@@ -1,3 +1,4 @@
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { produce } from 'immer';
 
@@ -12,6 +13,8 @@ const initialState: CoreState = {
 export const CoreStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+
+  withDevtools('coreStore'),
 
   withMethods(store => ({
     increaseLoadingCount(): void {

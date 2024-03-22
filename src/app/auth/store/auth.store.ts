@@ -1,3 +1,4 @@
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { computed } from '@angular/core';
 import {
   patchState,
@@ -20,6 +21,8 @@ const initialState: AuthState = {
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+
+  withDevtools('authStore'),
 
   withComputed(({ user }) => ({
     uid: computed(() => {

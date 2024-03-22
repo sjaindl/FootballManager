@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, input } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
-import { Formation, defaultFormation } from '../../../shared/formation';
+import { Formation } from '../../../shared/formation';
 
 @Component({
   selector: 's11-formation',
@@ -10,7 +10,7 @@ import { Formation, defaultFormation } from '../../../shared/formation';
   styleUrl: './formation.component.scss',
 })
 export class FormationComponent {
-  selectedFormation = input(defaultFormation);
+  selectedFormation = input<Formation>();
   formations = input<Formation[]>([]);
   @Output() onFormationChange = new EventEmitter<Formation>();
 

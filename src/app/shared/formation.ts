@@ -7,12 +7,7 @@ export interface Formation {
   attack: number;
 }
 
-export const defaultFormation: Formation = {
-  formation: '4-4-2',
-  defense: 4,
-  midfield: 4,
-  attack: 2,
-};
+export const defaultFormation = '4-4-2';
 
 export const formationConverter = {
   toFirestore: (formation: Formation) => {

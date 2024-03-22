@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Signal, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { getState } from '@ngrx/signals';
 import { CoreStore } from '../../../core/store/core.store';
@@ -23,6 +24,7 @@ import { PlayerStore } from '../../store/player.store';
     LineupRowComponent,
     CommonModule,
     MatButtonModule,
+    MatIconModule,
   ],
   templateUrl: './lineup.component.html',
   styleUrl: './lineup.component.scss',
@@ -34,7 +36,7 @@ export class LineupComponent {
   readonly lineupStore = inject(LineupStore);
   readonly snackBar = inject(MatSnackBar);
 
-  selectedFormation: Signal<Formation>;
+  selectedFormation: Signal<Formation | undefined>;
   formations: Signal<Formation[]>;
   player: Signal<Player[]>;
 
@@ -42,22 +44,8 @@ export class LineupComponent {
   defenders: Signal<Player[]>;
   midfielder: Signal<Player[]>;
   attacker: Signal<Player[]>;
-  // formations$: Observable<Formation[]>;
 
   constructor() {
-    this.formationStore.loadFormations();
-
-    // TODO: trigger request after loadFormations is completed
-    setTimeout(() => {
-      this.formationStore.loadSelectedFormation();
-    }, 1000);
-
-    this.playerStore.loadPlayers();
-
-    setTimeout(() => {
-      this.lineupStore.loadLineUp();
-    }, 2000);
-
     this.formations = this.formationStore.formations;
     this.selectedFormation = this.formationStore.selectedFormation;
     this.player = this.playerStore.players;
@@ -66,22 +54,6 @@ export class LineupComponent {
     this.defenders = this.lineupStore.defenders;
     this.midfielder = this.lineupStore.midfielders;
     this.attacker = this.lineupStore.attackers;
-
-    //TODO: delete effect
-    effect(() => {
-      const state = getState(this.formationStore);
-      const coreState = getState(this.coreStore);
-      const playerState = getState(this.playerStore);
-      console.warn(
-        'Lineup',
-        state.formations,
-        state.selectedFormation,
-        coreState.loadingCount,
-        playerState.players
-      );
-    });
-
-    // this.formations$ = this.firebaseService.getFormations();
   }
 
   onSelectedPlayerChanged($event: ChangePlayerRequestWrapper) {
