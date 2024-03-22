@@ -1,13 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  WritableSignal,
-  signal,
-} from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import {
   ChangePlayerRequest,
@@ -24,46 +15,28 @@ import { PlayerComponent } from '../../../shared/player/player.component';
   templateUrl: './lineup-row.component.html',
   styleUrl: './lineup-row.component.scss',
 })
-export class LineupRowComponent implements OnChanges {
-  @Input() rowTitle: string = '';
-  @Input() position?: Position;
-  @Input() maxNumOfPlayers: number = 0;
-  @Input() selectedPlayers: Player[] = [];
-  @Input() playerList: Player[] = [];
+export class LineupRowComponent {
+  rowTitle = input('');
+  position = input<Position>();
+  maxNumOfPlayers = input(0);
+  selectedPlayers = input<Partial<Player>[]>([]);
+  playerList = input<Player[]>([]);
   @Output() selectedPlayerChange =
     new EventEmitter<ChangePlayerRequestWrapper>();
 
-  players$: WritableSignal<Partial<Player>[]> = signal([]);
-
   panelOpenState = false;
 
-  playerList$: WritableSignal<Player[]> = signal([]);
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['maxNumOfPlayers'] || changes['selectedPlayers']) {
-      this.setPlayer();
-    }
-    if (changes['playerList']) {
-      this.playerList$.set(this.playerList);
-    }
+  constructor() {
+    // this.players$ = computed(() => {
+    //   if(this.maxNumOfPlayers() > 0) {
+    //   }
+    // })
   }
 
   onPlayerChange(request: ChangePlayerRequest) {
-    if (this.position) {
-      this.selectedPlayerChange.emit({ ...request, position: this.position });
+    const position = this.position();
+    if (position) {
+      this.selectedPlayerChange.emit({ ...request, position: position });
     }
-  }
-
-  private setPlayer() {
-    // const lineupRow: Partial<Player>[] = [...this.selectedPlayers];
-    // for (
-    //   let num = this.selectedPlayers.length;
-    //   num < this.maxNumOfPlayers;
-    //   num++
-    // ) {
-    //   lineupRow.push(getUndefinedPlayer());
-    // }
-    // this.players$.set(lineupRow);
-    this.players$.set(this.selectedPlayers);
   }
 }

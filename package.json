@@ -36,6 +36,7 @@
     "firebaseui-angular": "^6.2.0",
     "immer": "^10.0.3",
     "rxjs": "~7.8.0",
+    "rxjs-interop": "^2.0.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

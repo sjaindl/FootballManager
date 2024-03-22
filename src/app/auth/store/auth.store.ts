@@ -10,7 +10,7 @@ import { produce } from 'immer';
 import { User } from '../../shared/user';
 
 interface AuthState {
-  user?: User;
+  user: User | undefined;
 }
 
 const initialState: AuthState = {
