@@ -39,7 +39,6 @@ export const AuthStore = signalStore(
   withMethods(store => ({
     setUser(user?: User): void {
       patchState(store, state => {
-        // state.uid = uid
         return produce(state, draft => {
           draft.user = user;
         });
