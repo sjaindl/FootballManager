@@ -1,0 +1,7 @@
+.lineup-grid {
+  display: grid;
+  grid-template-columns: auto;
+  // grid-template-rows: min-content auto auto auto auto;
+  align-content: start;
+  grid-gap: 4px;
+}

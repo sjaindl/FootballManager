@@ -1,0 +1,50 @@
+<div class="lineup-grid s11-padding">
+  <mat-icon
+    aria-hidden="false"
+    aria-label="Example home icon"
+    fontIcon="save"></mat-icon>
+
+  <s11-formation
+    [selectedFormation]="selectedFormation()"
+    [formations]="formations()"
+    (onFormationChange)="onFormationChange($event)"></s11-formation>
+
+  <s11-lineup-row
+    position="Goalkeeper"
+    rowTitle="Tormann"
+    [maxNumOfPlayers]="1"
+    [selectedPlayers]="[goalkeeper()]"
+    [playerList]="playerStore.goalkeepers()"
+    (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
+  <s11-lineup-row
+    position="Defender"
+    rowTitle="Verteidigung"
+    [maxNumOfPlayers]="selectedFormation()?.defense ?? 0"
+    [selectedPlayers]="defenders()"
+    [playerList]="playerStore.defenders()"
+    (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
+  <s11-lineup-row
+    position="Midfielder"
+    rowTitle="Mittelfeld"
+    [maxNumOfPlayers]="selectedFormation()?.midfield ?? 0"
+    [selectedPlayers]="midfielder()"
+    [playerList]="playerStore.midfielders()"
+    (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
+  <s11-lineup-row
+    position="Attacker"
+    rowTitle="Stürmer"
+    [maxNumOfPlayers]="selectedFormation()?.attack ?? 0"
+    [selectedPlayers]="attacker()"
+    [playerList]="playerStore.attackers()"
+    (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
+
+  <button
+    mat-raised-button
+    color="primary"
+    class="horizontal-center"
+    (click)="save()">
+    Speichern
+  </button>
+
+  <br /><br />
+</div>

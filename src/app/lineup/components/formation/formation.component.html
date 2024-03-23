@@ -1,0 +1,16 @@
+@if (selectedFormation()) {
+<div class="center formation-grid">
+  <mat-form-field>
+    <mat-label>Formation:</mat-label>
+    <mat-select
+      [value]="selectedFormation()"
+      (valueChange)="onValueChange($event)">
+      @for (formation of formations(); track formation) {
+      <mat-option [value]="formation">
+        {{ formation.formation }}
+      </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+}

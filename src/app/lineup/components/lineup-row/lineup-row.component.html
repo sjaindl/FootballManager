@@ -1,0 +1,23 @@
+<mat-accordion>
+  <mat-expansion-panel
+    (opened)="panelOpenState = true"
+    (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ rowTitle() }} ({{ maxNumOfPlayers() }})
+      </mat-panel-title>
+      <!-- <mat-panel-description>
+        This is a summary of the content
+      </mat-panel-description> -->
+    </mat-expansion-panel-header>
+
+    <div class="lineup-grid">
+      @for (selectablePlayer of selectedPlayers(); track selectablePlayer) {
+      <s11-player
+        [player]="selectablePlayer"
+        [playerList]="playerList()"
+        (selectedPlayerChange)="onPlayerChange($event)"></s11-player>
+      }
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

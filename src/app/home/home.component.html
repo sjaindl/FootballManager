@@ -27,9 +27,9 @@
   (uiShown)="uiShownCallback()"></firebase-ui>
 
 <div class="s11-padding" *ngIf="isSignedIn()">
-  Hallo, {{ authService.user?.userName }}!
+  Hallo, {{ authStore.userName() }}!
   <br />
-  You have the UID: {{ authService.user?.uid }}
+  You have the UID: {{ authStore.uid() }}
   <br />
 
   <button (click)="logout()">Logout</button>

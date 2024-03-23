@@ -44,6 +44,7 @@ export const ProfileStore = signalStore(
     updateName(name: string): void {
       patchState(store, state => {
         if (state.user) {
+          // TODO: ... Mit immer ersetzen
           return { user: { ...state.user, name: name } };
         }
         return { ...state };
