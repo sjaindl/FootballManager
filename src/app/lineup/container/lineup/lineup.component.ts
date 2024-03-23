@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Signal, effect, inject } from '@angular/core';
+import { Component, Signal, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { getState } from '@ngrx/signals';
 import { CoreStore } from '../../../core/store/core.store';
 import {
   ChangePlayerRequestWrapper,
@@ -94,6 +93,13 @@ export class LineupComponent {
 //   4. Firebase mit Store verknüpfen
 //   5. Firebase Storage für Icons
 //   6. Check keine doppelte Spielerauswahl (ausgewählte Spieler filtern & in player.component zum Array hinzufügen)
+
+// TODO: snackbar service
+
+// Lineup UI:
+// BG color
+// formation whole len
+// save button in top bar
 
 // Ideen: Admin - Abstimmung für Punkte, Historie/Statistiken per Spiel (Gegner, Ergebnis, Punkte pro Spieler..)
 // Sum query für aggregate Punkte: https://firebase.google.com/docs/firestore/query-data/aggregation-queries#web-modular-api_3

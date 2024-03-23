@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
-  Input,
   OnChanges,
   OnInit,
   Output,
   SimpleChanges,
   WritableSignal,
+  input,
   signal,
 } from '@angular/core';
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
@@ -30,9 +30,8 @@ import { ChangePlayerRequest, Player } from '../common.model';
   styleUrl: './player.component.scss',
 })
 export class PlayerComponent implements OnChanges, OnInit {
-  // TODO: Change to signal inputs when ready
-  @Input() player: Partial<Player> = {};
-  @Input() playerList: Player[] = [];
+  player = input<Partial<Player>>();
+  playerList = input<Player[]>([]);
   @Output() selectedPlayerChange = new EventEmitter<ChangePlayerRequest>();
 
   player$: WritableSignal<Partial<Player>> = signal({});
@@ -43,7 +42,7 @@ export class PlayerComponent implements OnChanges, OnInit {
   constructor(private storage: Storage) {}
 
   ngOnInit(): void {
-    const playerRef = this.player.imageRef;
+    const playerRef = this.player()?.imageRef;
 
     if (playerRef) {
       const storageRef = ref(this.storage, playerRef);
@@ -55,24 +54,19 @@ export class PlayerComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['player']) {
-      this.player$.set(this.player);
+    const player = this.player();
+    if (changes['player'] && player) {
+      this.player$.set(player);
     }
     if (changes['playerList'] || changes['player']) {
-      this.playerList$.set(
-        this.playerList //.filter(p => p.playerId !== this.player.playerId)
-      );
+      this.playerList$.set(this.playerList());
     }
   }
 
   onValueChange(playerId: string) {
-    // const selectedPlayer = this.playerList.find(p => p.playerId === playerId);
-    // if (selectedPlayer) {
-    //   this.selectedPlayerChange.emit({selectedPlayer);
-    // }
     this.selectedPlayerChange.emit({
       newPlayerId: playerId,
-      oldPlayerId: this.player.playerId ?? '',
+      oldPlayerId: this.player()?.playerId ?? '',
     });
   }
 }

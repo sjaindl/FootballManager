@@ -26,13 +26,6 @@ export class LineupRowComponent {
 
   panelOpenState = false;
 
-  constructor() {
-    // this.players$ = computed(() => {
-    //   if(this.maxNumOfPlayers() > 0) {
-    //   }
-    // })
-  }
-
   onPlayerChange(request: ChangePlayerRequest) {
     const position = this.position();
     if (position) {

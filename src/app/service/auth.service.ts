@@ -58,7 +58,6 @@ export class AuthService {
           this.authStore.setUser(signedInUser);
 
           this.isUserSignedIn = true;
-          // User is signed in.
           console.log(
             'user signed in: ' + signedInUser.uid + ', ' + signedInUser.userName
           );
