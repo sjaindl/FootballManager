@@ -18,11 +18,10 @@ import {
   midfielder,
 } from '../../shared/common.model';
 
-import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { Storage, StorageReference, ref } from '@angular/fire/storage';
 import { CoreStore } from '../../core/store/core.store';
+import { SnackbarService } from '../../service/snackbar.service';
 
 interface PlayerState {
   players: Player[];
@@ -104,7 +103,7 @@ export const PlayerStore = signalStore(
       store,
       firebaseService = inject(FirebaseService),
       coreStore = inject(CoreStore),
-      snackBar = inject(MatSnackBar)
+      snackBarService = inject(SnackbarService)
     ) => ({
       loadPlayers: rxMethod<void>(
         pipe(
@@ -120,7 +119,8 @@ export const PlayerStore = signalStore(
                     return state;
                   });
                 },
-                error: () => snackBar.open('Fehler beim Laden der Spieler!'), //TODO: Move to SnackbarService
+                error: () =>
+                  snackBarService.open('Fehler beim Laden der Spieler!'),
                 finalize: () => coreStore.decreaseLoadingCount(),
               }),
               take(1)

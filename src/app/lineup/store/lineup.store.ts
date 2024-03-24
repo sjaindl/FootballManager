@@ -1,6 +1,5 @@
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { computed, inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
@@ -13,6 +12,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, switchMap, take, tap } from 'rxjs';
 import { CoreStore } from '../../core/store/core.store';
 import { FirebaseService } from '../../service/firebase.service';
+import { SnackbarService } from '../../service/snackbar.service';
 import {
   ChangePlayerRequestWrapper,
   Player,
@@ -176,7 +176,7 @@ export const LineupStore = signalStore(
       playerStore = inject(PlayerStore),
       coreStore = inject(CoreStore),
       firebaseService = inject(FirebaseService),
-      snackBar = inject(MatSnackBar)
+      snackBarService = inject(SnackbarService)
     ) => {
       const containsDuplicates = (players: Player[]) => {
         let entries = new Set();
@@ -302,7 +302,7 @@ export const LineupStore = signalStore(
                     });
                   },
                   error: () =>
-                    snackBar.open('Fehler beim Laden der Aufstellung!'), //TODO: Move to SnackbarService
+                    snackBarService.open('Fehler beim Laden der Aufstellung!'), //TODO: Move to SnackbarService
                   finalize: () => {
                     coreStore.decreaseLoadingCount();
                   },
@@ -320,10 +320,12 @@ export const LineupStore = signalStore(
             containsDuplicates(store.attackers())
           ) {
             console.error('Spieler dürfen nur einmal aufgestellt werden!');
-            snackBar.open('Spieler dürfen nur einmal aufgestellt werden!');
+            snackBarService.open(
+              'Spieler dürfen nur einmal aufgestellt werden!'
+            );
           } else {
             firebaseService.setLineup(this.allLinedUpPlayers());
-            snackBar.open('Aufstellung und Formation gespeichert!');
+            snackBarService.open('Aufstellung und Formation gespeichert!');
           }
         },
 
