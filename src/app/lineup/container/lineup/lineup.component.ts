@@ -64,25 +64,7 @@ export class LineupComponent {
   }
 
   save() {
-    if (
-      this.containsDuplicates(this.lineupStore.defenders()) ||
-      this.containsDuplicates(this.lineupStore.midfielders()) ||
-      this.containsDuplicates(this.lineupStore.attackers())
-    ) {
-      console.error('Spieler dürfen nur einmal aufgestellt werden!');
-      this.snackBar.open('Spieler dürfen nur einmal aufgestellt werden!');
-    } else {
-      this.lineupStore.saveLineup();
-    }
-  }
-
-  private containsDuplicates(players: Player[]) {
-    let entries = new Set();
-    players.forEach(player => {
-      entries.add(player.playerId);
-    });
-
-    return entries.size != players.length;
+    this.lineupStore.saveLineup();
   }
 }
 
