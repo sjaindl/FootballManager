@@ -42,8 +42,21 @@
       </mat-menu>
     </div>
 
-    <span>Title</span>
+    <span>{{ title }}</span>
 
-    <s11-profile-menu-icon></s11-profile-menu-icon>
+    <div class="s11-toolbar" matRipple>
+      @if (this.router.url == '/lineup') {
+
+      <button (click)="save()" mat-icon-button style="margin-right: 8px">
+        <mat-icon
+          class="icon-display"
+          aria-hidden="false"
+          aria-label="Save lineup"
+          fontIcon="save" />
+      </button>
+      }
+
+      <s11-profile-menu-icon></s11-profile-menu-icon>
+    </div>
   </div>
 </mat-toolbar>

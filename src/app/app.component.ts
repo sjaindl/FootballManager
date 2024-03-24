@@ -10,5 +10,5 @@ import { HeaderComponent } from './header/header.component';
   imports: [RouterOutlet, HeaderComponent],
 })
 export class AppComponent {
-  title = 'FootballManager';
+  title = 'Starting Eleven';
 }

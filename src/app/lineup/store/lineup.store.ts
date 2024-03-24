@@ -177,146 +177,168 @@ export const LineupStore = signalStore(
       coreStore = inject(CoreStore),
       firebaseService = inject(FirebaseService),
       snackBar = inject(MatSnackBar)
-    ) => ({
-      setFormation(formation?: Formation): void {
-        patchState(store, state => {
-          state.goalkeeper = getUndefinedPlayer(goalkeeper);
-          state.attackers = initArray(formation?.attack ?? 0, attacker);
-          state.defenders = initArray(formation?.defense ?? 0, defender);
-          state.midfielders = initArray(formation?.midfield ?? 0, midfielder);
-          state.formation = formation;
-
-          return { ...state };
+    ) => {
+      const containsDuplicates = (players: Player[]) => {
+        let entries = new Set();
+        players.forEach(player => {
+          entries.add(player.playerId);
         });
-      },
 
-      setPlayer(request: ChangePlayerRequestWrapper): void {
-        patchState(store, state => {
-          const position = request.position;
-          const newPlayerId = request.newPlayerId;
-          const oldPlayerId = request.oldPlayerId;
+        return entries.size != players.length;
+      };
 
-          const newPlayer =
-            playerStore.playerMap()[newPlayerId] ??
-            getUndefinedPlayer(position);
+      return {
+        setFormation(formation?: Formation): void {
+          patchState(store, state => {
+            state.goalkeeper = getUndefinedPlayer(goalkeeper);
+            state.attackers = initArray(formation?.attack ?? 0, attacker);
+            state.defenders = initArray(formation?.defense ?? 0, defender);
+            state.midfielders = initArray(formation?.midfield ?? 0, midfielder);
+            state.formation = formation;
 
-          switch (position) {
-            case 'Goalkeeper':
-              state.goalkeeper = newPlayer;
-              break;
-            case 'Defender':
-              state.defenders = state.defenders.map(player => {
-                if (player.playerId === oldPlayerId) {
-                  return newPlayer;
-                }
-                if (player.playerId === newPlayerId) {
-                  return getUndefinedPlayer(position);
-                }
-                return player;
-              });
-              console.warn(state.defenders);
-              break;
-            case 'Midfielder':
-              state.midfielders = state.midfielders.map(player => {
-                if (player.playerId === oldPlayerId) {
-                  return newPlayer;
-                }
-                if (player.playerId === newPlayerId) {
-                  return getUndefinedPlayer(position);
-                }
-                return player;
-              });
-              break;
-            case 'Attacker':
-              state.attackers = state.attackers.map(player => {
-                if (player.playerId === oldPlayerId) {
-                  return newPlayer;
-                }
-                if (player.playerId === newPlayerId) {
-                  return getUndefinedPlayer(position);
-                }
-                return player;
-              });
-              break;
-          }
-          return { ...state };
-        });
-      },
+            return { ...state };
+          });
+        },
 
-      loadLineUp: rxMethod<void>(
-        pipe(
-          distinctUntilChanged(),
-          tap(() => coreStore.increaseLoadingCount()),
-          switchMap(() => {
-            return firebaseService.getLineUp().pipe(
-              // take(1),
-              tapResponse({
-                next: lineupData => {
-                  patchState(store, state => {
-                    state.defenders = [];
-                    state.midfielders = [];
-                    state.attackers = [];
+        setPlayer(request: ChangePlayerRequestWrapper): void {
+          patchState(store, state => {
+            const position = request.position;
+            const newPlayerId = request.newPlayerId;
+            const oldPlayerId = request.oldPlayerId;
 
-                    let keeper = playerStore.players().find(player => {
-                      return player.playerId === lineupData?.goalkeeper;
+            const newPlayer =
+              playerStore.playerMap()[newPlayerId] ??
+              getUndefinedPlayer(position);
+
+            switch (position) {
+              case 'Goalkeeper':
+                state.goalkeeper = newPlayer;
+                break;
+              case 'Defender':
+                state.defenders = state.defenders.map(player => {
+                  if (player.playerId === oldPlayerId) {
+                    return newPlayer;
+                  }
+                  if (player.playerId === newPlayerId) {
+                    return getUndefinedPlayer(position);
+                  }
+                  return player;
+                });
+                console.warn(state.defenders);
+                break;
+              case 'Midfielder':
+                state.midfielders = state.midfielders.map(player => {
+                  if (player.playerId === oldPlayerId) {
+                    return newPlayer;
+                  }
+                  if (player.playerId === newPlayerId) {
+                    return getUndefinedPlayer(position);
+                  }
+                  return player;
+                });
+                break;
+              case 'Attacker':
+                state.attackers = state.attackers.map(player => {
+                  if (player.playerId === oldPlayerId) {
+                    return newPlayer;
+                  }
+                  if (player.playerId === newPlayerId) {
+                    return getUndefinedPlayer(position);
+                  }
+                  return player;
+                });
+                break;
+            }
+            return { ...state };
+          });
+        },
+
+        loadLineUp: rxMethod<void>(
+          pipe(
+            distinctUntilChanged(),
+            tap(() => coreStore.increaseLoadingCount()),
+            switchMap(() => {
+              return firebaseService.getLineUp().pipe(
+                // take(1),
+                tapResponse({
+                  next: lineupData => {
+                    patchState(store, state => {
+                      state.defenders = [];
+                      state.midfielders = [];
+                      state.attackers = [];
+
+                      let keeper = playerStore.players().find(player => {
+                        return player.playerId === lineupData?.goalkeeper;
+                      });
+
+                      state.goalkeeper =
+                        keeper ?? getUndefinedPlayer(goalkeeper);
+
+                      setLineUpState(
+                        playerStore.defenders(),
+                        lineupData?.defenders ?? [],
+                        state,
+                        defender,
+                        state.formation?.defense ?? 0
+                      );
+
+                      setLineUpState(
+                        playerStore.midfielders(),
+                        lineupData?.midfielders ?? [],
+                        state,
+                        midfielder,
+                        state.formation?.midfield ?? 0
+                      );
+
+                      setLineUpState(
+                        playerStore.attackers(),
+                        lineupData?.attackers ?? [],
+                        state,
+                        attacker,
+                        state.formation?.attack ?? 0
+                      );
+
+                      return state;
                     });
+                  },
+                  error: () =>
+                    snackBar.open('Fehler beim Laden der Aufstellung!'), //TODO: Move to SnackbarService
+                  finalize: () => {
+                    coreStore.decreaseLoadingCount();
+                  },
+                }),
+                take(1)
+              );
+            })
+          )
+        ),
 
-                    state.goalkeeper = keeper ?? getUndefinedPlayer(goalkeeper);
+        saveLineup() {
+          if (
+            containsDuplicates(store.defenders()) ||
+            containsDuplicates(store.midfielders()) ||
+            containsDuplicates(store.attackers())
+          ) {
+            console.error('Spieler dürfen nur einmal aufgestellt werden!');
+            snackBar.open('Spieler dürfen nur einmal aufgestellt werden!');
+          } else {
+            firebaseService.setLineup(this.allLinedUpPlayers());
+            snackBar.open('Aufstellung und Formation gespeichert!');
+          }
+        },
 
-                    setLineUpState(
-                      playerStore.defenders(),
-                      lineupData?.defenders ?? [],
-                      state,
-                      defender,
-                      state.formation?.defense ?? 0
-                    );
+        allLinedUpPlayers(): LinedUpPlayer[] {
+          var players: LinedUpPlayer[] = [];
 
-                    setLineUpState(
-                      playerStore.midfielders(),
-                      lineupData?.midfielders ?? [],
-                      state,
-                      midfielder,
-                      state.formation?.midfield ?? 0
-                    );
+          addToLineUpIfDefined(players, [store.goalkeeper()]);
+          addToLineUpIfDefined(players, store.defenders());
+          addToLineUpIfDefined(players, store.midfielders());
+          addToLineUpIfDefined(players, store.attackers());
 
-                    setLineUpState(
-                      playerStore.attackers(),
-                      lineupData?.attackers ?? [],
-                      state,
-                      attacker,
-                      state.formation?.attack ?? 0
-                    );
-
-                    return state;
-                  });
-                },
-                error: () =>
-                  snackBar.open('Fehler beim Laden der Aufstellung!'), //TODO: Move to SnackbarService
-                finalize: () => {
-                  coreStore.decreaseLoadingCount();
-                },
-              }),
-              take(1)
-            );
-          })
-        )
-      ),
-
-      saveLineup() {
-        firebaseService.setLineup(this.allLinedUpPlayers());
-      },
-
-      allLinedUpPlayers(): LinedUpPlayer[] {
-        var players: LinedUpPlayer[] = [];
-
-        addToLineUpIfDefined(players, [store.goalkeeper()]);
-        addToLineUpIfDefined(players, store.defenders());
-        addToLineUpIfDefined(players, store.midfielders());
-        addToLineUpIfDefined(players, store.attackers());
-
-        return players;
-      },
-    })
+          return players;
+        },
+      };
+    }
   )
 
   // withMethods((store, booksService = inject(BooksService)) => ({
