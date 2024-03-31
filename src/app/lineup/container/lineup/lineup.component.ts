@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, Signal, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoreStore } from '../../../core/store/core.store';
 import {
   ChangePlayerRequestWrapper,
@@ -33,7 +32,6 @@ export class LineupComponent {
   readonly coreStore = inject(CoreStore);
   readonly playerStore = inject(PlayerStore);
   readonly lineupStore = inject(LineupStore);
-  readonly snackBar = inject(MatSnackBar);
 
   selectedFormation: Signal<Formation | undefined>;
   formations: Signal<Formation[]>;
@@ -64,25 +62,7 @@ export class LineupComponent {
   }
 
   save() {
-    if (
-      this.containsDuplicates(this.lineupStore.defenders()) ||
-      this.containsDuplicates(this.lineupStore.midfielders()) ||
-      this.containsDuplicates(this.lineupStore.attackers())
-    ) {
-      console.error('Spieler dürfen nur einmal aufgestellt werden!');
-      this.snackBar.open('Spieler dürfen nur einmal aufgestellt werden!');
-    } else {
-      this.lineupStore.saveLineup();
-    }
-  }
-
-  private containsDuplicates(players: Player[]) {
-    let entries = new Set();
-    players.forEach(player => {
-      entries.add(player.playerId);
-    });
-
-    return entries.size != players.length;
+    this.lineupStore.saveLineup();
   }
 }
 

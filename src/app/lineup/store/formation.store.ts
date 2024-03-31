@@ -1,15 +1,13 @@
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, switchMap, take, tap } from 'rxjs';
-import { FirebaseService } from '../../service/firebase.service';
-import { Formation } from '../../shared/formation';
-
-import { MatSnackBar } from '@angular/material/snack-bar';
-
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { CoreStore } from '../../core/store/core.store';
+import { FirebaseService } from '../../service/firebase.service';
+import { SnackbarService } from '../../service/snackbar.service';
+import { Formation } from '../../shared/formation';
 import { LineupStore } from './lineup.store';
 
 interface FormationState {
@@ -34,9 +32,9 @@ export const FormationStore = signalStore(
     (
       store,
       firebaseService = inject(FirebaseService),
+      snackBarService = inject(SnackbarService),
       coreStore = inject(CoreStore),
-      lineupStore = inject(LineupStore),
-      snackBar = inject(MatSnackBar)
+      lineupStore = inject(LineupStore)
     ) => {
       const setSelectedFormationById = (state: FormationState) => {
         const id = state.selectedFormationId;
@@ -67,7 +65,7 @@ export const FormationStore = signalStore(
                     });
                   },
                   error: () =>
-                    snackBar.open('Fehler beim Laden der Formation!'), //TODO: Move to SnackbarService
+                    snackBarService.open('Fehler beim Laden der Formation!'),
                   finalize: () => {
                     coreStore.decreaseLoadingCount();
                   },
@@ -98,7 +96,9 @@ export const FormationStore = signalStore(
                     });
                   },
                   error: () =>
-                    snackBar.open('Fehler beim Laden der aktuellen Formation!'), //TODO: Move to SnackbarService
+                    snackBarService.open(
+                      'Fehler beim Laden der aktuellen Formation!'
+                    ),
                   finalize: () => {
                     coreStore.decreaseLoadingCount();
                   },
