@@ -9,6 +9,7 @@ import {
   setDoc,
 } from '@angular/fire/firestore';
 import { EMPTY, Observable } from 'rxjs';
+import { PlayerWithMatchDay } from '../admin/store/matchday.store';
 import { AuthStore } from '../auth/store/auth.store';
 import {
   FirebaseResponse,
@@ -18,6 +19,7 @@ import {
 import { Formation, formationConverter } from '../shared/formation';
 import { LinedUpPlayer } from '../shared/lineup';
 import { LineupData, lineupDataConverter } from '../shared/lineupdata';
+import { Matchday, matchdayConverter } from '../shared/matchday';
 import { User, userConverter } from '../shared/user';
 
 @Injectable({
@@ -56,7 +58,7 @@ export class FirebaseService {
   // User
   userCollection = collection(this.db, '/users/').withConverter(userConverter);
 
-  getUsers(): Observable<[User] | (User[] & {})> {
+  getUsers(): Observable<User[] | (User[] & {})> {
     return collectionData(this.userCollection);
   }
 
@@ -88,7 +90,8 @@ export class FirebaseService {
     photoUrl: string,
     formation: string,
     points: number,
-    pointsLastRound: number
+    pointsLastRound: number,
+    isAdmin: boolean
   ) {
     const userDoc = this.getUserDoc(uid);
 
@@ -101,6 +104,7 @@ export class FirebaseService {
       formation: formation,
       points: points,
       pointsLastRound: pointsLastRound,
+      isAdmin: isAdmin,
     };
 
     setDoc(userDoc, docData, { merge: true });
@@ -151,6 +155,8 @@ export class FirebaseService {
     return userId;
   }
 
+  // Lineup
+
   getLineUp(): Observable<LineupData | undefined> {
     const userId = this.getCurrentUserId();
     if (!userId) {
@@ -158,6 +164,10 @@ export class FirebaseService {
       return EMPTY;
     }
 
+    return this.getLineUpOfUser(userId);
+  }
+
+  getLineUpOfUser(userId: string): Observable<LineupData | undefined> {
     const lineupCollection = collection(
       this.getUserDoc(userId),
       'lineup'
@@ -210,5 +220,89 @@ export class FirebaseService {
     };
 
     setDoc(linedUpPlayerDoc, docData, { merge: true });
+  }
+
+  setUserMatchdayLineup(matchday: string) {
+    this.getUsers().subscribe(users => {
+      users.forEach(user => {
+        this.getLineUpOfUser(user.uid).subscribe(lineupData => {
+          if (lineupData) {
+            const matchdaysCollection = collection(
+              this.getUserDoc(user.uid),
+              'matchdays'
+            );
+            const matchdayDoc = doc(matchdaysCollection, matchday);
+
+            setDoc(matchdayDoc, lineupData);
+          }
+        });
+      });
+    });
+  }
+
+  // Matchdays
+  getUserMatchdayLineups(): Observable<LineupData[] | (LineupData[] & {})> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('Cannot get lineup - User ID is null');
+      return EMPTY;
+    }
+
+    const matchdaysCollection = collection(
+      this.getUserDoc(userId),
+      'matchdays'
+    ).withConverter(lineupDataConverter);
+
+    return collectionData(matchdaysCollection);
+  }
+
+  setPlayerMatchdays(matchdays: PlayerWithMatchDay[]) {
+    const playersCollection = collection(this.db, 'players').withConverter(
+      playerConverter
+    );
+
+    matchdays.forEach(playerWithMatchDay => {
+      const matchday = playerWithMatchDay.matchday;
+      const player = doc(playersCollection, playerWithMatchDay.player.playerId);
+
+      const matchdaysCollection = collection(player, 'matchdays').withConverter(
+        matchdayConverter
+      );
+
+      const matchdayDoc = doc(matchdaysCollection, matchday.id);
+
+      const docData = {
+        id: playerWithMatchDay.matchday.id,
+        points: Number(matchday.pointsCurrentRound),
+      };
+
+      console.log(docData);
+
+      setDoc(matchdayDoc, docData);
+    });
+  }
+
+  getPlayerMatchdays(
+    playerId: string
+  ): Observable<Matchday[] | (Matchday[] & {})> {
+    const playerCollection = collection(this.db, 'players').withConverter(
+      playerConverter
+    );
+
+    const player = doc(playerCollection, playerId);
+
+    const matchdaysCollection = collection(player, 'matchdays').withConverter(
+      matchdayConverter
+    );
+
+    // collectionCount(matchdaysCollection).subscribe(number => {
+    //   console.log('count: ' + number);
+    // });
+
+    // collectionData(matchdaysCollection).subscribe(value => {
+    //   console.log('entry: ' + JSON.stringify(value));
+    // });
+
+    return collectionData(matchdaysCollection);
   }
 }

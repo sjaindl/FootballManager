@@ -10,7 +10,7 @@ import { FirebaseService } from './firebase.service';
 export class AuthService {
   private readonly authStore = inject(AuthStore);
 
-  isUserSignedIn: boolean;
+  private isUserSignedIn: boolean;
 
   isSignedIn(): boolean {
     return this.isUserSignedIn;
@@ -40,7 +40,8 @@ export class AuthService {
               user.photoURL ?? '',
               defaultFormation,
               0,
-              0
+              0,
+              false
             );
           }
 
@@ -53,6 +54,7 @@ export class AuthService {
             formation: dbUser?.formation ?? defaultFormation,
             points: dbUser?.points ?? 0,
             pointsLastRound: dbUser?.pointsLastRound ?? 0,
+            isAdmin: dbUser?.isAdmin ?? false,
           };
 
           this.authStore.setUser(signedInUser);

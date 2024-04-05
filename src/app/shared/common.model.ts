@@ -11,6 +11,21 @@ export const attacker = 'Attacker';
 
 export type Position = 'Goalkeeper' | 'Defender' | 'Midfielder' | 'Attacker';
 
+export class PositionMapper {
+  displayName(position: Position): string {
+    switch (position) {
+      case 'Goalkeeper':
+        return 'Tormann';
+      case 'Defender':
+        return 'Verteidiger';
+      case 'Midfielder':
+        return 'Mittelfeldspieler';
+      case 'Attacker':
+        return 'Stürmer';
+    }
+  }
+}
+
 export type FirebaseResponse = DocumentData | (DocumentData & {});
 export interface Player {
   playerId: string;

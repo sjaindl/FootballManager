@@ -11,6 +11,8 @@ export interface User {
   formation: string;
   points: number;
   pointsLastRound: number;
+
+  isAdmin: boolean;
 }
 
 export const userConverter = {
@@ -25,6 +27,8 @@ export const userConverter = {
       formation: user.formation,
       points: user.points,
       pointsLastRound: user.pointsLastRound,
+
+      isAdmin: user.isAdmin,
     };
   },
   fromFirestore: (
@@ -43,6 +47,8 @@ export const userConverter = {
       formation: data['formation'],
       points: data['points'],
       pointsLastRound: data['pointsLastRound'],
+
+      isAdmin: data['isAdmin'],
     };
   },
 };
