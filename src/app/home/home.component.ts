@@ -24,7 +24,6 @@ export class HomeComponent implements OnInit {
   readonly authStore = inject(AuthStore);
   isMobile = true;
   private sub: Subscription | undefined;
-  angularFireAuth: any;
 
   constructor(
     private router: Router,
