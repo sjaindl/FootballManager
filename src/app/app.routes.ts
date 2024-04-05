@@ -15,6 +15,13 @@ export const routes: Routes = [
       import('./faq/faq.component').then(mod => mod.FaqComponent),
   },
   {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./privacy-policy/privacy-policy.component').then(
+        mod => mod.PrivacyPolicyComponent
+      ),
+  },
+  {
     path: 'lineup',
     loadComponent: () =>
       import('./lineup/container/lineup/lineup.component').then(
