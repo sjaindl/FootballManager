@@ -20,12 +20,11 @@
   </a>
 </div>
 
-<div *ngIf="isMobile">
-  <img src="/assets/StartingEleven.jpg" width="100%" />
-</div>
-<div *ngIf="!isMobile">
-  <img class="center" src="/assets/StartingEleven.jpg" />
-</div>
+@if (isMobile) {
+<img src="/assets/StartingEleven.jpg" width="100%" />
+} @else {
+<img class="center" src="/assets/StartingEleven.jpg" />
+}
 
 <firebase-ui
   *ngIf="!isSignedIn()"
@@ -33,8 +32,10 @@
   (signInFailure)="errorCallback($event)"
   (uiShown)="uiShownCallback()"></firebase-ui>
 
-<div class="s11-padding" *ngIf="isSignedIn()">
-  <br />
-  <h1 class="text-center">Hallo, {{ authStore.userName() }}!</h1>
-  <br />
+@if (isSignedIn()) {
+<div class="s11-padding">
+  <h1 class="text-center home-padding-top">
+    Hallo, {{ authStore.userName() }}!
+  </h1>
 </div>
+}

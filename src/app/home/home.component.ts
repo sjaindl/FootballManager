@@ -47,11 +47,9 @@ export class HomeComponent implements OnInit {
         'Spiele mit deinen Lieblingsspielern aus der Voitsberger Stammtischliga gegen deine Freunde, und erstelle deine persönliche Aufstellung.',
     });
 
-    this.sub = this.route.params.subscribe(params => {
-      console.log(params);
-
-      if (params['logout'] == 'logout') {
-        console.log('log out ..');
+    this.sub = this.route.url.subscribe(urlSegments => {
+      if (urlSegments.some(segment => segment.path === 'logout')) {
+        console.log('logging out ..');
         this.authService.signOut();
         this.router.navigate(['home']);
       }
