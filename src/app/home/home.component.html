@@ -20,17 +20,22 @@
   </a>
 </div>
 
+@if (isMobile) {
+<img src="/assets/StartingEleven.jpg" width="100%" />
+} @else {
+<img class="center" src="/assets/StartingEleven.jpg" />
+}
+
 <firebase-ui
   *ngIf="!isSignedIn()"
   (signInSuccessWithAuthResult)="successCallback($event)"
   (signInFailure)="errorCallback($event)"
   (uiShown)="uiShownCallback()"></firebase-ui>
 
-<div class="s11-padding" *ngIf="isSignedIn()">
-  Hallo, {{ authStore.userName() }}!
-  <br />
-  You have the UID: {{ authStore.uid() }}
-  <br />
-
-  <button (click)="logout()">Logout</button>
+@if (isSignedIn()) {
+<div class="s11-padding">
+  <h1 class="text-center home-padding-top">
+    Hallo, {{ authStore.userName() }}!
+  </h1>
 </div>
+}
