@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FirebaseUIModule,
   FirebaseUISignInFailure,
   FirebaseUISignInSuccessWithAuthResult,
 } from 'firebaseui-angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthStore } from '../auth/store/auth.store';
 import { AuthService } from '../service/auth.service';
 
@@ -15,13 +16,23 @@ import { AuthService } from '../service/auth.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   readonly authStore = inject(AuthStore);
+  isMobile = true;
 
   constructor(
-    public authService: AuthService // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
+    private deviceService: DeviceDetectorService,
+    private authService: AuthService // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
   ) {
     //firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
+  }
+
+  ngOnInit() {
+    this.checkDevice();
+  }
+
+  checkDevice() {
+    this.isMobile = this.deviceService.isMobile();
   }
 
   isSignedIn(): boolean {

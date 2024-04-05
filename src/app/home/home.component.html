@@ -20,6 +20,13 @@
   </a>
 </div>
 
+<div *ngIf="isMobile">
+  <img src="/assets/StartingEleven.jpg" width="100%" />
+</div>
+<div *ngIf="!isMobile">
+  <img class="center" src="/assets/StartingEleven.jpg" />
+</div>
+
 <firebase-ui
   *ngIf="!isSignedIn()"
   (signInSuccessWithAuthResult)="successCallback($event)"
@@ -27,9 +34,8 @@
   (uiShown)="uiShownCallback()"></firebase-ui>
 
 <div class="s11-padding" *ngIf="isSignedIn()">
-  Hallo, {{ authStore.userName() }}!
   <br />
-  You have the UID: {{ authStore.uid() }}
+  <h1 class="text-center">Hallo, {{ authStore.userName() }}!</h1>
   <br />
 
   <button (click)="logout()">Logout</button>
