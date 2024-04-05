@@ -9,10 +9,18 @@ import { HomeComponent } from './home/home.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
+  { path: 'home/logout', component: HomeComponent },
   {
     path: 'faq',
     loadComponent: () =>
       import('./faq/faq.component').then(mod => mod.FaqComponent),
+  },
+  {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./privacy-policy/privacy-policy.component').then(
+        mod => mod.PrivacyPolicyComponent
+      ),
   },
   {
     path: 'lineup',

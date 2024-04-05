@@ -19,7 +19,6 @@ export const firebaseUiAuthConfig: firebaseui.auth.Config = {
     },
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
   ],
-  tosUrl: 'TODO: <your-tos-link>',
-  privacyPolicyUrl: 'TODO: <your-privacyPolicyUrl-link>',
+  privacyPolicyUrl: 'https://starting-eleven-2019.firebaseapp.com/#/privacy',
   credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
 };

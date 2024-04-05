@@ -1,10 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FirebaseUIModule,
   FirebaseUISignInFailure,
   FirebaseUISignInSuccessWithAuthResult,
+  FirebaseuiAngularLibraryService,
 } from 'firebaseui-angular';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { Subscription } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
 import { AuthService } from '../service/auth.service';
 
@@ -15,13 +20,48 @@ import { AuthService } from '../service/auth.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   readonly authStore = inject(AuthStore);
+  isMobile = true;
+  private sub: Subscription | undefined;
 
   constructor(
-    public authService: AuthService // firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
+    private router: Router,
+    private route: ActivatedRoute,
+    private metaTagService: Meta,
+    private titleService: Title,
+    private deviceService: DeviceDetectorService,
+    private authService: AuthService,
+    firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
   ) {
-    //firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
+    firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
+  }
+
+  ngOnInit() {
+    this.checkDevice();
+
+    this.titleService.setTitle('Fußball Manager: Home');
+    this.metaTagService.updateTag({
+      name: 'description',
+      content:
+        'Spiele mit deinen Lieblingsspielern aus der Voitsberger Stammtischliga gegen deine Freunde, und erstelle deine persönliche Aufstellung.',
+    });
+
+    this.sub = this.route.url.subscribe(urlSegments => {
+      if (urlSegments.some(segment => segment.path === 'logout')) {
+        console.log('logging out ..');
+        this.authService.signOut();
+        this.router.navigate(['home']);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+
+  checkDevice() {
+    this.isMobile = this.deviceService.isMobile();
   }
 
   isSignedIn(): boolean {
@@ -38,9 +78,5 @@ export class HomeComponent {
 
   uiShownCallback() {
     console.log('UI shown');
-  }
-
-  logout() {
-    this.authService.signOut();
   }
 }

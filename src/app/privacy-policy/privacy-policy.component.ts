@@ -1,0 +1,12 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 's11-privacy-policy',
+  standalone: true,
+  imports: [],
+  templateUrl: './privacy-policy.component.html',
+  styleUrl: './privacy-policy.component.scss'
+})
+export class PrivacyPolicyComponent {
+
+}
