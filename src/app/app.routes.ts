@@ -31,6 +31,14 @@ export const routes: Routes = [
     canActivate: [matchdayGuard, playersGuard],
   },
   {
+    path: 'profile',
+    loadComponent: () =>
+      import('./user/components/user-profile/user-profile.component').then(
+        mod => mod.UserProfileComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'admin',
     loadComponent: () =>
       import('./admin/container/admin.component').then(

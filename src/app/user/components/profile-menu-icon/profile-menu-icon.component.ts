@@ -1,6 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { getState } from '@ngrx/signals';
-import { ProfileStore } from '../../store/profile.store';
+import { AuthStore } from '../../../auth/store/auth.store';
 import { UserIconComponent } from '../user-icon/user-icon.component';
 
 @Component({
@@ -11,7 +11,7 @@ import { UserIconComponent } from '../user-icon/user-icon.component';
   styleUrl: './profile-menu-icon.component.scss',
 })
 export class ProfileMenuIconComponent {
-  readonly store = inject(ProfileStore);
+  readonly store = inject(AuthStore);
 
   constructor() {
     effect(() => {

@@ -24,7 +24,6 @@ import { ChangePlayerRequest, Player } from '../common.model';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
-    FormsModule,
     MatInputModule,
   ],
   templateUrl: './player.component.html',

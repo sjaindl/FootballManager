@@ -20,7 +20,10 @@ export class AuthService {
     this.fireAuth.signOut();
   }
 
-  constructor(private fireAuth: Auth, firebaseService: FirebaseService) {
+  constructor(
+    private fireAuth: Auth,
+    private firebaseService: FirebaseService
+  ) {
     this.isUserSignedIn = fireAuth.currentUser != null;
 
     console.log('Current user: ' + fireAuth.currentUser);
@@ -29,7 +32,7 @@ export class AuthService {
     fireAuth.onAuthStateChanged(user => {
       if (user) {
         firebaseService.getUser(user.uid).subscribe(dbUser => {
-          const userName = user.displayName ?? 'No Name';
+          const userName = dbUser?.userName ?? user.displayName ?? 'No Name';
 
           if (!dbUser) {
             firebaseService.setUserData(
@@ -38,9 +41,8 @@ export class AuthService {
               user.email ?? '',
               user.providerId,
               user.photoURL ?? '',
+              '',
               defaultFormation,
-              0,
-              0,
               false
             );
           }
@@ -51,6 +53,7 @@ export class AuthService {
             email: user.email ?? '',
             providerId: user.providerId ?? '',
             photoUrl: user.photoURL ?? '',
+            photoRef: dbUser?.photoRef ?? '',
             formation: dbUser?.formation ?? defaultFormation,
             isAdmin: dbUser?.isAdmin ?? false,
           };
@@ -68,5 +71,15 @@ export class AuthService {
         console.log('user signed out');
       }
     });
+  }
+
+  updateName(name: string): void {
+    this.firebaseService.setUserName(name);
+    this.authStore.updateName(name);
+  }
+
+  updatePhotoRef(photoRef: string): void {
+    this.firebaseService.setUserPhotoRef(photoRef);
+    this.authStore.updatePhotoRef(photoRef);
   }
 }

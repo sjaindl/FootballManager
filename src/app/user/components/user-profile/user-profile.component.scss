@@ -1,0 +1,43 @@
+.profile-card {
+  max-width: 400px;
+}
+
+.profile-image {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media all and (min-width: 0px) and (max-width: 400px) {
+  .profile-card {
+    margin: 16px;
+  }
+
+  mat-form-field {
+    width: 154%;
+    display: block;
+  }
+}
+
+@media all and (min-width: 400px) and (max-width: 6000px) {
+  .profile-card {
+    display: block;
+    margin: auto;
+    margin-top: 32px;
+    width: 50%;
+  }
+
+  mat-form-field {
+    width: 172%;
+    display: block;
+  }
+}
+
+.mat-card-header-text {
+  width: 100%;
+  text-align: center;
+}
+
+.file-input {
+  display: none;
+}

@@ -5,8 +5,8 @@ export interface User {
   userName: string;
   email: string;
   providerId: string;
-  // photoRef: string;
   photoUrl: string;
+  photoRef: string;
   formation: string;
   isAdmin: boolean;
 }
@@ -19,6 +19,7 @@ export const userConverter = {
       email: user.email,
       providerId: user.providerId,
       photoUrl: user.photoUrl,
+      photoRef: user.photoRef,
       formation: user.formation,
       isAdmin: user.isAdmin,
     };
@@ -35,6 +36,7 @@ export const userConverter = {
       email: data['email'],
       providerId: data['providerId'],
       photoUrl: data['photoUrl'],
+      photoRef: data['photoRef'],
       formation: data['formation'],
       isAdmin: data['isAdmin'],
     };
