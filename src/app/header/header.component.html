@@ -47,11 +47,20 @@
     <div class="s11-toolbar" matRipple>
       @if (this.router.url == '/lineup') {
 
-      <button (click)="save()" mat-icon-button style="margin-right: 8px">
+      <button (click)="saveLineup()" mat-icon-button>
         <mat-icon
           class="icon-display"
           aria-hidden="false"
-          aria-label="Save lineup"
+          aria-label="Aufstellung speichern"
+          fontIcon="save" />
+      </button>
+      } @if (this.router.url == '/admin') {
+
+      <button (click)="saveMatchday()" mat-icon-button>
+        <mat-icon
+          class="icon-display"
+          aria-hidden="false"
+          aria-label="Spieltag speichern"
           fontIcon="save" />
       </button>
       }

@@ -9,8 +9,12 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { MatchdayStore } from '../admin/store/matchday.store';
 import { AppComponent } from '../app.component';
 import { LineupStore } from '../lineup/store/lineup.store';
+import { PlayerStore } from '../lineup/store/player.store';
+import { FirebaseService } from '../service/firebase.service';
+import { SnackbarService } from '../service/snackbar.service';
 import { ProfileMenuIconComponent } from '../user/components/profile-menu-icon/profile-menu-icon.component';
 import { UserIconComponent } from '../user/components/user-icon/user-icon.component';
 
@@ -34,13 +38,51 @@ import { UserIconComponent } from '../user/components/user-icon/user-icon.compon
 })
 export class HeaderComponent {
   readonly lineupStore = inject(LineupStore);
+  readonly playerStore = inject(PlayerStore);
+  readonly matchdayStore = inject(MatchdayStore);
+
   title = new AppComponent().title;
 
-  constructor(public router: Router) {}
+  constructor(
+    public router: Router,
+    private snackbarService: SnackbarService,
+    private firebaseService: FirebaseService
+  ) {}
 
-  showSaveButton = this.router.url === '/lineup';
-
-  save() {
+  saveLineup() {
     this.lineupStore.saveLineup();
+  }
+
+  saveMatchday() {
+    if (!this.isValid()) {
+      this.snackbarService.open(
+        'Es wurden nicht für alle Spieler Punkte eingetragen!'
+      );
+      return;
+    }
+
+    const nextDay = this.matchdayStore.nextMatchday();
+
+    this.matchdayStore.addMatchday(nextDay);
+    this.playerStore.setPlayerMatchdays(this.playerStore.players(), nextDay);
+
+    // TODO: create user store
+    this.firebaseService.setUserMatchdayLineup(nextDay);
+
+    this.playerStore.resetCurrentPoints();
+  }
+
+  private isValid(): Boolean {
+    var isValid = true;
+    this.playerStore.players().forEach(player => {
+      const value = player.pointsCurrentRound;
+      console.log(value === undefined);
+      console.log(isNaN(+Number(value)));
+      if (value === undefined || isNaN(+Number(value))) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
   }
 }

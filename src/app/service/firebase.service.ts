@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import {
+  CollectionReference,
   DocumentReference,
   Firestore,
   collection,
+  collectionCount,
   collectionData,
   doc,
   docData,
@@ -18,6 +20,7 @@ import {
 import { Formation, formationConverter } from '../shared/formation';
 import { LinedUpPlayer } from '../shared/lineup';
 import { LineupData, lineupDataConverter } from '../shared/lineupdata';
+import { Matchday, matchdayConverter } from '../shared/matchday';
 import { User, userConverter } from '../shared/user';
 
 @Injectable({
@@ -56,7 +59,7 @@ export class FirebaseService {
   // User
   userCollection = collection(this.db, '/users/').withConverter(userConverter);
 
-  getUsers(): Observable<[User] | (User[] & {})> {
+  getUsers(): Observable<User[] | (User[] & {})> {
     return collectionData(this.userCollection);
   }
 
@@ -88,7 +91,8 @@ export class FirebaseService {
     photoUrl: string,
     formation: string,
     points: number,
-    pointsLastRound: number
+    pointsLastRound: number,
+    isAdmin: boolean
   ) {
     const userDoc = this.getUserDoc(uid);
 
@@ -101,6 +105,7 @@ export class FirebaseService {
       formation: formation,
       points: points,
       pointsLastRound: pointsLastRound,
+      isAdmin: isAdmin,
     };
 
     setDoc(userDoc, docData, { merge: true });
@@ -151,6 +156,41 @@ export class FirebaseService {
     return userId;
   }
 
+  getUserMatchdayLineups(): Observable<LineupData[] | (LineupData[] & {})> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('Cannot get lineup - User ID is null');
+      return EMPTY;
+    }
+
+    const matchdaysCollection = collection(
+      this.getUserDoc(userId),
+      'matchdays'
+    ).withConverter(lineupDataConverter);
+
+    return collectionData(matchdaysCollection);
+  }
+
+  setUserMatchdayLineup(matchday: string) {
+    this.getUsers().subscribe(users => {
+      users.forEach(user => {
+        this.getLineUpOfUser(user.uid).subscribe(lineupData => {
+          if (lineupData) {
+            const matchdaysCollection = collection(
+              this.getUserDoc(user.uid),
+              'matchdays'
+            );
+            const matchdayDoc = doc(matchdaysCollection, matchday);
+
+            setDoc(matchdayDoc, lineupData);
+          }
+        });
+      });
+    });
+  }
+
+  // Lineup
+
   getLineUp(): Observable<LineupData | undefined> {
     const userId = this.getCurrentUserId();
     if (!userId) {
@@ -158,6 +198,10 @@ export class FirebaseService {
       return EMPTY;
     }
 
+    return this.getLineUpOfUser(userId);
+  }
+
+  getLineUpOfUser(userId: string): Observable<LineupData | undefined> {
     const lineupCollection = collection(
       this.getUserDoc(userId),
       'lineup'
@@ -210,5 +254,66 @@ export class FirebaseService {
     };
 
     setDoc(linedUpPlayerDoc, docData, { merge: true });
+  }
+
+  // Matchdays
+  getMatchdays(): Observable<Matchday[] | (Matchday[] & {})> {
+    const matchDaysCollection = collection(this.db, 'matchDays').withConverter(
+      matchdayConverter
+    );
+
+    return collectionData(matchDaysCollection);
+  }
+
+  addMatchday(matchday: string, opponent: string) {
+    const matchDaysCollection = collection(this.db, 'matchDays').withConverter(
+      matchdayConverter
+    );
+
+    const matchdayDoc = doc(matchDaysCollection, matchday);
+
+    const docData = {
+      id: matchday,
+      opponent: opponent,
+    };
+
+    setDoc(matchdayDoc, docData, { merge: true });
+  }
+
+  setPlayerMatchdays(players: Player[], matchday: string) {
+    const playersCollection = collection(this.db, 'players').withConverter(
+      playerConverter
+    );
+
+    players.forEach(player => {
+      const playerDoc = doc(playersCollection, player.playerId);
+      const points = player.points ?? {};
+
+      points[matchday] = player.pointsCurrentRound ?? 0;
+
+      const docData = {
+        playerId: player.playerId,
+        name: player.name,
+        position: player.position,
+        imageRef: player.imageRef,
+        points: points,
+      };
+
+      console.log(docData);
+
+      setDoc(playerDoc, docData, { merge: true });
+    });
+  }
+
+  // Util
+
+  debugInfo(collection: CollectionReference) {
+    collectionCount(collection).subscribe(number => {
+      console.log('count: ' + number);
+    });
+
+    collectionData(collection).subscribe(value => {
+      console.log('entry: ' + JSON.stringify(value));
+    });
   }
 }

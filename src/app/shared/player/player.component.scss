@@ -4,3 +4,44 @@
 
   width: 100%;
 }
+
+.player-form {
+  display: flex;
+}
+
+.container img {
+  max-width: 100px;
+  max-height: 100px;
+  display: block;
+  margin: auto;
+}
+
+@media all and (min-width: 0px) and (max-width: 400px) {
+  .player-form {
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+  }
+
+  .player-row {
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+  }
+}
+
+@media all and (min-width: 400px) and (max-width: 6000px) {
+  .player-form {
+    flex-direction: row;
+    align-items: center;
+
+    column-gap: 32px;
+  }
+
+  .player-row {
+    justify-content: start;
+    align-items: center;
+
+    column-gap: 32px;
+  }
+}

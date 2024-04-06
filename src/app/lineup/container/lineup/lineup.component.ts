@@ -35,7 +35,6 @@ export class LineupComponent {
 
   selectedFormation: Signal<Formation | undefined>;
   formations: Signal<Formation[]>;
-  player: Signal<Player[]>;
 
   goalkeeper: Signal<Player>;
   defenders: Signal<Player[]>;
@@ -45,7 +44,6 @@ export class LineupComponent {
   constructor() {
     this.formations = this.formationStore.formations;
     this.selectedFormation = this.formationStore.selectedFormation;
-    this.player = this.playerStore.players;
 
     this.goalkeeper = this.lineupStore.goalkeeper;
     this.defenders = this.lineupStore.defenders;

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
 import { formationsGuard } from './guards/formations.guard';
 import { lineupGuard } from './guards/lineup.guard';
@@ -21,6 +22,14 @@ export const routes: Routes = [
       import('./privacy-policy/privacy-policy.component').then(
         mod => mod.PrivacyPolicyComponent
       ),
+  },
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./admin/container/admin.component').then(
+        mod => mod.AdminComponent
+      ),
+    canActivate: [adminGuard],
   },
   {
     path: 'lineup',

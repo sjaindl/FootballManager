@@ -115,7 +115,17 @@ export const PlayerStore = signalStore(
               tapResponse({
                 next: players => {
                   patchState(store, state => {
-                    state.players = players;
+                    var mapped: Player[] = players.map(player => {
+                      return {
+                        playerId: player.playerId,
+                        position: player.position,
+                        name: player.name,
+                        imageRef: player.imageRef,
+                        points: player.points,
+                        pointsCurrentRound: 0,
+                      };
+                    });
+                    state.players = mapped;
                     return state;
                   });
                 },
@@ -128,6 +138,29 @@ export const PlayerStore = signalStore(
           })
         )
       ),
+      setPlayerMatchdays(players: Player[], matchday: string): void {
+        patchState(store, state => {
+          state.players = players;
+          return state;
+        });
+
+        firebaseService.setPlayerMatchdays(players, matchday);
+      },
+      resetCurrentPoints(): void {
+        patchState(store, state => {
+          state.players = state.players.map(player => {
+            return {
+              playerId: player.playerId,
+              name: player.name,
+              position: player.position,
+              imageRef: player.imageRef,
+              points: player.points,
+              pointsCurrentRound: 0,
+            };
+          });
+          return state;
+        });
+      },
     })
   )
 );

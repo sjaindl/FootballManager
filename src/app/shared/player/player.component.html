@@ -1,22 +1,62 @@
 <div class="player-row">
-  @if (imageUrl) {
-  <!-- player: {{ imageUrl | async }} -->
-  <img alt="user-icon" [src]="imageUrl | async" width="100px" />
-  }@else {
-  <img alt="user-icon" src="./../../../assets/no_photo.jpg" width="100px" />
-  }
+  <div class="container" style="width: 100px; height: 100px">
+    @if (imageUrl) {
+    <img alt="user-icon" [src]="imageUrl | async" />
+    } @else {
+    <img alt="user-icon" src="./../../../assets/no_photo.jpg" />
+    }
+  </div>
 
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <mat-select
-      [value]="player$().playerId"
-      (valueChange)="onValueChange($event)">
-      @for (selectablePlayer of playerList$(); track selectablePlayer.playerId)
-      {
-      <mat-option [value]="selectablePlayer.playerId">{{
-        selectablePlayer.name
-      }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <div class="player-form">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+
+      <mat-select
+        [value]="player()?.playerId"
+        (valueChange)="onValueChange($event)"
+        [disabled]="!isSelectable()">
+        @for (selectablePlayer of playerList(); track selectablePlayer.playerId)
+        { @if (displayPointsSeparately()) {
+        <mat-option [value]="selectablePlayer.playerId">{{
+          selectablePlayer.name
+        }}</mat-option>
+        } @else {
+        <mat-option [value]="selectablePlayer.playerId"
+          >{{ selectablePlayer.name }} ({{
+            totalPoints(selectablePlayer.points)
+          }})</mat-option
+        >
+        } }
+      </mat-select>
+    </mat-form-field>
+
+    @if (isAdmin()) { @if (editMode()) {
+
+    <form>
+      <mat-form-field class="example-full-width">
+        <mat-label>Punkte</mat-label>
+        <input
+          matInput
+          placeholder="0"
+          (change)="setCurrentPoints($event)"
+          [value]="player()?.pointsCurrentRound" />
+      </mat-form-field>
+    </form>
+
+    } @else {
+    <form>
+      <mat-form-field>
+        <mat-label>Punkte</mat-label>
+        <input matInput disabled value="{{ points() }}" />
+      </mat-form-field>
+    </form>
+    } } @else { @if ((displayPointsSeparately())) {
+    <form>
+      <mat-form-field>
+        <mat-label>Punkte</mat-label>
+        <input matInput disabled value="{{ points() }}" />
+      </mat-form-field>
+    </form>
+    } }
+  </div>
 </div>

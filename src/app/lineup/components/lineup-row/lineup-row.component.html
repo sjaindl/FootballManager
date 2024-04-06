@@ -1,8 +1,13 @@
 <mat-accordion>
-  <mat-expansion-panel [expanded]="numSelectedPlayers < maxNumOfPlayers()">
+  <mat-expansion-panel
+    [expanded]="
+      isForLineup() ? numSelectedPlayers() < maxNumOfPlayers() : true
+    ">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{ rowTitle() }} ({{ numSelectedPlayers }}/{{ maxNumOfPlayers() }})
+        @if (isForLineup()) {
+        {{ rowTitle() }} ({{ numSelectedPlayers() }}/{{ maxNumOfPlayers() }}) }
+        @else { {{ rowTitle() }} ({{ maxNumOfPlayers() }}) }
       </mat-panel-title>
       <!-- <mat-panel-description>
         This is a summary of the content
@@ -14,6 +19,11 @@
       <s11-player
         [player]="selectablePlayer"
         [playerList]="playerList()"
+        [displayPointsSeparately]="!isForLineup()"
+        [isSelectable]="isForLineup()"
+        [isAdmin]="isAdmin()"
+        [editMode]="editMode()"
+        [matchDayId]="matchDayId()"
         (selectedPlayerChange)="onPlayerChange($event)"></s11-player>
       }
     </div>
