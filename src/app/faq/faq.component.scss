@@ -4,3 +4,10 @@
   margin-top: 16px;
   font-size: 20px;
 }
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: auto;
+  align-content: start;
+  grid-gap: 4px;
+}
