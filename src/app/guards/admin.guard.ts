@@ -31,8 +31,14 @@ export const adminGuard: CanActivateFn = (
       if (fulfillsRequirements) {
         return true;
       }
-      playerStore.loadPlayers();
-      matchdayStore.loadPlayerMatchdays();
+
+      if (playerStore.players().length === 0) {
+        playerStore.loadPlayers();
+      }
+
+      if (matchdayStore.matchdays().length === 0) {
+        matchdayStore.loadMatchdays();
+      }
       return false;
     }),
     filter(canActivate => {
