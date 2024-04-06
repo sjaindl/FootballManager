@@ -28,6 +28,10 @@ export class LineupRowComponent {
   maxNumOfPlayers = input(0);
   selectedPlayers = input<Partial<Player>[]>([]);
   playerList = input<Player[]>([]);
+  isForLineup = input(true);
+  isAdmin = input(false);
+  editMode = input<boolean>(false);
+  matchDayId = input<string>();
   @Output() selectedPlayerChange =
     new EventEmitter<ChangePlayerRequestWrapper>();
 
