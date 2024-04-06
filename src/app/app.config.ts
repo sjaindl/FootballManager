@@ -9,7 +9,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {
   PreloadAllModules,
   provideRouter,
-withDebugTracing,
+  withDebugTracing,
   withPreloading,
 } from '@angular/router';
 import { FirebaseUIModule } from 'firebaseui-angular';
