@@ -1,4 +1,4 @@
-<div class="faq-header">
+<div class="faq-grid faq-header">
   @for (faq of faqs$ | async; track faq) {
   <mat-expansion-panel [expanded]="faq.index == 0">
     <mat-expansion-panel-header>
@@ -9,5 +9,3 @@
   </mat-expansion-panel>
   }
 </div>
-
-<br />

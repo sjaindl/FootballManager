@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, Signal, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CoreStore } from '../../../core/store/core.store';
 import {
   ChangePlayerRequestWrapper,
   Player,
@@ -29,7 +28,6 @@ import { PlayerStore } from '../../store/player.store';
 })
 export class LineupComponent {
   readonly formationStore = inject(FormationStore);
-  readonly coreStore = inject(CoreStore);
   readonly playerStore = inject(PlayerStore);
   readonly lineupStore = inject(LineupStore);
 

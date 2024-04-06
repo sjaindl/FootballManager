@@ -3,6 +3,7 @@ import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
 import { formationsGuard } from './guards/formations.guard';
 import { lineupGuard } from './guards/lineup.guard';
+import { matchdayGuard } from './guards/matchday.guard';
 import { playersGuard } from './guards/players.guard';
 import { selectedFormationGuard } from './guards/selected-formation.guard';
 import { HomeComponent } from './home/home.component';
@@ -24,12 +25,18 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'players',
+    loadComponent: () =>
+      import('./players/players.component').then(mod => mod.PlayersComponent),
+    canActivate: [matchdayGuard, playersGuard],
+  },
+  {
     path: 'admin',
     loadComponent: () =>
       import('./admin/container/admin.component').then(
         mod => mod.AdminComponent
       ),
-    canActivate: [adminGuard],
+    canActivate: [matchdayGuard, playersGuard, adminGuard],
   },
   {
     path: 'lineup',

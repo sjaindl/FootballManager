@@ -1,3 +1,10 @@
 table {
   width: 100%;
 }
+
+.matchday-grid {
+  display: grid;
+  grid-template-columns: auto;
+  align-content: start;
+  grid-gap: 4px;
+}
