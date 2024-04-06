@@ -1,1 +1,67 @@
-<p>user-profile works!</p>
+<mat-card class="profile-card">
+  <mat-card-header>
+    <mat-card-title>
+      <form>
+        <mat-form-field>
+          <mat-label>Benutzername:</mat-label>
+          <input
+            [disabled]="!editMode()"
+            matInput
+            (change)="setUserName($event)"
+            [value]="authStore.user()?.userName" />
+        </mat-form-field>
+      </form>
+    </mat-card-title>
+
+    <mat-card-subtitle>
+      <mat-form-field>
+        <mat-label>E-Mail:</mat-label>
+        <input matInput disabled [value]="authStore.user()?.email" />
+      </mat-form-field>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  @if (this.photoRef) {
+
+  <img
+    class="profile-image"
+    mat-card-image
+    [src]="this.photoRef | async"
+    alt="{{ authStore.user()?.userName }}" />
+  } @else {
+  <img
+    class="profile-image"
+    mat-card-image
+    src="{{ authStore.user()?.photoUrl }}"
+    alt="{{ authStore.user()?.userName }}" />
+  }
+
+  <!-- <mat-card-content/> -->
+
+  <mat-card-actions>
+    @if (editMode()) {
+    <button mat-button (click)="resetEditMode()">
+      Benutzernamen speichern
+    </button>
+    } @else {
+    <button mat-button (click)="setEditMode()">Benutzernamen ändern</button>
+    }
+
+    <input
+      type="file"
+      class="file-input"
+      accept="image/*"
+      (change)="upload($event)"
+      #fileUpload />
+
+    <div class="file-upload" style="margin-left: 10px; margin-right: 10px">
+      <button
+        mat-mini-fab
+        color="primary"
+        class="upload-btn"
+        (click)="fileUpload.click()">
+        <mat-icon>attach_file</mat-icon>
+      </button>
+    </div>
+  </mat-card-actions>
+</mat-card>

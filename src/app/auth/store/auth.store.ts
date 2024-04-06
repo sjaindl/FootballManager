@@ -37,15 +37,47 @@ export const AuthStore = signalStore(
       }
       return undefined;
     }),
+    imageUrl: computed(() => {
+      if (user) {
+        return user()?.photoUrl ?? undefined;
+      }
+      return undefined;
+    }),
+    imageRef: computed(() => {
+      if (user) {
+        return user()?.photoRef ?? undefined;
+      }
+      return undefined;
+    }),
   })),
 
-  withMethods(store => ({
-    setUser(user?: User): void {
-      patchState(store, state => {
-        return produce(state, draft => {
-          draft.user = user;
+  withMethods(store => {
+    return {
+      setUser(user?: User): void {
+        patchState(store, state => {
+          return produce(state, draft => {
+            draft.user = user;
+          });
         });
-      });
-    },
-  }))
+      },
+      updateName(name: string): void {
+        patchState(store, state => {
+          if (state.user) {
+            // TODO: ... Mit immer ersetzen
+            return { user: { ...state.user, name: name } };
+          }
+          return { ...state };
+        });
+      },
+      updatePhotoRef(photoRef: string): void {
+        patchState(store, state => {
+          if (state.user) {
+            // TODO: ... Mit immer ersetzen
+            return { user: { ...state.user, photoRef: photoRef } };
+          }
+          return { ...state };
+        });
+      },
+    };
+  })
 );

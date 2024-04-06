@@ -89,9 +89,8 @@ export class FirebaseService {
     email: string,
     providerId: string,
     photoUrl: string,
+    photoRef: string,
     formation: string,
-    points: number,
-    pointsLastRound: number,
     isAdmin: boolean
   ) {
     const userDoc = this.getUserDoc(uid);
@@ -102,13 +101,60 @@ export class FirebaseService {
       email: email,
       providerId: providerId,
       photoUrl: photoUrl,
+      photoRef: photoRef,
       formation: formation,
-      points: points,
-      pointsLastRound: pointsLastRound,
       isAdmin: isAdmin,
     };
 
     setDoc(userDoc, docData, { merge: true });
+  }
+
+  setUserName(userName: string) {
+    const user = this.authStore.user();
+    if (user) {
+      if (userName === user.userName) {
+        return;
+      }
+
+      const userDoc = this.getUserDoc(user.uid);
+
+      const docData = {
+        uid: user.uid,
+        userName: userName,
+        email: user.email,
+        providerId: user.providerId,
+        photoUrl: user.photoUrl,
+        photoRef: user.photoRef,
+        formation: user.formation,
+        isAdmin: user.isAdmin,
+      };
+
+      setDoc(userDoc, docData, { merge: true });
+    }
+  }
+
+  setUserPhotoRef(photoRef: string) {
+    const user = this.authStore.user();
+    if (user) {
+      const userDoc = this.getUserDoc(user.uid);
+
+      if (photoRef === user.photoRef) {
+        return;
+      }
+
+      const docData = {
+        uid: user.uid,
+        userName: user.userName,
+        email: user.email,
+        providerId: user.providerId,
+        photoUrl: user.photoUrl,
+        photoRef: photoRef,
+        formation: user.formation,
+        isAdmin: user.isAdmin,
+      };
+
+      setDoc(userDoc, docData, { merge: true });
+    }
   }
 
   setFormation(formation: string) {
