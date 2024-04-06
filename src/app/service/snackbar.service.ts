@@ -8,6 +8,8 @@ export class SnackbarService {
   readonly snackBar = inject(MatSnackBar);
 
   open(message: string) {
-    this.snackBar.open(message);
+    this.snackBar.open(message, '', {
+      duration: 2000,
+    });
   }
 }

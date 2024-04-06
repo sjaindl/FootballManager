@@ -7,11 +7,7 @@ export interface User {
   providerId: string;
   // photoRef: string;
   photoUrl: string;
-
   formation: string;
-  points: number;
-  pointsLastRound: number;
-
   isAdmin: boolean;
 }
 
@@ -23,11 +19,7 @@ export const userConverter = {
       email: user.email,
       providerId: user.providerId,
       photoUrl: user.photoUrl,
-
       formation: user.formation,
-      points: user.points,
-      pointsLastRound: user.pointsLastRound,
-
       isAdmin: user.isAdmin,
     };
   },
@@ -43,11 +35,7 @@ export const userConverter = {
       email: data['email'],
       providerId: data['providerId'],
       photoUrl: data['photoUrl'],
-
       formation: data['formation'],
-      points: data['points'],
-      pointsLastRound: data['pointsLastRound'],
-
       isAdmin: data['isAdmin'],
     };
   },
