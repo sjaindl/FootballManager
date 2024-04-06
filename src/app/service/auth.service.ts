@@ -52,8 +52,6 @@ export class AuthService {
             providerId: user.providerId ?? '',
             photoUrl: user.photoURL ?? '',
             formation: dbUser?.formation ?? defaultFormation,
-            points: dbUser?.points ?? 0,
-            pointsLastRound: dbUser?.pointsLastRound ?? 0,
             isAdmin: dbUser?.isAdmin ?? false,
           };
 
