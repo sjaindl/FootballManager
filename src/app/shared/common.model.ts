@@ -32,6 +32,10 @@ export interface Player {
   name: string;
   position: Position;
   imageRef?: string;
+  points: Record<string, number>;
+
+  // admin property:
+  pointsCurrentRound?: number;
 }
 
 export interface ChangePlayerRequest {
@@ -50,6 +54,7 @@ export const playerConverter = {
       name: player.name,
       position: player.position,
       imageRef: player.imageRef,
+      points: player.points,
     };
   },
   fromFirestore: (
@@ -62,6 +67,7 @@ export const playerConverter = {
       name: data['name'],
       position: data['position'],
       imageRef: data['imageRef'],
+      points: data['points'],
     };
   },
 };

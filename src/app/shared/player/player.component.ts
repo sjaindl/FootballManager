@@ -43,7 +43,6 @@ export class PlayerComponent implements OnInit {
   imageUrl: Promise<String> | undefined;
 
   points: Signal<number>;
-  pointsCurrentRound: Signal<number>;
 
   constructor(private storage: Storage) {
     this.points = computed(() => {
@@ -62,8 +61,6 @@ export class PlayerComponent implements OnInit {
 
       return this.totalPoints(points);
     });
-
-    this.pointsCurrentRound = computed(() => 0);
   }
 
   ngOnInit(): void {
@@ -75,6 +72,15 @@ export class PlayerComponent implements OnInit {
     } else {
       const storageRef = ref(this.storage, 'players/no_photo.jpg');
       this.imageUrl = getDownloadURL(storageRef);
+    }
+  }
+
+  setCurrentPoints(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    const value = element.value;
+    const player = this.player();
+    if (player) {
+      player.pointsCurrentRound = Number(value);
     }
   }
 

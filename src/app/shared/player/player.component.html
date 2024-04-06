@@ -35,7 +35,11 @@
     <form>
       <mat-form-field class="example-full-width">
         <mat-label>Punkte</mat-label>
-        <input matInput placeholder="0" value="{{ pointsCurrentRound() }}" />
+        <input
+          matInput
+          placeholder="0"
+          (change)="setCurrentPoints($event)"
+          [value]="player()?.pointsCurrentRound" />
       </mat-form-field>
     </form>
 

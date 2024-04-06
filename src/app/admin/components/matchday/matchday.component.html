@@ -1,51 +1,40 @@
-<table mat-table [dataSource]="matchdays" class="mat-elevation-z8">
-  <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef>Position</th>
-    <td mat-cell *matCellDef="let matchday">
-      {{ positionMapper.displayName(matchday.player.position) }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let matchday">{{ matchday.player.name }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="points">
-    <th mat-header-cell *matHeaderCellDef>Punkte</th>
-    @if (editMode()) {
-    <td mat-cell *matCellDef="let matchday">
-      <input
-        [ngModel]="matchday.matchday.pointsCurrentRound"
-        (ngModelChange)="matchday.matchday.pointsCurrentRound = $event" />
-    </td>
-    } @else {
-    <td mat-cell *matCellDef="let matchday">{{ matchday.matchday.points }}</td>
-    }
-  </ng-container>
-
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef>Spieltag</th>
-    <td mat-cell *matCellDef="let matchday">{{ matchday.matchday.id }}</td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-
-<br />
-
-@if (editMode()) {
-<button
-  mat-raised-button
-  color="primary"
-  class="horizontal-center"
-  (click)="save()">
-  Speichern
-</button>
-}
-
-<br />
+<s11-lineup-row
+  position="Goalkeeper"
+  rowTitle="Tormann"
+  [maxNumOfPlayers]="goalkeeper().length"
+  [selectedPlayers]="goalkeeper()"
+  [isForLineup]="false"
+  [isAdmin]="true"
+  [editMode]="editMode()"
+  [matchDayId]="matchday()"
+  [playerList]="playerStore.goalkeepers()"></s11-lineup-row>
+<s11-lineup-row
+  position="Defender"
+  rowTitle="Verteidigung"
+  [maxNumOfPlayers]="defenders().length"
+  [selectedPlayers]="defenders()"
+  [isForLineup]="false"
+  [isAdmin]="true"
+  [editMode]="editMode()"
+  [matchDayId]="matchday()"
+  [playerList]="playerStore.defenders()"></s11-lineup-row>
+<s11-lineup-row
+  position="Midfielder"
+  rowTitle="Mittelfeld"
+  [maxNumOfPlayers]="midfielder().length"
+  [selectedPlayers]="midfielder()"
+  [isForLineup]="false"
+  [isAdmin]="true"
+  [editMode]="editMode()"
+  [matchDayId]="matchday()"
+  [playerList]="playerStore.midfielders()"></s11-lineup-row>
+<s11-lineup-row
+  position="Attacker"
+  rowTitle="Stürmer"
+  [maxNumOfPlayers]="attacker.length"
+  [selectedPlayers]="attacker()"
+  [isForLineup]="false"
+  [isAdmin]="true"
+  [editMode]="editMode()"
+  [matchDayId]="matchday()"
+  [playerList]="playerStore.attackers()"></s11-lineup-row>

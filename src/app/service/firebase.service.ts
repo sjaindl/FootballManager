@@ -1,15 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import {
+  CollectionReference,
   DocumentReference,
   Firestore,
   collection,
+  collectionCount,
   collectionData,
   doc,
   docData,
   setDoc,
 } from '@angular/fire/firestore';
 import { EMPTY, Observable } from 'rxjs';
-import { PlayerWithMatchDay } from '../admin/store/matchday.store';
 import { AuthStore } from '../auth/store/auth.store';
 import {
   FirebaseResponse,
@@ -155,6 +156,39 @@ export class FirebaseService {
     return userId;
   }
 
+  getUserMatchdayLineups(): Observable<LineupData[] | (LineupData[] & {})> {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('Cannot get lineup - User ID is null');
+      return EMPTY;
+    }
+
+    const matchdaysCollection = collection(
+      this.getUserDoc(userId),
+      'matchdays'
+    ).withConverter(lineupDataConverter);
+
+    return collectionData(matchdaysCollection);
+  }
+
+  setUserMatchdayLineup(matchday: string) {
+    this.getUsers().subscribe(users => {
+      users.forEach(user => {
+        this.getLineUpOfUser(user.uid).subscribe(lineupData => {
+          if (lineupData) {
+            const matchdaysCollection = collection(
+              this.getUserDoc(user.uid),
+              'matchdays'
+            );
+            const matchdayDoc = doc(matchdaysCollection, matchday);
+
+            setDoc(matchdayDoc, lineupData);
+          }
+        });
+      });
+    });
+  }
+
   // Lineup
 
   getLineUp(): Observable<LineupData | undefined> {
@@ -222,87 +256,64 @@ export class FirebaseService {
     setDoc(linedUpPlayerDoc, docData, { merge: true });
   }
 
-  setUserMatchdayLineup(matchday: string) {
-    this.getUsers().subscribe(users => {
-      users.forEach(user => {
-        this.getLineUpOfUser(user.uid).subscribe(lineupData => {
-          if (lineupData) {
-            const matchdaysCollection = collection(
-              this.getUserDoc(user.uid),
-              'matchdays'
-            );
-            const matchdayDoc = doc(matchdaysCollection, matchday);
-
-            setDoc(matchdayDoc, lineupData);
-          }
-        });
-      });
-    });
-  }
-
   // Matchdays
-  getUserMatchdayLineups(): Observable<LineupData[] | (LineupData[] & {})> {
-    const userId = this.getCurrentUserId();
-    if (!userId) {
-      console.error('Cannot get lineup - User ID is null');
-      return EMPTY;
-    }
+  getMatchdays(): Observable<Matchday[] | (Matchday[] & {})> {
+    const matchDaysCollection = collection(this.db, 'matchDays').withConverter(
+      matchdayConverter
+    );
 
-    const matchdaysCollection = collection(
-      this.getUserDoc(userId),
-      'matchdays'
-    ).withConverter(lineupDataConverter);
-
-    return collectionData(matchdaysCollection);
+    return collectionData(matchDaysCollection);
   }
 
-  setPlayerMatchdays(matchdays: PlayerWithMatchDay[]) {
+  addMatchday(matchday: string, opponent: string) {
+    const matchDaysCollection = collection(this.db, 'matchDays').withConverter(
+      matchdayConverter
+    );
+
+    const matchdayDoc = doc(matchDaysCollection, matchday);
+
+    const docData = {
+      id: matchday,
+      opponent: opponent,
+    };
+
+    setDoc(matchdayDoc, docData, { merge: true });
+  }
+
+  setPlayerMatchdays(players: Player[], matchday: string) {
     const playersCollection = collection(this.db, 'players').withConverter(
       playerConverter
     );
 
-    matchdays.forEach(playerWithMatchDay => {
-      const matchday = playerWithMatchDay.matchday;
-      const player = doc(playersCollection, playerWithMatchDay.player.playerId);
+    players.forEach(player => {
+      const playerDoc = doc(playersCollection, player.playerId);
+      const points = player.points ?? {};
 
-      const matchdaysCollection = collection(player, 'matchdays').withConverter(
-        matchdayConverter
-      );
-
-      const matchdayDoc = doc(matchdaysCollection, matchday.id);
+      points[matchday] = player.pointsCurrentRound ?? 0;
 
       const docData = {
-        id: playerWithMatchDay.matchday.id,
-        points: Number(matchday.pointsCurrentRound),
+        playerId: player.playerId,
+        name: player.name,
+        position: player.position,
+        imageRef: player.imageRef,
+        points: points,
       };
 
       console.log(docData);
 
-      setDoc(matchdayDoc, docData);
+      setDoc(playerDoc, docData, { merge: true });
     });
   }
 
-  getPlayerMatchdays(
-    playerId: string
-  ): Observable<Matchday[] | (Matchday[] & {})> {
-    const playerCollection = collection(this.db, 'players').withConverter(
-      playerConverter
-    );
+  // Util
 
-    const player = doc(playerCollection, playerId);
+  debugInfo(collection: CollectionReference) {
+    collectionCount(collection).subscribe(number => {
+      console.log('count: ' + number);
+    });
 
-    const matchdaysCollection = collection(player, 'matchdays').withConverter(
-      matchdayConverter
-    );
-
-    // collectionCount(matchdaysCollection).subscribe(number => {
-    //   console.log('count: ' + number);
-    // });
-
-    // collectionData(matchdaysCollection).subscribe(value => {
-    //   console.log('entry: ' + JSON.stringify(value));
-    // });
-
-    return collectionData(matchdaysCollection);
+    collectionData(collection).subscribe(value => {
+      console.log('entry: ' + JSON.stringify(value));
+    });
   }
 }

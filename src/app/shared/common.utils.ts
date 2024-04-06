@@ -12,6 +12,7 @@ export function getUndefinedPlayer(position: Position): Player {
     name: 'No Player',
     position: position,
     playerId: `${getNextUniqueNegativeNumber()}`,
+    points: {},
   };
 }
 
