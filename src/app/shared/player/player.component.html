@@ -23,7 +23,7 @@
         } @else {
         <mat-option [value]="selectablePlayer.playerId"
           >{{ selectablePlayer.name }} ({{
-            totalPoints(selectablePlayer.points)
+            totalPoints(selectablePlayer.playerId)
           }})</mat-option
         >
         } }

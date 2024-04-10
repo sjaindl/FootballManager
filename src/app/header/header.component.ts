@@ -66,7 +66,7 @@ export class HeaderComponent {
     this.matchdayStore.addMatchday(nextDay);
     this.playerStore.setPlayerMatchdays(this.playerStore.players(), nextDay);
 
-    // TODO: create user store
+    // TODO: move to user matchday store
     this.firebaseService.setUserMatchdayLineup(nextDay);
 
     this.playerStore.resetCurrentPoints();

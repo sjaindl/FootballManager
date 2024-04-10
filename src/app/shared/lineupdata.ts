@@ -5,6 +5,7 @@ export interface LineupData {
   defenders: string[];
   midfielders: string[];
   attackers: string[];
+  id: string;
 }
 
 export const lineupDataConverter = {
@@ -27,6 +28,7 @@ export const lineupDataConverter = {
       defenders: data['defenders'],
       midfielders: data['midfielders'],
       attackers: data['attackers'],
+      id: snapshot.id,
     };
   },
 };

@@ -14,8 +14,6 @@ import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { CoreStore } from '../../core/store/core.store';
 import { Matchday } from '../../shared/matchday';
 
-export type PlayerWithMatchDay = Record<string, Matchday[]>;
-
 interface MatchdayState {
   matchdays: Matchday[];
 }

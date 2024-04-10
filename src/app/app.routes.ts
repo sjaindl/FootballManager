@@ -6,6 +6,8 @@ import { lineupGuard } from './guards/lineup.guard';
 import { matchdayGuard } from './guards/matchday.guard';
 import { playersGuard } from './guards/players.guard';
 import { selectedFormationGuard } from './guards/selected-formation.guard';
+import { userMatchdayGuard } from './guards/usermatchday.guard';
+import { usersGuard } from './guards/users.guard';
 import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
@@ -29,6 +31,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./players/players.component').then(mod => mod.PlayersComponent),
     canActivate: [matchdayGuard, playersGuard],
+  },
+  {
+    path: 'standings',
+    loadComponent: () =>
+      import('./standings/standings.component').then(
+        mod => mod.StandingsComponent
+      ),
+    canActivate: [matchdayGuard, playersGuard, userMatchdayGuard, usersGuard],
   },
   {
     path: 'profile',

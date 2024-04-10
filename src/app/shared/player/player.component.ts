@@ -6,6 +6,7 @@ import {
   Output,
   Signal,
   computed,
+  inject,
   input,
 } from '@angular/core';
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
@@ -13,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { PlayerStore } from '../../lineup/store/player.store';
 import { ChangePlayerRequest, Player } from '../common.model';
 
 @Component({
@@ -41,24 +43,34 @@ export class PlayerComponent implements OnInit {
 
   imageUrl: Promise<String> | undefined;
 
+  readonly playerStore = inject(PlayerStore);
   points: Signal<number>;
 
   constructor(private storage: Storage) {
     this.points = computed(() => {
       const matchDayId = this.matchDayId();
-      const points = this.player()?.points;
-      if (!points) {
+
+      const playerId = this.player()?.playerId;
+      if (!playerId) {
         return 0;
       }
 
       if (matchDayId) {
-        if (points.hasOwnProperty(matchDayId)) {
-          return points[matchDayId] ?? 0;
+        const matchdayPoints = this.playerStore.matchdayPoints();
+        if (matchdayPoints.hasOwnProperty(playerId)) {
+          const matchdaysWithPoints = matchdayPoints[playerId];
+
+          const matchdayWithPoints = matchdaysWithPoints.find(day => {
+            return day.matchday === matchDayId;
+          });
+
+          return matchdayWithPoints?.points ?? 0;
         }
+
         return 0;
       }
 
-      return this.totalPoints(points);
+      return this.totalPoints(playerId);
     });
   }
 
@@ -90,18 +102,13 @@ export class PlayerComponent implements OnInit {
     });
   }
 
-  totalPoints(pointsOptional: Record<string, number> | undefined): number {
-    const points = pointsOptional;
-    if (!points) {
-      return 0;
+  totalPoints(playerId: string): number {
+    const totalPoints = this.playerStore.totalPoints();
+
+    if (totalPoints.hasOwnProperty(playerId)) {
+      return totalPoints[playerId] ?? 0;
     }
 
-    var totalPoints = 0;
-
-    Object.entries(points).forEach(([matchDayKey, pointsOfMatchDay]) => {
-      totalPoints += pointsOfMatchDay;
-    });
-
-    return totalPoints;
+    return 0;
   }
 }

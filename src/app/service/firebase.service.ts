@@ -202,17 +202,15 @@ export class FirebaseService {
     return userId;
   }
 
-  getUserMatchdayLineups(): Observable<LineupData[] | (LineupData[] & {})> {
-    const userId = this.getCurrentUserId();
-    if (!userId) {
-      console.error('Cannot get lineup - User ID is null');
-      return EMPTY;
-    }
-
+  getUserMatchdayLineups(
+    userId: string
+  ): Observable<LineupData[] | (LineupData[] & {})> {
     const matchdaysCollection = collection(
       this.getUserDoc(userId),
       'matchdays'
     ).withConverter(lineupDataConverter);
+
+    // this.debugInfo(matchdaysCollection);
 
     return collectionData(matchdaysCollection);
   }

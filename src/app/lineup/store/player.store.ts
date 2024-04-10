@@ -27,6 +27,11 @@ interface PlayerState {
   players: Player[];
 }
 
+interface MatchdayWithPoints {
+  matchday: string;
+  points: number;
+}
+
 const initialState: PlayerState = {
   players: [],
 };
@@ -95,6 +100,41 @@ export const PlayerStore = signalStore(
       });
 
       return attackers;
+    }),
+
+    matchdayPoints: computed(() => {
+      const playerMatchdayPoints: Record<string, MatchdayWithPoints[]> = {};
+
+      players().forEach(player => {
+        const matchdaysWithPoints: MatchdayWithPoints[] = [];
+        Object.entries(player.points).forEach(
+          ([matchDayKey, pointsOfMatchDay]) => {
+            const matchdayWithPoints: MatchdayWithPoints = {
+              matchday: matchDayKey,
+              points: pointsOfMatchDay,
+            };
+            matchdaysWithPoints.push(matchdayWithPoints);
+          }
+        );
+
+        playerMatchdayPoints[player.playerId] = matchdaysWithPoints;
+      });
+
+      return playerMatchdayPoints;
+    }),
+
+    totalPoints: computed(() => {
+      const playerTotalPoints: Record<string, number> = {};
+      players().forEach(player => {
+        var totalPoints = 0;
+        const points = player.points;
+        Object.entries(points).forEach(([matchDayKey, pointsOfMatchDay]) => {
+          totalPoints += pointsOfMatchDay;
+        });
+        playerTotalPoints[player.playerId] = totalPoints;
+      });
+
+      return playerTotalPoints;
     }),
   })),
 
