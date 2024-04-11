@@ -8,6 +8,8 @@ import {
   collectionData,
   doc,
   docData,
+  orderBy,
+  query,
   setDoc,
 } from '@angular/fire/firestore';
 import { EMPTY, Observable } from 'rxjs';
@@ -202,17 +204,15 @@ export class FirebaseService {
     return userId;
   }
 
-  getUserMatchdayLineups(): Observable<LineupData[] | (LineupData[] & {})> {
-    const userId = this.getCurrentUserId();
-    if (!userId) {
-      console.error('Cannot get lineup - User ID is null');
-      return EMPTY;
-    }
-
+  getUserMatchdayLineups(
+    userId: string
+  ): Observable<LineupData[] | (LineupData[] & {})> {
     const matchdaysCollection = collection(
       this.getUserDoc(userId),
       'matchdays'
     ).withConverter(lineupDataConverter);
+
+    // this.debugInfo(matchdaysCollection);
 
     return collectionData(matchdaysCollection);
   }
@@ -308,10 +308,14 @@ export class FirebaseService {
       matchdayConverter
     );
 
-    return collectionData(matchDaysCollection);
+    const q = query(matchDaysCollection, orderBy('id')).withConverter(
+      matchdayConverter
+    );
+
+    return collectionData(q);
   }
 
-  addMatchday(matchday: string, opponent: string) {
+  addMatchday(matchday: string, index: number, opponent: string) {
     const matchDaysCollection = collection(this.db, 'matchDays').withConverter(
       matchdayConverter
     );
@@ -319,7 +323,7 @@ export class FirebaseService {
     const matchdayDoc = doc(matchDaysCollection, matchday);
 
     const docData = {
-      id: matchday,
+      index: index,
       opponent: opponent,
     };
 
