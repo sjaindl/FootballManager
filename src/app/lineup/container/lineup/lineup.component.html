@@ -10,6 +10,7 @@
     [maxNumOfPlayers]="1"
     [selectedPlayers]="[goalkeeper()]"
     [playerList]="playerStore.goalkeepers()"
+    [isFrozen]="isFrozen()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
   <s11-lineup-row
     position="Defender"
@@ -17,6 +18,7 @@
     [maxNumOfPlayers]="selectedFormation()?.defense ?? 0"
     [selectedPlayers]="defenders()"
     [playerList]="playerStore.defenders()"
+    [isFrozen]="isFrozen()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
   <s11-lineup-row
     position="Midfielder"
@@ -24,6 +26,7 @@
     [maxNumOfPlayers]="selectedFormation()?.midfield ?? 0"
     [selectedPlayers]="midfielder()"
     [playerList]="playerStore.midfielders()"
+    [isFrozen]="isFrozen()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
   <s11-lineup-row
     position="Attacker"
@@ -31,6 +34,7 @@
     [maxNumOfPlayers]="selectedFormation()?.attack ?? 0"
     [selectedPlayers]="attacker()"
     [playerList]="playerStore.attackers()"
+    [isFrozen]="isFrozen()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
 
   <br /><br />

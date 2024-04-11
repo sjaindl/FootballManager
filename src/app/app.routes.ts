@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
+import { configGuard } from './guards/config.guard';
 import { formationsGuard } from './guards/formations.guard';
 import { lineupGuard } from './guards/lineup.guard';
 import { matchdayGuard } from './guards/matchday.guard';
@@ -54,7 +55,7 @@ export const routes: Routes = [
       import('./admin/container/admin.component').then(
         mod => mod.AdminComponent
       ),
-    canActivate: [matchdayGuard, playersGuard, adminGuard],
+    canActivate: [matchdayGuard, playersGuard, adminGuard, configGuard],
   },
   {
     path: 'lineup',
@@ -69,6 +70,7 @@ export const routes: Routes = [
       selectedFormationGuard,
       playersGuard,
       lineupGuard,
+      configGuard,
     ],
   },
   { path: '**', component: HomeComponent },

@@ -20,7 +20,7 @@
         [player]="selectablePlayer"
         [playerList]="playerList()"
         [displayPointsSeparately]="!isForLineup()"
-        [isSelectable]="isForLineup()"
+        [isSelectable]="isForLineup() && !isFrozen()"
         [isAdmin]="isAdmin()"
         [editMode]="editMode()"
         [matchDayId]="matchDayId()"
