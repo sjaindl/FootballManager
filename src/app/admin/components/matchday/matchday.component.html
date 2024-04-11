@@ -1,11 +1,22 @@
 <div class="matchday-grid s11-padding">
+  @if (singleRow()) {
+  <s11-lineup-row
+    rowTitle="Alle"
+    [maxNumOfPlayers]="players.length"
+    [selectedPlayers]="players"
+    [isForLineup]="false"
+    [isAdmin]="isAdmin()"
+    [editMode]="editMode()"
+    [matchDayId]="matchday()"
+    [playerList]="players"></s11-lineup-row>
+  } @else {
   <s11-lineup-row
     position="Goalkeeper"
     rowTitle="Tormann"
     [maxNumOfPlayers]="goalkeeper().length"
     [selectedPlayers]="goalkeeper()"
     [isForLineup]="false"
-    [isAdmin]="true"
+    [isAdmin]="isAdmin()"
     [editMode]="editMode()"
     [matchDayId]="matchday()"
     [playerList]="playerStore.goalkeepers()"></s11-lineup-row>
@@ -15,7 +26,7 @@
     [maxNumOfPlayers]="defenders().length"
     [selectedPlayers]="defenders()"
     [isForLineup]="false"
-    [isAdmin]="true"
+    [isAdmin]="isAdmin()"
     [editMode]="editMode()"
     [matchDayId]="matchday()"
     [playerList]="playerStore.defenders()"></s11-lineup-row>
@@ -25,7 +36,7 @@
     [maxNumOfPlayers]="midfielder().length"
     [selectedPlayers]="midfielder()"
     [isForLineup]="false"
-    [isAdmin]="true"
+    [isAdmin]="isAdmin()"
     [editMode]="editMode()"
     [matchDayId]="matchday()"
     [playerList]="playerStore.midfielders()"></s11-lineup-row>
@@ -35,8 +46,9 @@
     [maxNumOfPlayers]="attacker.length"
     [selectedPlayers]="attacker()"
     [isForLineup]="false"
-    [isAdmin]="true"
+    [isAdmin]="isAdmin()"
     [editMode]="editMode()"
     [matchDayId]="matchday()"
     [playerList]="playerStore.attackers()"></s11-lineup-row>
+  }
 </div>
