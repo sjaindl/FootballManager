@@ -87,8 +87,6 @@ export class StandingsComponent implements OnInit {
         points: curPoints,
       });
     });
-
-    console.error('points', JSON.stringify(this.userPoints));
   }
 
   pointsForPlayer(playerId: string, matchday: string): number {
