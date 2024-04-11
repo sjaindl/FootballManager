@@ -8,6 +8,8 @@ import {
   collectionData,
   doc,
   docData,
+  orderBy,
+  query,
   setDoc,
 } from '@angular/fire/firestore';
 import { EMPTY, Observable } from 'rxjs';
@@ -306,10 +308,14 @@ export class FirebaseService {
       matchdayConverter
     );
 
-    return collectionData(matchDaysCollection);
+    const q = query(matchDaysCollection, orderBy('id')).withConverter(
+      matchdayConverter
+    );
+
+    return collectionData(q);
   }
 
-  addMatchday(matchday: string, opponent: string) {
+  addMatchday(matchday: string, index: number, opponent: string) {
     const matchDaysCollection = collection(this.db, 'matchDays').withConverter(
       matchdayConverter
     );
@@ -317,7 +323,7 @@ export class FirebaseService {
     const matchdayDoc = doc(matchDaysCollection, matchday);
 
     const docData = {
-      id: matchday,
+      index: index,
       opponent: opponent,
     };
 

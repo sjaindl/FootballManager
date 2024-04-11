@@ -36,7 +36,9 @@ export const MatchdayStore = signalStore(
       const lastMatchday = matchDayKeys[matchDayKeys.length - 1];
       const index = lastMatchday.lastIndexOf('_');
       const lastMatchdayNum = Number(lastMatchday.substring(index + 1));
-      const nextMatchday = lastMatchday.slice(0, -1) + (lastMatchdayNum + 1);
+      const sliceValue = lastMatchdayNum / 10 == 0 ? -1 : -2;
+      const nextMatchday =
+        lastMatchday.slice(0, sliceValue) + (lastMatchdayNum + 1);
       return nextMatchday;
     }),
   })),
@@ -65,17 +67,21 @@ export const MatchdayStore = signalStore(
         )
       ),
       addMatchday(matchday: string, opponent: string = 'unknown'): void {
+        const substrIndex = matchday.lastIndexOf('_');
+        const index = Number(matchday.substring(substrIndex + 1));
+
         patchState(store, state => {
           const days = state.matchdays;
           days.push({
             id: matchday,
+            index: index,
             opponent: opponent,
           });
           state.matchdays = days;
           return state;
         });
 
-        firebaseService.addMatchday(matchday, opponent);
+        firebaseService.addMatchday(matchday, index, opponent);
       },
     })
   )
