@@ -19,6 +19,7 @@ import {
   Player,
   playerConverter,
 } from '../shared/common.model';
+import { Config, configConverter } from '../shared/config';
 import { Formation, formationConverter } from '../shared/formation';
 import { LinedUpPlayer } from '../shared/lineup';
 import { LineupData, lineupDataConverter } from '../shared/lineupdata';
@@ -353,6 +354,31 @@ export class FirebaseService {
 
       setDoc(playerDoc, docData, { merge: true });
     });
+  }
+
+  // Config
+  getConfig(): Observable<Config | undefined> {
+    const configCollection = collection(this.db, 'config').withConverter(
+      configConverter
+    );
+
+    const ref = doc(configCollection, 'config');
+
+    return docData(ref);
+  }
+
+  setFreeze(freeze: boolean) {
+    const configCollection = collection(this.db, 'config').withConverter(
+      configConverter
+    );
+
+    const configDoc = doc(configCollection, 'config');
+
+    const docData = {
+      freeze: freeze,
+    };
+
+    setDoc(configDoc, docData, { merge: true });
   }
 
   // Util

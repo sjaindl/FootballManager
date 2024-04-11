@@ -30,6 +30,7 @@ export class LineupRowComponent {
   playerList = input<Player[]>([]);
   isForLineup = input(true);
   isAdmin = input(false);
+  isFrozen = input(false);
   editMode = input<boolean>(false);
   matchDayId = input<string>();
   @Output() selectedPlayerChange =

@@ -9,6 +9,7 @@ import {
 import { Formation } from '../../../shared/formation';
 import { FormationComponent } from '../../components/formation/formation.component';
 import { LineupRowComponent } from '../../components/lineup-row/lineup-row.component';
+import { ConfigStore } from '../../store/config.store';
 import { FormationStore } from '../../store/formation.store';
 import { LineupStore } from '../../store/lineup.store';
 import { PlayerStore } from '../../store/player.store';
@@ -30,9 +31,11 @@ export class LineupComponent {
   readonly formationStore = inject(FormationStore);
   readonly playerStore = inject(PlayerStore);
   readonly lineupStore = inject(LineupStore);
+  readonly configStore = inject(ConfigStore);
 
   selectedFormation: Signal<Formation | undefined>;
   formations: Signal<Formation[]>;
+  freeze: Signal<boolean | undefined>;
 
   goalkeeper: Signal<Player>;
   defenders: Signal<Player[]>;
@@ -47,6 +50,8 @@ export class LineupComponent {
     this.defenders = this.lineupStore.defenders;
     this.midfielder = this.lineupStore.midfielders;
     this.attacker = this.lineupStore.attackers;
+
+    this.freeze = this.configStore.freeze;
   }
 
   onSelectedPlayerChanged($event: ChangePlayerRequestWrapper) {
@@ -59,6 +64,10 @@ export class LineupComponent {
 
   save() {
     this.lineupStore.saveLineup();
+  }
+
+  isFrozen(): boolean {
+    return this.freeze() === true;
   }
 }
 
