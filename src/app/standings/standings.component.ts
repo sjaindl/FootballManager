@@ -13,6 +13,7 @@ import { UserStore } from './store/user.store';
 interface UserWithPoints {
   user: User;
   points: number;
+  pointsLastRound: number;
 }
 
 @Component({
@@ -51,6 +52,7 @@ export class StandingsComponent implements OnInit {
 
     this.users().forEach(user => {
       var curPoints = 0;
+      var pointsForRound = 0;
       const userMatchdays = usersMatchdays[user.uid];
 
       this.matchdays().forEach(matchday => {
@@ -59,32 +61,41 @@ export class StandingsComponent implements OnInit {
         });
 
         if (lineupAtMatchday) {
+          pointsForRound = 0;
+
           const points = this.pointsForPlayer(
             lineupAtMatchday.goalkeeper,
             matchday
           );
           curPoints += points;
+          pointsForRound += points;
 
           lineupAtMatchday.defenders.forEach(playerId => {
             const points = this.pointsForPlayer(playerId, matchday);
             curPoints += points;
+            pointsForRound += points;
           });
 
           lineupAtMatchday.midfielders.forEach(playerId => {
             const points = this.pointsForPlayer(playerId, matchday);
             curPoints += points;
+            pointsForRound += points;
           });
 
           lineupAtMatchday.attackers.forEach(playerId => {
             const points = this.pointsForPlayer(playerId, matchday);
             curPoints += points;
+            pointsForRound += points;
           });
+
+          console.log(matchday, points);
         }
       });
 
       this.userPoints.push({
         user: user,
         points: curPoints,
+        pointsLastRound: pointsForRound,
       });
     });
   }
