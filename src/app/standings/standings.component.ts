@@ -88,6 +88,15 @@ export class StandingsComponent implements OnInit {
             pointsForRound += points;
           });
 
+          const penalty =
+            (lineupAtMatchday.goalkeeper !== '' ? 0 : 1) +
+            lineupAtMatchday.defenders.length +
+            lineupAtMatchday.midfielders.length +
+            lineupAtMatchday.attackers.length;
+
+          curPoints -= penalty;
+          pointsForRound -= penalty;
+
           console.log(matchday, points);
         }
       });
