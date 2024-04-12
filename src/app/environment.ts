@@ -1,7 +1,7 @@
 import { firebaseConfig } from './shared/firebase.config';
 
 export const environment = {
-  production: false,
+  production: true,
   useEmulators: true,
   firebaseConfig: firebaseConfig,
 };
