@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/browser",
+    "public": "dist/football-manager/browser",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
@@ -19,6 +19,11 @@
       "database": "s11-test",
       "rules": "firestore.s11-test.rules",
       "indexes": "firestore.s11-test.indexes.json"
+    },
+    {
+      "database": "s11-prod",
+      "rules": "firestore.s11-prod.rules",
+      "indexes": "firestore.s11-prod.indexes.json"
     }
   ]
 }

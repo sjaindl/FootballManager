@@ -1,4 +1,4 @@
-import { computed, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
   ActivatedRouteSnapshot,
@@ -14,17 +14,13 @@ export const matchdayGuard: CanActivateFn = (
 ) => {
   const matchdayStore = inject(MatchdayStore);
 
-  const value = computed(() => {
-    return matchdayStore.matchdays().length > 0;
-  });
-
-  return toObservable(value).pipe(
+  return toObservable(matchdayStore.loaded).pipe(
     map(fulfillsRequirements => {
       if (fulfillsRequirements) {
         return true;
       }
 
-      if (matchdayStore.matchdays().length === 0) {
+      if (!matchdayStore.loaded()) {
         matchdayStore.loadMatchdays();
       }
       return false;

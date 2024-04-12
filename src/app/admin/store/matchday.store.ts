@@ -16,10 +16,12 @@ import { Matchday } from '../../shared/matchday';
 
 interface MatchdayState {
   matchdays: Matchday[];
+  loaded: boolean | undefined;
 }
 
 const initialState: MatchdayState = {
   matchdays: [],
+  loaded: undefined,
 };
 
 export const MatchdayStore = signalStore(
@@ -58,6 +60,7 @@ export const MatchdayStore = signalStore(
               tap(matchdays => {
                 patchState(store, state => {
                   state.matchdays = matchdays;
+                  state.loaded = true;
                   return state;
                 });
                 coreStore.decreaseLoadingCount();
