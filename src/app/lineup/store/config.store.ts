@@ -10,7 +10,7 @@ import { SnackbarService } from '../../service/snackbar.service';
 import { Config } from '../../shared/config';
 
 const initialState: Config = {
-  freeze: true,
+  freeze: false,
 };
 
 export const ConfigStore = signalStore(
@@ -25,41 +25,40 @@ export const ConfigStore = signalStore(
       firebaseService = inject(FirebaseService),
       coreStore = inject(CoreStore),
       snackBarService = inject(SnackbarService)
-    ) => {
-      return {
-        loadConfig: rxMethod<void>(
-          pipe(
-            distinctUntilChanged(),
-            tap(() => coreStore.increaseLoadingCount()),
-            switchMap(() => {
-              return firebaseService.getConfig().pipe(
-                tapResponse({
-                  next: config => {
-                    patchState(store, state => {
-                      state.freeze = config?.freeze ?? true;
-                      return state;
-                    });
-                  },
-                  error: () =>
-                    snackBarService.open('Fehler beim Laden der Formation!'),
-                  finalize: () => {
-                    coreStore.decreaseLoadingCount();
-                  },
-                })
-              );
-            })
-          )
-        ),
+    ) => ({
+      // TODO: Fix freeze initial loading
+      loadConfig: rxMethod<void>(
+        pipe(
+          distinctUntilChanged(),
+          tap(() => coreStore.increaseLoadingCount()),
+          switchMap(() => {
+            return firebaseService.getConfig().pipe(
+              tapResponse({
+                next: config => {
+                  patchState(store, state => {
+                    state.freeze = config?.freeze ?? true;
+                    return state;
+                  });
+                },
+                error: () =>
+                  snackBarService.open('Fehler beim Laden der Formation!'),
+                finalize: () => {
+                  coreStore.decreaseLoadingCount();
+                },
+              })
+            );
+          })
+        )
+      ),
 
-        setConfig(freeze: boolean): void {
-          patchState(store, state => {
-            state.freeze = freeze;
-            return state;
-          });
+      setConfig(freeze: boolean): void {
+        patchState(store, state => {
+          state.freeze = freeze;
+          return state;
+        });
 
-          firebaseService.setFreeze(freeze);
-        },
-      };
-    }
+        firebaseService.setFreeze(freeze);
+      },
+    })
   )
 );
