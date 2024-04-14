@@ -42,6 +42,11 @@ export const routes: Routes = [
     canActivate: [matchdayGuard, playersGuard, userMatchdayGuard, usersGuard],
   },
   {
+    path: 'prices',
+    loadComponent: () =>
+      import('./prices/prices.component').then(mod => mod.PricesComponent),
+  },
+  {
     path: 'profile',
     loadComponent: () =>
       import('./user/components/user-profile/user-profile.component').then(

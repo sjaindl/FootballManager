@@ -1,0 +1,24 @@
+.prices-padding {
+  padding-left: 8px;
+}
+
+::ng-deep .mat-list .mat-list-item {
+  height: initial !important;
+}
+
+.prices-card {
+  word-wrap: break-word;
+}
+
+.mat-card-content {
+  word-wrap: break-word;
+}
+
+.list-wrapping {
+  max-width: 500px;
+}
+
+.content {
+  color: white;
+  margin-left: 0px;
+}
