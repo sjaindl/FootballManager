@@ -3,6 +3,7 @@
   <mat-form-field>
     <mat-label>Formation:</mat-label>
     <mat-select
+      [disabled]="isFrozen()"
       [value]="selectedFormation()"
       (valueChange)="onValueChange($event)">
       @for (formation of formations(); track formation) {

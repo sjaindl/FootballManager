@@ -26,7 +26,6 @@ export const ConfigStore = signalStore(
       coreStore = inject(CoreStore),
       snackBarService = inject(SnackbarService)
     ) => ({
-      // TODO: Fix freeze initial loading
       loadConfig: rxMethod<void>(
         pipe(
           distinctUntilChanged(),

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
+import { ConfigStore } from './lineup/store/config.store';
 
 @Component({
   selector: 'app-root',
@@ -10,5 +11,10 @@ import { HeaderComponent } from './header/header.component';
   imports: [RouterOutlet, HeaderComponent],
 })
 export class AppComponent {
+  readonly configStore = inject(ConfigStore);
   title = 'Starting Eleven';
+
+  constructor() {
+    this.configStore.loadConfig();
+  }
 }
