@@ -31,7 +31,12 @@
             "scripts": [],
             "server": "src/main.server.ts",
             "prerender": false,
-            "ssr": false
+            "ssr": false,
+            "sourceMap": {
+              "scripts": true,
+              "styles": true,
+              "vendor": true
+            }
           },
           "configurations": {
             "production": {
