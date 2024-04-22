@@ -16,6 +16,6 @@ export function getUndefinedPlayer(position: Position): Player {
   };
 }
 
-export function isUndefinedPlayer(player: Player): boolean {
-  return player.playerId.startsWith('-');
+export function isUndefinedPlayer(player: Partial<Player>): boolean {
+  return player.playerId?.startsWith('-') ?? true;
 }

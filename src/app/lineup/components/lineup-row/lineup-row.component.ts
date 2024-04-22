@@ -13,6 +13,7 @@ import {
   Player,
   Position,
 } from '../../../shared/common.model';
+import { isUndefinedPlayer } from '../../../shared/common.utils';
 import { PlayerComponent } from '../../../shared/player/player.component';
 
 @Component({
@@ -44,7 +45,7 @@ export class LineupRowComponent {
       return this.selectedPlayers().filter(player => {
         const playerId = player.playerId;
         if (!playerId) return false;
-        return Number(playerId) > 0;
+        return !isUndefinedPlayer(player);
       }).length;
     });
   }
