@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, Signal } from '@angular/core';
-import {
-  getDownloadURL,
-  ref,
-  Storage,
-  uploadBytesResumable,
-} from '@angular/fire/storage';
+import { Component, computed, inject, Signal } from '@angular/core';
+import { ref, Storage, uploadBytesResumable } from '@angular/fire/storage';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -14,6 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { AuthStore } from '../../../auth/store/auth.store';
 import { AuthService } from '../../../service/auth.service';
+import {
+  ImageComponent,
+  S11Image,
+} from '../../../shared/image/image.component';
 
 @Component({
   selector: 's11-user-profile',
@@ -26,27 +25,27 @@ import { AuthService } from '../../../service/auth.service';
     FormsModule,
     MatInputModule,
     MatIconModule,
+    ImageComponent,
   ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent {
   readonly authStore = inject(AuthStore);
   readonly storage = inject(Storage);
 
   editMode: Signal<boolean>;
   currentName = this.authStore.userName();
-  photoRef: Promise<string> | undefined;
+
+  image: Signal<S11Image>;
 
   constructor(private authService: AuthService) {
     this.editMode = computed(() => false);
-  }
-
-  ngOnInit() {
-    const photoRef = this.authStore.imageRef();
-    if (photoRef) {
-      this.loadImageRef(photoRef);
-    }
+    this.image = computed(() => ({
+      ref: this.authStore.imageRef(),
+      url: this.authStore.imageUrl(),
+      alt: this.authStore.userName(),
+    }));
   }
 
   setEditMode() {
@@ -71,18 +70,14 @@ export class UserProfileComponent implements OnInit {
   }
 
   upload(event: any) {
+    this.authStore.updatePhotoRef('players/no_photo.jpg');
     var storageLocation = '/users/' + this.authStore.uid();
     console.log(storageLocation);
     let storageRef = ref(this.storage, storageLocation);
     uploadBytesResumable(storageRef, event.target.files[0]).then(() => {
       this.authService.updatePhotoRef(storageLocation);
-      this.loadImageRef(storageLocation);
+      this.authStore.updatePhotoRef(storageLocation);
     });
-  }
-
-  loadImageRef(photoRef: string) {
-    let photo = ref(this.storage, photoRef);
-    this.photoRef = getDownloadURL(photo);
   }
 
   hasPhotoRef(): boolean {

@@ -1,0 +1,9 @@
+<div class="container" style="width: 100px; height: 100px">
+  @if (image()?.ref) {
+  <img [src]="imageUrl$ | async" alt="{{ image()?.alt }}" />
+  } @else if(image()?.url) {
+  <img [src]="image()?.url" alt="{{ image()?.alt }}" />
+  } @else {
+  <img src="./../../../assets/no_photo.jpg" alt="{{ image()?.alt }}" />
+  }
+</div>
