@@ -1,11 +1,5 @@
 <div class="player-row">
-  <div class="container" style="width: 100px; height: 100px">
-    @if (imageUrl) {
-    <img alt="user-icon" [src]="imageUrl | async" />
-    } @else {
-    <img alt="user-icon" src="./../../../assets/no_photo.jpg" />
-    }
-  </div>
+  <s11-image [image]="image()"></s11-image>
 
   <div class="player-form">
     <mat-form-field>

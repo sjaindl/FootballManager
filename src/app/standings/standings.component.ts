@@ -6,11 +6,13 @@ import { MatchdayComponent } from '../admin/components/matchday/matchday.compone
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { Player } from '../shared/common.model';
+import { ImageComponent, S11Image } from '../shared/image/image.component';
 import { UserMatchdayStore } from '../shared/store/user-matchday.store';
 import { User } from '../shared/user';
 import { UserStore } from './store/user.store';
 
 interface UserWithPoints {
+  image: S11Image;
   user: User;
   points: number;
   pointsLastRound: number;
@@ -19,7 +21,13 @@ interface UserWithPoints {
 @Component({
   selector: 's11-standings',
   standalone: true,
-  imports: [MatTabsModule, MatchdayComponent, MatTableModule, CommonModule],
+  imports: [
+    MatTabsModule,
+    MatchdayComponent,
+    MatTableModule,
+    CommonModule,
+    ImageComponent,
+  ],
   templateUrl: './standings.component.html',
   styleUrl: './standings.component.scss',
 })
@@ -102,6 +110,7 @@ export class StandingsComponent implements OnInit {
       });
 
       this.userPoints.push({
+        image: { ref: user.photoRef, url: user.photoUrl, alt: user.userName },
         user: user,
         points: curPoints,
         pointsLastRound: pointsForRound,

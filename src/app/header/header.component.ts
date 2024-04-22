@@ -11,6 +11,7 @@ import {
 } from '@angular/router';
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { AppComponent } from '../app.component';
+import { ConfigStore } from '../lineup/store/config.store';
 import { LineupStore } from '../lineup/store/lineup.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { FirebaseService } from '../service/firebase.service';
@@ -40,6 +41,7 @@ export class HeaderComponent {
   readonly lineupStore = inject(LineupStore);
   readonly playerStore = inject(PlayerStore);
   readonly matchdayStore = inject(MatchdayStore);
+  readonly configStore = inject(ConfigStore);
 
   title = new AppComponent().title;
 

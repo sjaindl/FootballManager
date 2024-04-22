@@ -2,6 +2,7 @@
   <s11-formation
     [selectedFormation]="selectedFormation()"
     [formations]="formations()"
+    [isFrozen]="isFrozen()"
     (onFormationChange)="onFormationChange($event)"></s11-formation>
 
   <s11-lineup-row
@@ -36,6 +37,4 @@
     [playerList]="playerStore.attackers()"
     [isFrozen]="isFrozen()"
     (selectedPlayerChange)="onSelectedPlayerChanged($event)"></s11-lineup-row>
-
-  <br /><br />
 </div>

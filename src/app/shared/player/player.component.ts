@@ -2,20 +2,20 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
-  OnInit,
   Output,
   Signal,
   computed,
   inject,
   input,
 } from '@angular/core';
-import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
+import { Storage } from '@angular/fire/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { PlayerStore } from '../../lineup/store/player.store';
 import { ChangePlayerRequest, Player } from '../common.model';
+import { ImageComponent, S11Image } from '../image/image.component';
 
 @Component({
   selector: 's11-player',
@@ -27,11 +27,12 @@ import { ChangePlayerRequest, Player } from '../common.model';
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
+    ImageComponent,
   ],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent {
   player = input<Partial<Player>>();
   playerList = input<Player[]>([]);
   displayPointsSeparately = input(true);
@@ -41,12 +42,18 @@ export class PlayerComponent implements OnInit {
   matchDayId = input<string>();
   @Output() selectedPlayerChange = new EventEmitter<ChangePlayerRequest>();
 
-  imageUrl: Promise<String> | undefined;
+  image: Signal<S11Image>;
 
   readonly playerStore = inject(PlayerStore);
   points: Signal<number>;
 
   constructor(private storage: Storage) {
+    this.image = computed(() => ({
+      ref: this.player()?.imageRef,
+      url: undefined,
+      alt: this.player()?.name,
+    }));
+
     this.points = computed(() => {
       const matchDayId = this.matchDayId();
 
@@ -72,18 +79,6 @@ export class PlayerComponent implements OnInit {
 
       return this.totalPoints(playerId);
     });
-  }
-
-  ngOnInit(): void {
-    const playerRef = this.player()?.imageRef;
-
-    if (playerRef) {
-      const storageRef = ref(this.storage, playerRef);
-      this.imageUrl = getDownloadURL(storageRef);
-    } else {
-      const storageRef = ref(this.storage, 'players/no_photo.jpg');
-      this.imageUrl = getDownloadURL(storageRef);
-    }
   }
 
   setCurrentPoints(event: Event) {

@@ -12,6 +12,8 @@ import { Formation } from '../../../shared/formation';
 export class FormationComponent {
   selectedFormation = input<Formation>();
   formations = input<Formation[]>([]);
+
+  isFrozen = input(true);
   @Output() onFormationChange = new EventEmitter<Formation>();
 
   onValueChange(formation: Formation) {

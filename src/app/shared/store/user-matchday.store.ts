@@ -2,7 +2,15 @@ import { inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
+import {
+  distinctUntilChanged,
+  forkJoin,
+  map,
+  pipe,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { FirebaseService } from '../../service/firebase.service';
 
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
@@ -41,18 +49,28 @@ export const UserMatchdayStore = signalStore(
             return firebaseService.getUsers().pipe(
               tapResponse({
                 next: users => {
-                  users.forEach(user => {
-                    return firebaseService
-                      .getUserMatchdayLineups(user.uid)
-                      .subscribe(lineups => {
+                  forkJoin(
+                    users.map(user =>
+                      firebaseService.getUserMatchdayLineups(user.uid).pipe(
+                        take(1),
+                        map(lineups => ({ user: user, lineups: lineups }))
+                      )
+                    )
+                  )
+                    .pipe(
+                      tap(values => {
+                        const map: UserToMatchdays = {};
+                        values.forEach(lineupsWrapper => {
+                          map[lineupsWrapper.user.uid] = lineupsWrapper.lineups;
+                        });
                         patchState(store, state => {
-                          const map = state.usersToMatchdays;
-                          map[user.uid] = lineups;
                           state.usersToMatchdays = map;
                           return state;
                         });
-                      });
-                  });
+                      }),
+                      take(1)
+                    )
+                    .subscribe();
                 },
                 error: () => {
                   snackBarService.open('Fehler beim Laden der Spieltage!');

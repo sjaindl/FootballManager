@@ -21,21 +21,7 @@
     </mat-card-subtitle>
   </mat-card-header>
 
-  @if (this.photoRef) {
-  <img
-    class="profile-image"
-    mat-card-image
-    [src]="this.photoRef | async"
-    alt="{{ authStore.user()?.userName }}" />
-  } @else {
-  <img
-    class="profile-image"
-    mat-card-image
-    src="{{ authStore.user()?.photoUrl }}"
-    alt="{{ authStore.user()?.userName }}" />
-  }
-
-  <!-- <mat-card-content/> -->
+  <s11-image [image]="image()"></s11-image>
 
   <mat-card-actions>
     @if (editMode()) {

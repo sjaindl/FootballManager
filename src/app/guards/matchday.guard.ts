@@ -19,10 +19,7 @@ export const matchdayGuard: CanActivateFn = (
       if (fulfillsRequirements) {
         return true;
       }
-
-      if (!matchdayStore.loaded()) {
-        matchdayStore.loadMatchdays();
-      }
+      matchdayStore.loadMatchdays();
       return false;
     }),
     filter(canActivate => {

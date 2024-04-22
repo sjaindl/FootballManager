@@ -6,27 +6,7 @@
     <ng-container matColumnDef="image">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let userPoints">
-        <div class="container s11-margin">
-          @if (userPoints.user.photoRef) {
-          <img
-            class="standings-image"
-            mat-card-image
-            [src]="userPoints.user.photoRef | async"
-            alt="{{ userPoints.user.userName }}" />
-          } @else if(userPoints.user.photoUrl) {
-          <img
-            class="standings-image"
-            mat-card-image
-            src="{{ userPoints.user.photoUrl }}"
-            alt="{{ userPoints.user.userName }}" />
-          } @else {
-          <img
-            class="standings-image"
-            mat-card-image
-            src="./../../../assets/no_photo.jpg"
-            alt="{{ userPoints.user.userName }}" />
-          }
-        </div>
+        <s11-image [image]="userPoints.image"></s11-image>
       </td>
     </ng-container>
 

@@ -50,7 +50,10 @@
     <div class="s11-toolbar" matRipple>
       @if (this.router.url == '/lineup') {
 
-      <button (click)="saveLineup()" mat-icon-button>
+      <button
+        [disabled]="configStore.freeze()"
+        (click)="saveLineup()"
+        mat-icon-button>
         <mat-icon
           class="icon-display"
           aria-hidden="false"
