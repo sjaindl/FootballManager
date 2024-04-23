@@ -20,7 +20,7 @@ export interface S11Image {
 export class ImageComponent {
   image = input<S11Image>();
   width = input<number>(100);
-  height = input<number>(80);
+  height = input<number>(75);
 
   imageRef$: Signal<string | undefined>;
 
