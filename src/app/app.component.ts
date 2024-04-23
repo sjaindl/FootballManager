@@ -12,7 +12,7 @@ import { ConfigStore } from './lineup/store/config.store';
 })
 export class AppComponent {
   readonly configStore = inject(ConfigStore);
-  title = 'Starting Eleven';
+  title = 'S11';
 
   constructor() {
     this.configStore.loadConfig();
