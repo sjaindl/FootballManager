@@ -123,6 +123,14 @@ export class StandingsComponent implements OnInit {
         pointsLastRound: pointsForRound,
       });
     });
+
+    this.userPoints.sort((first, second) => {
+      const firstPoints = first.points;
+      const secondPoints = second.points;
+      if (firstPoints > secondPoints) return -1;
+      if (firstPoints < secondPoints) return 1;
+      else return 0;
+    });
   }
 
   pointsForPlayer(playerId: string, matchday: string): number {
