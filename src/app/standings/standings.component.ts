@@ -6,6 +6,7 @@ import { MatchdayComponent } from '../admin/components/matchday/matchday.compone
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { Player } from '../shared/common.model';
+import { requiredNumOfPlayers } from '../shared/constants';
 import { ImageComponent, S11Image } from '../shared/image/image.component';
 import { UserMatchdayStore } from '../shared/store/user-matchday.store';
 import { User } from '../shared/user';
@@ -96,16 +97,22 @@ export class StandingsComponent implements OnInit {
             pointsForRound += points;
           });
 
-          const penalty =
-            (lineupAtMatchday.goalkeeper !== '' ? 0 : 1) +
+          const playersInFormation =
+            (lineupAtMatchday.goalkeeper !== '' ? 1 : 0) +
             lineupAtMatchday.defenders.length +
             lineupAtMatchday.midfielders.length +
             lineupAtMatchday.attackers.length;
 
-          curPoints -= penalty;
-          pointsForRound -= penalty;
+          const penaltyForMissingPlayers =
+            requiredNumOfPlayers - playersInFormation;
+
+          curPoints -= penaltyForMissingPlayers;
+          pointsForRound -= penaltyForMissingPlayers;
 
           console.log(matchday, points);
+        } else {
+          pointsForRound = -requiredNumOfPlayers;
+          curPoints -= requiredNumOfPlayers;
         }
       });
 
