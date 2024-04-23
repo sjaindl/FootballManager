@@ -3,20 +3,17 @@
 }
 
 .profile-image {
-  width: 100%;
   padding-left: 16px;
   padding-right: 16px;
+}
+
+mat-form-field {
+  display: block;
 }
 
 @media all and (min-width: 0px) and (max-width: 400px) {
   .profile-card {
     margin: 16px;
-  }
-
-  // TODO: Fix mobile field width
-  mat-form-field {
-    // width: 154%;
-    display: block;
   }
 }
 
@@ -26,11 +23,6 @@
     margin: auto;
     margin-top: 32px;
     width: 50%;
-  }
-
-  mat-form-field {
-    width: 172%;
-    display: block;
   }
 }
 
