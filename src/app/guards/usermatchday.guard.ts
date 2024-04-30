@@ -24,7 +24,7 @@ export const userMatchdayGuard: CanActivateFn = (
         return true;
       }
 
-      if (Object.keys(userMatchdayStore.usersToMatchdays()).length == 0) {
+      if (Object.keys(userMatchdayStore.usersToMatchdays()).length === 0) {
         userMatchdayStore.load();
       }
       return false;

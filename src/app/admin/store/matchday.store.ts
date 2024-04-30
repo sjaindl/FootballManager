@@ -43,7 +43,7 @@ export const MatchdayStore = signalStore(
 
       const index = lastMatchday.lastIndexOf('_');
       const lastMatchdayNum = Number(lastMatchday.substring(index + 1));
-      const sliceValue = lastMatchdayNum / 10 == 0 ? -1 : -2;
+      const sliceValue = lastMatchdayNum / 10 === 0 ? -1 : -2;
       const nextMatchday =
         lastMatchday.slice(0, sliceValue) + (lastMatchdayNum + 1);
       return nextMatchday;
