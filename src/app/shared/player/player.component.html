@@ -26,6 +26,16 @@
 
     @if (isAdmin()) { @if (editMode()) {
 
+    <mat-form-field>
+      <mat-label>Aufstellungen gesamt</mat-label>
+      <input
+        matInput
+        disabled
+        value="{{
+          numOfCurrentMatchdayLineups() + numOfPastMatchdayLineups()
+        }}" />
+    </mat-form-field>
+
     <form>
       <mat-form-field class="example-full-width">
         <mat-label>Punkte</mat-label>
@@ -38,12 +48,19 @@
     </form>
 
     } @else {
+
+    <mat-form-field>
+      <mat-label>Aufstellungen Spieltag</mat-label>
+      <input matInput disabled value="{{ numOfPastMatchdayLineups() }}" />
+    </mat-form-field>
+
     <form>
       <mat-form-field>
         <mat-label>Punkte</mat-label>
         <input matInput disabled value="{{ points() }}" />
       </mat-form-field>
     </form>
+
     } } @else { @if ((displayPointsSeparately())) {
     <form>
       <mat-form-field>
