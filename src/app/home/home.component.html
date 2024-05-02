@@ -1,3 +1,25 @@
+@if (isMobile) {
+<img src="/assets/StartingEleven.jpg" width="100%" />
+} @else {
+<img class="center" src="/assets/StartingEleven.jpg" />
+}
+
+<firebase-ui
+  *ngIf="!isSignedIn()"
+  (signInSuccessWithAuthResult)="successCallback($event)"
+  (signInFailure)="errorCallback($event)"
+  (uiShown)="uiShownCallback()"></firebase-ui>
+
+@if (isSignedIn()) {
+<div class="s11-padding">
+  <h1 class="text-center home-padding-top">
+    Hallo, {{ authStore.userName() }}!
+  </h1>
+
+  <s11-stats />
+</div>
+}
+
 <!-- Social feed -->
 <div class="icon-bar">
   <a
@@ -19,23 +41,3 @@
     <svg class="fab fa-instagram"></svg>
   </a>
 </div>
-
-@if (isMobile) {
-<img src="/assets/StartingEleven.jpg" width="100%" />
-} @else {
-<img class="center" src="/assets/StartingEleven.jpg" />
-}
-
-<firebase-ui
-  *ngIf="!isSignedIn()"
-  (signInSuccessWithAuthResult)="successCallback($event)"
-  (signInFailure)="errorCallback($event)"
-  (uiShown)="uiShownCallback()"></firebase-ui>
-
-@if (isSignedIn()) {
-<div class="s11-padding">
-  <h1 class="text-center home-padding-top">
-    Hallo, {{ authStore.userName() }}!
-  </h1>
-</div>
-}
