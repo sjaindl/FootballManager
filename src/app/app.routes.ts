@@ -10,6 +10,7 @@ import { selectedFormationGuard } from './guards/selected-formation.guard';
 import { userMatchdayGuard } from './guards/usermatchday.guard';
 import { usersGuard } from './guards/users.guard';
 import { HomeComponent } from './home/home.component';
+import { userLineupGuard } from './guards/userlineup.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -60,7 +61,7 @@ export const routes: Routes = [
       import('./admin/container/admin.component').then(
         mod => mod.AdminComponent
       ),
-    canActivate: [matchdayGuard, playersGuard, adminGuard, configGuard],
+    canActivate: [matchdayGuard, playersGuard, adminGuard, configGuard, userLineupGuard, userMatchdayGuard],
   },
   {
     path: 'lineup',

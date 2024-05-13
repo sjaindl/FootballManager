@@ -8,7 +8,6 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Storage } from '@angular/fire/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +15,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { PlayerStore } from '../../lineup/store/player.store';
 import { ChangePlayerRequest, Player } from '../common.model';
 import { ImageComponent, S11Image } from '../image/image.component';
+import { LineupData } from '../lineupdata';
+import { UserLineupStore } from '../store/user-lineup.store';
+import { UserMatchdayStore } from '../store/user-matchday.store';
 
 @Component({
   selector: 's11-player',
@@ -44,15 +46,58 @@ export class PlayerComponent {
 
   image: Signal<S11Image>;
 
+  readonly userMatchdayStore = inject(UserMatchdayStore);
+  readonly userLineupStore = inject(UserLineupStore);
   readonly playerStore = inject(PlayerStore);
   points: Signal<number>;
+  numOfPastMatchdayLineups: Signal<number>;
+  numOfCurrentMatchdayLineups: Signal<number>;
 
-  constructor(private storage: Storage) {
+  constructor() {
     this.image = computed(() => ({
       ref: this.player()?.imageRef,
       url: undefined,
       alt: this.player()?.name,
     }));
+
+    this.numOfCurrentMatchdayLineups = computed(() => {
+      const playerId = this.player()?.playerId;
+      if (!playerId) {
+        return 0;
+      }
+
+      var lineupCount = 0;
+
+      const lineups = this.userLineupStore.userToLineup();
+      Object.values(lineups).forEach(lineupData => {
+        lineupCount = this.calculateLineups(lineupCount, lineupData, playerId);
+      });
+
+      return lineupCount;
+    });
+
+    this.numOfPastMatchdayLineups = computed(() => {
+      const playerId = this.player()?.playerId;
+      if (!playerId) {
+        return 0;
+      }
+
+      var lineupCount = 0;
+
+      const userMatchdays = this.userMatchdayStore.usersToMatchdays();
+
+      Object.values(userMatchdays).forEach(lineupDataArray => {
+        lineupDataArray.forEach(lineupData => {
+          lineupCount = this.calculateLineups(
+            lineupCount,
+            lineupData,
+            playerId
+          );
+        });
+      });
+
+      return lineupCount;
+    });
 
     this.points = computed(() => {
       const matchDayId = this.matchDayId();
@@ -79,6 +124,58 @@ export class PlayerComponent {
 
       return this.totalPoints(playerId);
     });
+  }
+
+  private calculateLineups(
+    lineupCount: number,
+    lineupData: LineupData,
+    playerId: string
+  ) {
+    lineupCount = this.calculateLineupCount(
+      [lineupData.goalkeeper],
+      lineupData,
+      playerId,
+      lineupCount
+    );
+    lineupCount = this.calculateLineupCount(
+      lineupData.defenders,
+      lineupData,
+      playerId,
+      lineupCount
+    );
+    lineupCount = this.calculateLineupCount(
+      lineupData.midfielders,
+      lineupData,
+      playerId,
+      lineupCount
+    );
+    lineupCount = this.calculateLineupCount(
+      lineupData.attackers,
+      lineupData,
+      playerId,
+      lineupCount
+    );
+    return lineupCount;
+  }
+
+  private calculateLineupCount(
+    players: string[],
+    lineupData: LineupData,
+    playerId: string,
+    lineupCount: number
+  ) {
+    const matchDayId = this.matchDayId();
+
+    if (players.includes(playerId)) {
+      if (matchDayId && matchDayId > '') {
+        if (lineupData.id === matchDayId) {
+          return lineupCount + 1;
+        }
+      } else {
+        return lineupCount + 1;
+      }
+    }
+    return lineupCount;
   }
 
   setCurrentPoints(event: Event) {
