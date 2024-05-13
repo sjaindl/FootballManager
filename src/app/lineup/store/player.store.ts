@@ -27,10 +27,21 @@ interface PlayerState {
   players: Player[];
 }
 
-interface MatchdayWithPoints {
+export interface MatchdayWithPoints {
   matchday: string;
   points: number;
 }
+
+export const sortMatchdayWithPointsByMatchday = (
+  first: MatchdayWithPoints,
+  second: MatchdayWithPoints
+) => {
+  const firstMatchday = first.matchday;
+  const secondMatchday = second.matchday;
+  if (firstMatchday > secondMatchday) return -1;
+  if (firstMatchday < secondMatchday) return 1;
+  else return 0;
+};
 
 const initialState: PlayerState = {
   players: [],

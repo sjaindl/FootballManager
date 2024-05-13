@@ -1,0 +1,17 @@
+<div class="s11-margin">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ title() }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-list role="list">
+        @for (mvp of mvps(); track $index) {
+        <mat-list-item role="listitem">
+          {{ $index + 1 }}. {{ mvp.playerName }} ({{ mvp.points }})
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>
