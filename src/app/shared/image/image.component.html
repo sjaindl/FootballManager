@@ -1,9 +1,25 @@
-<div class="container" style="width: 100px; height: 100px">
-  @if (image()?.ref) {
-  <img [src]="imageUrl$ | async" alt="{{ image()?.alt }}" />
+<div class="container">
+  @if (imageRef$()) {
+  <img
+    [width]="width()"
+    [height]="height()"
+    loading="lazy"
+    ngSrc="{{ imageRef$() }}"
+    width="{{ width() }}"
+    height="{{ height() }}"
+    alt="{{ image()?.alt }}" />
   } @else if(image()?.url) {
-  <img [src]="image()?.url" alt="{{ image()?.alt }}" />
+  <img
+    ngSrc="{{ image()?.url }}"
+    width="{{ width() }}"
+    height="{{ height() }}"
+    alt="{{ image()?.alt }}"
+    priority />
   } @else {
-  <img src="./../../../assets/no_photo.jpg" alt="{{ image()?.alt }}" />
+  <img
+    ngSrc="./../../../assets/no_photo.jpg"
+    width="{{ width() }}"
+    height="{{ height() }}"
+    alt="{{ image()?.alt }}" />
   }
 </div>

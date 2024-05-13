@@ -62,6 +62,14 @@
       </button>
       } @if (this.router.url == '/admin') {
 
+      <button (click)="toggleFreeze()" mat-icon-button>
+        <mat-icon
+          class="icon-display"
+          aria-hidden="false"
+          aria-label="Änderungen einfrieren"
+          fontIcon="{{ toggleFreezeIcon() }}" />
+      </button>
+
       <button (click)="saveMatchday()" mat-icon-button>
         <mat-icon
           class="icon-display"

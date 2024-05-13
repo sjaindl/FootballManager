@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Signal, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
@@ -45,14 +45,30 @@ export class HeaderComponent {
 
   title = new AppComponent().title;
 
+  freeze: Signal<boolean | undefined>;
+
   constructor(
     public router: Router,
     private snackbarService: SnackbarService,
     private firebaseService: FirebaseService
-  ) {}
+  ) {
+    this.freeze = this.configStore.freeze;
+  }
 
   saveLineup() {
     this.lineupStore.saveLineup();
+  }
+
+  toggleFreezeIcon(): string {
+    return this.isFrozen() ? 'ac_unit' : 'sunny';
+  }
+
+  isFrozen(): boolean {
+    return this.freeze() === true;
+  }
+
+  toggleFreeze() {
+    this.configStore.setConfig(!this.isFrozen());
   }
 
   saveMatchday() {

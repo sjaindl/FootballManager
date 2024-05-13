@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component, Signal, input } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
-import { Observable, from, of, switchMap } from 'rxjs';
+import { from, of, switchMap } from 'rxjs';
 
 export interface S11Image {
   ref: string | undefined;
@@ -13,25 +13,30 @@ export interface S11Image {
 @Component({
   selector: 's11-image',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './image.component.html',
   styleUrl: './image.component.scss',
 })
 export class ImageComponent {
   image = input<S11Image>();
-  imageUrl$: Observable<string | undefined>;
+  width = input<number>(100);
+  height = input<number>(75);
+
+  imageRef$: Signal<string | undefined>;
 
   constructor(private storage: Storage) {
-    this.imageUrl$ = toObservable(this.image).pipe(
-      switchMap(image => {
-        const imageRef = image?.ref;
-        if (imageRef && imageRef !== '') {
-          const storageRef = ref(this.storage, imageRef);
-          return from(getDownloadURL(storageRef));
-        }
+    this.imageRef$ = toSignal(
+      toObservable(this.image).pipe(
+        switchMap(image => {
+          const imageRef = image?.ref;
+          if (imageRef && imageRef !== '') {
+            const storageRef = ref(this.storage, imageRef);
+            return from(getDownloadURL(storageRef));
+          }
 
-        return of(undefined);
-      })
+          return of(undefined);
+        })
+      )
     );
   }
 }
