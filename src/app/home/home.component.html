@@ -16,6 +16,10 @@
     Hallo, {{ authStore.userName() }}!
   </h1>
 
+  @if (authStore.user()) {
+  <s11-betting-game />
+  }
+
   <s11-stats />
 </div>
 }

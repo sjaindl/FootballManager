@@ -1,0 +1,33 @@
+<div class="s11-margin betting-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Tippspiel</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>Dein Tipp für das nächste Spiel:</p>
+      <b>
+        <p>{{ nextBet?.home }} : {{ nextBet?.away }}</p>
+      </b>
+      <p>
+        <input
+          type="number"
+          min="0"
+          matInput
+          (change)="setHomeScore($event)"
+          [value]="homeScore()" />
+        <input
+          type="number"
+          min="0"
+          matInput
+          (change)="setAwayScore($event)"
+          [value]="awayScore()" />
+      </p>
+      <p>
+        <button mat-flat-button color="primary" (click)="submitBet()">
+          Tipp abgeben / ändern
+        </button>
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

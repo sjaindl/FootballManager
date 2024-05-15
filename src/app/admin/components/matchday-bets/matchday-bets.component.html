@@ -1,0 +1,29 @@
+<div class="matchday-grid s11-padding">
+  <h1>{{ match() }}</h1>
+
+  <table mat-table [dataSource]="userBets" class="mat-elevation-z8">
+    <ng-container matColumnDef="image">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let userBet">
+        <s11-image [image]="userBet.image"></s11-image>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let userBet">
+        {{ userBet.user.userName }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="bet">
+      <th mat-header-cell *matHeaderCellDef>Tipp</th>
+      <td mat-cell *matCellDef="let userBet">
+        {{ userBet.bet }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

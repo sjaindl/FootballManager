@@ -11,18 +11,25 @@ import {
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Subscription } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
+import { BettingGameComponent } from '../betting-game/betting-game.component';
 import { AuthService } from '../service/auth.service';
 import { StatsComponent } from '../stats/container/stats/stats.component';
 
 @Component({
   selector: 's11-home',
   standalone: true,
-  imports: [FirebaseUIModule, CommonModule, StatsComponent],
+  imports: [
+    FirebaseUIModule,
+    CommonModule,
+    StatsComponent,
+    BettingGameComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
   readonly authStore = inject(AuthStore);
+
   isMobile = true;
   private sub: Subscription | undefined;
 

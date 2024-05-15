@@ -33,9 +33,14 @@
         <button mat-menu-item routerLink="/profile" routerLinkActive="active">
           <span class="fas fa-user fa-sm"></span> Profil
         </button>
-        <button mat-menu-item routerLink="/admin" routerLinkActive="active">
+        <button mat-menu-item [matMenuTriggerFor]="admin">
           <span class="fas fa-lock fa-sm"></span> Admin
         </button>
+        <mat-menu #admin="matMenu">
+          <button mat-menu-item routerLink="/admin/points">Punkte</button>
+          <button mat-menu-item routerLink="/admin/bets">Tipps</button>
+        </mat-menu>
+
         <button
           mat-menu-item
           routerLink="/home/logout"
@@ -60,7 +65,7 @@
           aria-label="Aufstellung speichern"
           fontIcon="save" />
       </button>
-      } @if (this.router.url == '/admin') {
+      } @if (this.router.url == '/admin/points') {
 
       <button (click)="toggleFreeze()" mat-icon-button>
         <mat-icon
