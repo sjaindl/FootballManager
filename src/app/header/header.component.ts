@@ -11,6 +11,7 @@ import {
 } from '@angular/router';
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { AppComponent } from '../app.component';
+import { AuthStore } from '../auth/store/auth.store';
 import { ConfigStore } from '../lineup/store/config.store';
 import { LineupStore } from '../lineup/store/lineup.store';
 import { PlayerStore } from '../lineup/store/player.store';
@@ -42,6 +43,7 @@ export class HeaderComponent {
   readonly playerStore = inject(PlayerStore);
   readonly matchdayStore = inject(MatchdayStore);
   readonly configStore = inject(ConfigStore);
+  readonly authStore = inject(AuthStore);
 
   title = new AppComponent().title;
 
