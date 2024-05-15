@@ -1,7 +1,14 @@
-<div class="matchday-grid s11-padding">
+<div class="s11-padding">
   <table mat-table [dataSource]="userPoints" class="mat-elevation-z8">
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
+
+    <ng-container matColumnDef="place">
+      <th mat-header-cell *matHeaderCellDef>Platz</th>
+      <td mat-cell *matCellDef="let userPoints; let index = index">
+        {{ index + 1 }}
+      </td>
+    </ng-container>
 
     <ng-container matColumnDef="image">
       <th mat-header-cell *matHeaderCellDef></th>

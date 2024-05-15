@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, Signal, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatchdayComponent } from '../admin/components/matchday/matchday.component';
+import { MatchdayComponent } from '../admin/components/matchday-points/matchday-points.component';
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { Player } from '../shared/common.model';
@@ -38,7 +38,7 @@ export class StandingsComponent implements OnInit {
   readonly matchdayStore = inject(MatchdayStore);
   readonly userStore = inject(UserStore);
 
-  displayedColumns: string[] = ['image', 'name', 'points'];
+  displayedColumns: string[] = ['place', 'image', 'name', 'points'];
 
   users: Signal<User[]>;
   matchdays: Signal<string[]>;
@@ -52,7 +52,7 @@ export class StandingsComponent implements OnInit {
     this.players = this.playerStore.players;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.calculatePoints();
   }
 
