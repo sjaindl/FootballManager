@@ -38,8 +38,8 @@ export const sortMatchdayWithPointsByMatchday = (
 ) => {
   const firstMatchday = first.matchday;
   const secondMatchday = second.matchday;
-  if (firstMatchday > secondMatchday) return -1;
-  if (firstMatchday < secondMatchday) return 1;
+  if (firstMatchday > secondMatchday) return 1;
+  if (firstMatchday < secondMatchday) return -1;
   else return 0;
 };
 
