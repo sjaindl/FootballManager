@@ -16,7 +16,7 @@
     Hallo, {{ authStore.userName() }}!
   </h1>
 
-  @if (authStore.user()) {
+  @if (authStore.user() !== undefined && configStore.bets()) {
   <s11-betting-game />
   }
 

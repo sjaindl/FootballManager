@@ -10,7 +10,8 @@ import { SnackbarService } from '../../service/snackbar.service';
 import { Config } from '../../shared/config';
 
 const initialState: Config = {
-  freeze: false,
+  freeze: true,
+  bets: false,
 };
 
 export const ConfigStore = signalStore(
@@ -36,6 +37,7 @@ export const ConfigStore = signalStore(
                 next: config => {
                   patchState(store, state => {
                     state.freeze = config?.freeze ?? true;
+                    state.bets = config?.bets ?? false;
                     return state;
                   });
                 },

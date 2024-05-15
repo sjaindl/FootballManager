@@ -12,6 +12,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { Subscription } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
 import { BettingGameComponent } from '../betting-game/betting-game.component';
+import { ConfigStore } from '../lineup/store/config.store';
 import { AuthService } from '../service/auth.service';
 import { StatsComponent } from '../stats/container/stats/stats.component';
 
@@ -29,6 +30,7 @@ import { StatsComponent } from '../stats/container/stats/stats.component';
 })
 export class HomeComponent implements OnInit {
   readonly authStore = inject(AuthStore);
+  readonly configStore = inject(ConfigStore);
 
   isMobile = true;
   private sub: Subscription | undefined;
