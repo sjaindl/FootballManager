@@ -14,17 +14,23 @@
           type="number"
           min="0"
           matInput
+          [disabled]="isFrozen()"
           (change)="setHomeScore($event)"
           [value]="homeScore()" />
         <input
           type="number"
           min="0"
           matInput
+          [disabled]="isFrozen()"
           (change)="setAwayScore($event)"
           [value]="awayScore()" />
       </p>
       <p>
-        <button mat-flat-button color="primary" (click)="submitBet()">
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="submitBet()"
+          [disabled]="isFrozen()">
           Tipp abgeben / ändern
         </button>
       </p>

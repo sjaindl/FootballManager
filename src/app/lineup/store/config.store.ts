@@ -54,11 +54,11 @@ export const ConfigStore = signalStore(
 
       setConfig(freeze: boolean): void {
         patchState(store, state => {
+          firebaseService.setConfig(freeze, state.bets ?? false);
+
           state.freeze = freeze;
           return state;
         });
-
-        firebaseService.setFreeze(freeze);
       },
     })
   )

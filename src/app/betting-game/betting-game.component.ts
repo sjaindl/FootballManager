@@ -1,6 +1,7 @@
 import {
   Component,
   OnInit,
+  Signal,
   WritableSignal,
   inject,
   signal,
@@ -29,6 +30,11 @@ export class BettingGameComponent implements OnInit {
   awayScore: WritableSignal<number> = signal(0);
 
   nextBet = this.bettingStore.nextBet();
+  freeze: Signal<boolean | undefined>;
+
+  constructor() {
+    this.freeze = this.configStore.freeze;
+  }
 
   ngOnInit() {
     this.initBets();
@@ -81,7 +87,7 @@ export class BettingGameComponent implements OnInit {
     this.awayScore.set(Number(element.value));
   }
 
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  isFrozen(): boolean {
+    return this.freeze() === true;
   }
 }
