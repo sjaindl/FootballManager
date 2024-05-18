@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { BettingStore } from '../../../betting-game/store/bettings.store';
-import { noBetText } from '../../../shared/constants';
+import { UserBettingsStore } from '../../../betting-game/store/user-bettings.store';
 import {
   ImageComponent,
   S11Image,
@@ -37,6 +37,7 @@ export class MatchdayBetsComponent implements OnInit {
   readonly userMatchdayStore = inject(UserMatchdayStore);
   readonly userStore = inject(UserStore);
   readonly bettingStore = inject(BettingStore);
+  readonly userBettingsStore = inject(UserBettingsStore);
 
   displayedColumns: string[] = ['image', 'name', 'bet'];
 
@@ -51,7 +52,9 @@ export class MatchdayBetsComponent implements OnInit {
 
   ngOnInit() {
     this.setCurrentBet();
-    this.calculateBets();
+    this.userBets = this.userBettingsStore.bets().filter(bets => {
+      return bets.matchday === this.matchday();
+    });
   }
 
   setCurrentBet() {
@@ -62,46 +65,5 @@ export class MatchdayBetsComponent implements OnInit {
     if (bet) {
       this.match.set(`${bet.home} : ${bet.away}`);
     }
-  }
-
-  calculateBets() {
-    const usersMatchdays = this.userMatchdayStore.usersToMatchdays();
-
-    this.users().forEach(user => {
-      const userMatchdays = usersMatchdays[user.uid];
-
-      const userDataAtMatchday = userMatchdays.find(userData => {
-        return userData.id === this.matchday();
-      });
-
-      if (userDataAtMatchday) {
-        const homeScore = userDataAtMatchday.homeScore;
-        const awayScore = userDataAtMatchday.awayScore;
-        var bet = noBetText;
-        if (homeScore != undefined && awayScore != undefined) {
-          bet = `${homeScore} : ${awayScore}`;
-        }
-
-        this.userBets.push({
-          image: {
-            ref: user.photoRef,
-            url: user.photoUrl,
-            alt: user.userName,
-          },
-          user: user,
-          bet: bet,
-        });
-      } else {
-        this.userBets.push({
-          image: {
-            ref: user.photoRef,
-            url: user.photoUrl,
-            alt: user.userName,
-          },
-          user: user,
-          bet: noBetText,
-        });
-      }
-    });
   }
 }

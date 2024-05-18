@@ -9,6 +9,7 @@ import { matchdayGuard } from './guards/matchday.guard';
 import { playersGuard } from './guards/players.guard';
 import { pointsGuard } from './guards/points.guard';
 import { selectedFormationGuard } from './guards/selected-formation.guard';
+import { userBettingGuard } from './guards/user-betting.guard';
 import { userLineupGuard } from './guards/userlineup.guard';
 import { userMatchdayGuard } from './guards/usermatchday.guard';
 import { usersGuard } from './guards/users.guard';
@@ -42,7 +43,7 @@ export const routes: Routes = [
   },
   {
     path: 'standings',
-    runGuardsAndResolvers: 'always',
+    // runGuardsAndResolvers: 'always',
     loadComponent: () =>
       import('./standings/standings.component').then(
         mod => mod.StandingsComponent
@@ -85,6 +86,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin/bets',
+    // runGuardsAndResolvers: 'always',
     loadComponent: () =>
       import('./admin/container/user-bets/user-bets.component').then(
         mod => mod.UserBetsComponent
@@ -92,6 +94,7 @@ export const routes: Routes = [
     canActivate: [
       adminGuard,
       bettingGuard,
+      userBettingGuard,
       matchdayGuard,
       userMatchdayGuard,
       usersGuard,

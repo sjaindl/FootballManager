@@ -27,6 +27,10 @@ export class UserBetsComponent {
       allMatchdays.push(nextMatchday);
     }
 
-    this.matchdays.set(allMatchdays);
+    // TODO: There are some duplicated elements at the end when calling matchdayKeys..
+    const set = new Set(allMatchdays);
+    const arr = Array.from(set);
+
+    this.matchdays.set(arr);
   }
 }
