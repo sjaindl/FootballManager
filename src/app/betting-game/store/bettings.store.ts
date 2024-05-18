@@ -67,6 +67,37 @@ export const BettingStore = signalStore(
           })
         )
       ),
+
+      saveBet(matchday: string, homeScore: number, awayScore: number) {
+        const bet = store.bets().find(bet => {
+          return bet.matchday === matchday;
+        });
+
+        if (!bet) return;
+
+        bet.resultScoreHome = homeScore;
+        bet.resultScoreAway = awayScore;
+
+        const betsList = store.bets().filter(bet => {
+          return bet.matchday !== matchday;
+        });
+
+        betsList.push(bet);
+
+        firebaseService.setBet(
+          matchday,
+          homeScore,
+          awayScore,
+          bet.home,
+          bet.away
+        );
+
+        patchState(store, state => {
+          state.bets = betsList.sort(sortBetsByMatchday);
+          snackBarService.open('Ergebnis gespeichert!');
+          return state;
+        });
+      },
     })
   )
 );

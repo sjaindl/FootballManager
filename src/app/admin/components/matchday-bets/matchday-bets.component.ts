@@ -7,6 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { BettingStore } from '../../../betting-game/store/bettings.store';
 import { UserBettingsStore } from '../../../betting-game/store/user-bettings.store';
@@ -27,7 +28,7 @@ interface UserWithBets {
 @Component({
   selector: 's11-matchday-bets',
   standalone: true,
-  imports: [MatTableModule, ImageComponent],
+  imports: [MatTableModule, ImageComponent, MatButtonModule],
   templateUrl: './matchday-bets.component.html',
   styleUrl: './matchday-bets.component.scss',
 })
@@ -45,6 +46,8 @@ export class MatchdayBetsComponent implements OnInit {
 
   users: Signal<User[]>;
   match: WritableSignal<string> = signal('');
+  homeScore: WritableSignal<number> = signal(0);
+  awayScore: WritableSignal<number> = signal(0);
 
   constructor() {
     this.users = this.userStore.users;
@@ -63,7 +66,30 @@ export class MatchdayBetsComponent implements OnInit {
       return bet.matchday === this.matchday();
     });
     if (bet) {
+      if (bet.resultScoreHome) {
+        this.homeScore.set(bet.resultScoreHome);
+      }
+      if (bet.resultScoreAway) {
+        this.awayScore.set(bet.resultScoreAway);
+      }
       this.match.set(`${bet.home} : ${bet.away}`);
+    }
+  }
+
+  setHomeScore(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    this.homeScore.set(Number(element.value));
+  }
+
+  setAwayScore(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    this.awayScore.set(Number(element.value));
+  }
+
+  saveResult() {
+    const day = this.matchday();
+    if (day) {
+      this.bettingStore.saveBet(day, this.homeScore(), this.awayScore());
     }
   }
 }

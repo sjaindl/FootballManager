@@ -396,6 +396,30 @@ export class FirebaseService {
     return collectionData(betsCollection);
   }
 
+  setBet(
+    matchday: string,
+    homeScore: number,
+    awayScore: number,
+    home: string,
+    away: string
+  ) {
+    const betsCollection = collection(this.db, 'bets').withConverter(
+      betConverter
+    );
+
+    const betDoc = doc(betsCollection, matchday);
+
+    const docData = {
+      matchday: matchday,
+      home: home,
+      away: away,
+      resultScoreAway: awayScore,
+      resultScoreHome: homeScore,
+    };
+
+    setDoc(betDoc, docData, { merge: true });
+  }
+
   // Config
   getConfig(): Observable<Config | undefined> {
     const configCollection = collection(this.db, 'config').withConverter(

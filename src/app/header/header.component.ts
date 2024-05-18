@@ -12,6 +12,7 @@ import {
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { AppComponent } from '../app.component';
 import { AuthStore } from '../auth/store/auth.store';
+import { BettingStore } from '../betting-game/store/bettings.store';
 import { ConfigStore } from '../lineup/store/config.store';
 import { LineupStore } from '../lineup/store/lineup.store';
 import { PlayerStore } from '../lineup/store/player.store';
@@ -44,6 +45,7 @@ export class HeaderComponent {
   readonly matchdayStore = inject(MatchdayStore);
   readonly configStore = inject(ConfigStore);
   readonly authStore = inject(AuthStore);
+  readonly bettingStore = inject(BettingStore);
 
   title = new AppComponent().title;
 
@@ -72,6 +74,10 @@ export class HeaderComponent {
   toggleFreeze() {
     this.configStore.setConfig(!this.isFrozen());
   }
+
+  // saveResult() {
+  //   this.bettingStore.saveBet;
+  // }
 
   saveMatchday() {
     if (!this.isValid()) {

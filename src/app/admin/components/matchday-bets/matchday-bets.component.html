@@ -1,5 +1,23 @@
 <div class="matchday-grid s11-padding">
-  <h1>{{ match() }}</h1>
+  <h1>
+    {{ match() }} <br />
+    <input
+      type="number"
+      min="0"
+      matInput
+      (change)="setHomeScore($event)"
+      [value]="homeScore()" />
+
+    <input
+      type="number"
+      min="0"
+      matInput
+      (change)="setAwayScore($event)"
+      [value]="awayScore()" />
+    <br />
+    <!-- TODO: Move to header component -->
+    <button mat-button (click)="saveResult()">Ergebnis speichern</button>
+  </h1>
 
   <table mat-table [dataSource]="userBets" class="mat-elevation-z8">
     <ng-container matColumnDef="image">
