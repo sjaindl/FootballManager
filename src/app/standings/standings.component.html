@@ -28,9 +28,17 @@
     </ng-container>
 
     <ng-container matColumnDef="points">
-      <th mat-header-cell *matHeaderCellDef>Punkte</th>
+      <th mat-header-cell *matHeaderCellDef>
+        Punkte<br />
+        Gesamt / Tipps
+      </th>
       <td mat-cell *matCellDef="let userPoints">
-        {{ userPoints.points }} ({{ userPoints.pointsLastRound }})
+        <p>
+          <b>{{ userPoints.points }}</b> ({{ userPoints.pointsLastRound }})
+        </p>
+        <p>
+          +{{ userPoints.betPoints }} (+{{ userPoints.betPointsLastRound }})
+        </p>
       </td>
     </ng-container>
 

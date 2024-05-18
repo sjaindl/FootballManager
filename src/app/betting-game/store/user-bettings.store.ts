@@ -17,6 +17,8 @@ interface UserWithBets {
   user: User;
   matchday: string;
   bet: string;
+  homeScore: number | undefined;
+  awayScore: number | undefined;
 }
 
 interface UserBetState {
@@ -106,6 +108,8 @@ export const UserBettingsStore = signalStore(
                       user: user,
                       matchday: matchday,
                       bet: bet,
+                      homeScore: homeScore,
+                      awayScore: awayScore,
                     });
                     return state;
                   });
@@ -120,6 +124,8 @@ export const UserBettingsStore = signalStore(
                       user: user,
                       matchday: matchday,
                       bet: noBetText,
+                      homeScore: undefined,
+                      awayScore: undefined,
                     });
                     return state;
                   });

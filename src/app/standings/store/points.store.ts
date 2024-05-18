@@ -5,9 +5,15 @@ import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 import { MatchdayStore } from '../../admin/store/matchday.store';
+import { BettingStore } from '../../betting-game/store/bettings.store';
+import { UserBettingsStore } from '../../betting-game/store/user-bettings.store';
 import { CoreStore } from '../../core/store/core.store';
 import { PlayerStore } from '../../lineup/store/player.store';
-import { requiredNumOfPlayers } from '../../shared/constants';
+import {
+  pointsForCorrectTendence,
+  pointsForExactBet,
+  requiredNumOfPlayers,
+} from '../../shared/constants';
 import { S11Image } from '../../shared/image/image.component';
 import { UserMatchdayStore } from '../../shared/store/user-matchday.store';
 import { User } from '../../shared/user';
@@ -18,6 +24,14 @@ export interface UserWithPoints {
   user: User | undefined;
   points: number;
   pointsLastRound: number;
+  betPoints: number;
+  betPointsLastRound: number;
+}
+
+enum Result {
+  Win,
+  Draw,
+  Loss,
 }
 
 export const sortPoints = (first: UserWithPoints, second: UserWithPoints) => {
@@ -49,7 +63,9 @@ export const PointsStore = signalStore(
       matchdayStore = inject(MatchdayStore),
       playerStore = inject(PlayerStore),
       userStore = inject(UserStore),
-      userMatchdayStore = inject(UserMatchdayStore)
+      userMatchdayStore = inject(UserMatchdayStore),
+      bettingStore = inject(BettingStore),
+      userBettingStore = inject(UserBettingsStore)
     ) => {
       const pointsForPlayer = (playerId: string, matchday: string) => {
         const player = playerStore.players().find(player => {
@@ -67,6 +83,54 @@ export const PointsStore = signalStore(
         return 0;
       };
 
+      const pointsForBet = (userId: string, matchday: string) => {
+        const userBet = userBettingStore.bets().find(bet => {
+          return bet.matchday === matchday && bet.user.uid === userId;
+        });
+        const userBetHome = userBet?.homeScore;
+        const userBetAway = userBet?.awayScore;
+
+        const result = bettingStore.bets().find(bet => {
+          return bet.matchday === matchday;
+        });
+        const resultScoreHome = result?.resultScoreHome;
+        const resultScoreAway = result?.resultScoreAway;
+
+        var points = 0;
+
+        if (
+          resultScoreHome != undefined &&
+          resultScoreAway != undefined &&
+          userBetHome != undefined &&
+          userBetAway != undefined
+        ) {
+          const isExactBet =
+            resultScoreHome === userBetHome && resultScoreAway === userBetAway;
+
+          const result =
+            resultScoreHome > resultScoreAway
+              ? Result.Win
+              : resultScoreHome === resultScoreAway
+              ? Result.Draw
+              : Result.Loss;
+
+          const bet =
+            userBetHome > userBetAway
+              ? Result.Win
+              : userBetHome === userBetAway
+              ? Result.Draw
+              : Result.Loss;
+
+          if (isExactBet) {
+            points += pointsForExactBet;
+          } else if (result === bet) {
+            points += pointsForCorrectTendence;
+          }
+        }
+
+        return points;
+      };
+
       return {
         calculatePoints: rxMethod<void>(
           pipe(
@@ -78,6 +142,8 @@ export const PointsStore = signalStore(
               return userStore.users().map(user => {
                 var curPoints = 0;
                 var pointsForRound = 0;
+                var curBetPoints = 0;
+                var betPointsForRound = 0;
                 const userMatchdays = usersMatchdays[user.uid];
 
                 matchdayStore.matchdayKeys().map(matchday => {
@@ -86,6 +152,7 @@ export const PointsStore = signalStore(
                   });
 
                   if (lineupAtMatchday) {
+                    // Points for lineup at matchday
                     pointsForRound = 0;
 
                     const points = pointsForPlayer(
@@ -127,9 +194,17 @@ export const PointsStore = signalStore(
 
                     console.log(matchday, points);
                   } else {
+                    // Penalty points for missing lineup at matchday
                     pointsForRound = -requiredNumOfPlayers;
                     curPoints -= requiredNumOfPlayers;
                   }
+
+                  // Additional points for matchday bet
+                  const betPoints = pointsForBet(user.uid, matchday);
+                  curPoints += betPoints;
+                  pointsForRound += betPoints;
+                  curBetPoints += betPoints;
+                  betPointsForRound = betPoints;
                 });
 
                 patchState(store, state => {
@@ -142,6 +217,8 @@ export const PointsStore = signalStore(
                     user: user,
                     points: curPoints,
                     pointsLastRound: pointsForRound,
+                    betPoints: curBetPoints,
+                    betPointsLastRound: betPointsForRound,
                   });
 
                   return state;

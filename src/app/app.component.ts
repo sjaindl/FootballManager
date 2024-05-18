@@ -40,11 +40,10 @@ export class AppComponent {
     this.bettingsStore.loadBets();
 
     (async () => {
-      console.log('before delay');
-      await this.delay(2000);
-      this.pointsStore.calculatePoints();
+      await this.delay(1000);
       this.userBettingStore.calculateBets();
-      console.log('after delay');
+      await this.delay(1000);
+      this.pointsStore.calculatePoints();
     })();
   }
 

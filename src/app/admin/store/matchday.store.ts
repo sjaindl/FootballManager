@@ -32,7 +32,11 @@ export const MatchdayStore = signalStore(
   withDevtools('matchdayStore'),
 
   withComputed(({ matchdays }) => ({
-    matchdayKeys: computed(() => matchdays().map(matchDay => matchDay.id)),
+    matchdayKeys: computed(() => {
+      // TODO: some elements at the end seem to be duplicated
+      const days = matchdays().map(matchDay => matchDay.id);
+      return Array.from(new Set(days));
+    }),
 
     nextMatchday: computed(() => {
       const matchDayKeys = matchdays().map(matchDay => matchDay.id);

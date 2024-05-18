@@ -4,6 +4,8 @@ export interface Bet {
   matchday: string;
   home: string;
   away: string;
+  resultScoreHome: number | undefined;
+  resultScoreAway: number | undefined;
 }
 
 export const betConverter = {
@@ -12,6 +14,8 @@ export const betConverter = {
       id: bet.matchday,
       home: bet.home,
       away: bet.away,
+      resultScoreHome: bet.resultScoreHome,
+      resultScoreAway: bet.resultScoreAway,
     };
   },
   fromFirestore: (
@@ -24,6 +28,8 @@ export const betConverter = {
       matchday: snapshot.id,
       home: data['home'],
       away: data['away'],
+      resultScoreHome: data['resultScoreHome'],
+      resultScoreAway: data['resultScoreAway'],
     };
   },
 };
