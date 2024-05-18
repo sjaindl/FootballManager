@@ -7,6 +7,7 @@ import { formationsGuard } from './guards/formations.guard';
 import { lineupGuard } from './guards/lineup.guard';
 import { matchdayGuard } from './guards/matchday.guard';
 import { playersGuard } from './guards/players.guard';
+import { pointsGuard } from './guards/points.guard';
 import { selectedFormationGuard } from './guards/selected-formation.guard';
 import { userLineupGuard } from './guards/userlineup.guard';
 import { userMatchdayGuard } from './guards/usermatchday.guard';
@@ -41,11 +42,18 @@ export const routes: Routes = [
   },
   {
     path: 'standings',
+    runGuardsAndResolvers: 'always',
     loadComponent: () =>
       import('./standings/standings.component').then(
         mod => mod.StandingsComponent
       ),
-    canActivate: [matchdayGuard, playersGuard, userMatchdayGuard, usersGuard],
+    canActivate: [
+      matchdayGuard,
+      playersGuard,
+      userMatchdayGuard,
+      usersGuard,
+      pointsGuard,
+    ],
   },
   {
     path: 'prices',

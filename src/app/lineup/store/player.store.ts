@@ -139,7 +139,7 @@ export const PlayerStore = signalStore(
       players().forEach(player => {
         var totalPoints = 0;
         const points = player.points;
-        Object.entries(points).forEach(([matchDayKey, pointsOfMatchDay]) => {
+        Object.entries(points).forEach(([, pointsOfMatchDay]) => {
           totalPoints += pointsOfMatchDay;
         });
         playerTotalPoints[player.playerId] = totalPoints;
