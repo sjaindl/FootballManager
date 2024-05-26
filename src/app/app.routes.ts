@@ -33,27 +33,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./prices/prices.component').then(mod => mod.PricesComponent),
   },
-  // with login
+  // with required login: ->
   {
     path: '',
-    canActivateChild: [
-      // authGuard,
-      configGuard,
-      usersGuard,
-      matchdayGuard,
-      playersGuard,
-    ],
+    canActivateChild: [configGuard, usersGuard, matchdayGuard, playersGuard],
     children: [
-      // {
-      //   path: '',
-      //   canActivateChild: [
-      //     authGuard,
-      //     // configGuard,
-      //     usersGuard,
-      //     matchdayGuard,
-      //     playersGuard,
-      //   ],
-      //   children: [
       {
         path: 'players',
         loadComponent: () =>
@@ -68,16 +52,19 @@ export const routes: Routes = [
           import('./standings/standings.component').then(
             mod => mod.StandingsComponent
           ),
-        canActivate: [userMatchdayGuard, pointsGuard],
+        canActivate: [
+          bettingGuard,
+          userMatchdayGuard,
+          userBettingGuard,
+          pointsGuard,
+        ],
       },
-
       {
         path: 'profile',
         loadComponent: () =>
           import('./user/components/user-profile/user-profile.component').then(
             mod => mod.UserProfileComponent
           ),
-        // canActivate: [authGuard],
       },
       {
         path: 'admin',
@@ -112,8 +99,6 @@ export const routes: Routes = [
         canActivate: [formationsGuard, selectedFormationGuard, lineupGuard],
       },
     ],
-    //   },
-    // ],
   },
 
   {

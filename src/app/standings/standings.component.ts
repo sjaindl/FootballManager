@@ -38,7 +38,7 @@ export class StandingsComponent {
   matchdays: Signal<string[]>;
   players: Signal<Player[]>;
 
-  userPoints: Signal<UserWithPoints[]>;
+  userPoints: Signal<UserWithPoints[] | undefined>;
 
   sorting = sortPoints;
 

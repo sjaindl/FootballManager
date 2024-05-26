@@ -43,11 +43,11 @@ export const sortPoints = (first: UserWithPoints, second: UserWithPoints) => {
 };
 
 interface UserWithPointsState {
-  userWithPoints: UserWithPoints[];
+  userWithPoints: UserWithPoints[] | undefined;
 }
 
 const initialState: UserWithPointsState = {
-  userWithPoints: [],
+  userWithPoints: undefined,
 };
 
 export const PointsStore = signalStore(
@@ -208,6 +208,10 @@ export const PointsStore = signalStore(
                 });
 
                 patchState(store, state => {
+                  if (state.userWithPoints === undefined) {
+                    state.userWithPoints = [];
+                  }
+
                   state.userWithPoints.push({
                     image: {
                       ref: user.photoRef,
