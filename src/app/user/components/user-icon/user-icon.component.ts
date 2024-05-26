@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatFabButton } from '@angular/material/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 's11-user-icon',
@@ -11,4 +12,10 @@ import { MatFabButton } from '@angular/material/button';
 export class UserIconComponent {
   @Input()
   userUrl?: string;
+
+  constructor(private router: Router) {}
+
+  goToProfile() {
+    this.router.navigate(['profile']);
+  }
 }

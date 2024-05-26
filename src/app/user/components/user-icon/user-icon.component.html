@@ -1,10 +1,15 @@
 <button class="s11-icon-circular-border">
   @if (userUrl) {
-  <img alt="user-icon" [src]="userUrl" class="s11-icon-circular-content" />
+  <img
+    alt="user-icon"
+    [src]="userUrl"
+    class="s11-icon-circular-content"
+    (click)="goToProfile()" />
   }@else {
   <img
     alt="user-icon"
     src="./../../../favicon.ico"
+    (click)="goToProfile()"
     class="s11-icon-circular-content" />
   }
 </button>
