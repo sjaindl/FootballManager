@@ -4,39 +4,18 @@
 <img class="center" src="/assets/StartingEleven.jpg" />
 }
 
-<!-- <s11-firebase-wrapper> -->
 <div class="s11-padding">
+  @if (authStore.user() !== undefined) {
   <h1 class="text-center home-padding-top">
     Hallo, {{ authStore.userName() }}!
   </h1>
 
-  @if (authStore.user() !== undefined && configStore.bets()) {
+  @if (configStore.bets()) {
   <s11-betting-game />
   }
-
   <s11-stats />
-</div>
-<!-- </s11-firebase-wrapper> -->
-
-<!-- <firebase-ui
-  *ngIf="!isSignedIn()"
-  (signInSuccessWithAuthResult)="successCallback($event)"
-  (signInFailure)="errorCallback($event)"
-  (uiShown)="uiShownCallback()"></firebase-ui>
-
-@if (isSignedIn()) {
-<div class="s11-padding">
-  <h1 class="text-center home-padding-top">
-    Hallo, {{ authStore.userName() }}!
-  </h1>
-
-  @if (authStore.user() !== undefined && configStore.bets()) {
-  <s11-betting-game />
   }
-
-  <s11-stats />
 </div>
-} -->
 
 <!-- Social feed -->
 <!-- <div class="icon-bar">
