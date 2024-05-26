@@ -10,8 +10,8 @@ import { SnackbarService } from '../../service/snackbar.service';
 import { Config } from '../../shared/config';
 
 const initialState: Config = {
-  freeze: true,
-  bets: false,
+  freeze: undefined,
+  bets: undefined,
 };
 
 export const ConfigStore = signalStore(

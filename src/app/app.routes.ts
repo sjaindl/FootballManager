@@ -119,7 +119,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [userMatchdayGuard, bettingGuard, playersGuard],
+    canActivate: [userMatchdayGuard, bettingGuard, playersGuard, configGuard],
   },
   { path: '**', redirectTo: 'home' },
 ];
