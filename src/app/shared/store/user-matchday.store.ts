@@ -21,11 +21,11 @@ import { UserData } from '../userdata';
 export type UserToMatchdays = Record<string, UserData[]>;
 
 interface UserToMatchdaysState {
-  usersToMatchdays: UserToMatchdays;
+  usersToMatchdays: UserToMatchdays | undefined;
 }
 
 const initialState: UserToMatchdaysState = {
-  usersToMatchdays: {},
+  usersToMatchdays: undefined,
 };
 
 export const UserMatchdayStore = signalStore(
@@ -94,7 +94,7 @@ export const UserMatchdayStore = signalStore(
         firebaseService.saveUserMatchdayBet(matchday, homeScore, awayScore);
 
         patchState(store, state => {
-          const days = state.usersToMatchdays;
+          const days = state.usersToMatchdays ?? {};
 
           var userData = days[uid].find(data => {
             return data.id === matchday;

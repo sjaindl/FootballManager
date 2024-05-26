@@ -86,15 +86,17 @@ export class PlayerComponent {
 
       const userMatchdays = this.userMatchdayStore.usersToMatchdays();
 
-      Object.values(userMatchdays).forEach(lineupDataArray => {
-        lineupDataArray.forEach(lineupData => {
-          lineupCount = this.calculateLineups(
-            lineupCount,
-            lineupData,
-            playerId
-          );
+      if (userMatchdays !== undefined) {
+        Object.values(userMatchdays).forEach(lineupDataArray => {
+          lineupDataArray.forEach(lineupData => {
+            lineupCount = this.calculateLineups(
+              lineupCount,
+              lineupData,
+              playerId
+            );
+          });
         });
-      });
+      }
 
       return lineupCount;
     });

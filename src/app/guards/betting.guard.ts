@@ -16,7 +16,7 @@ export const bettingGuard: CanActivateFn = (
 
   return toObservable(bettingStore.bets).pipe(
     map(bets => {
-      if (bets.length > 0) {
+      if (bets !== undefined) {
         return true;
       }
       bettingStore.loadBets();

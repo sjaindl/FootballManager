@@ -11,7 +11,7 @@ import { BettingStore } from '../betting-game/store/bettings.store';
 import { UserBettingsStore } from '../betting-game/store/user-bettings.store';
 import { UserMatchdayStore } from '../shared/store/user-matchday.store';
 import { UserStore } from '../standings/store/user.store';
-import { guardDependency } from '../utils/is-signed-in-requirement';
+import { guardDependency } from '../utils/guard-dependency';
 
 export const userBettingGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -24,18 +24,19 @@ export const userBettingGuard: CanActivateFn = (
   const userMatchdayStore = inject(UserMatchdayStore);
 
   const bets = toObservable(bettingStore.bets).pipe(
-    map(betsArray => betsArray.length > 0)
+    map(betsArray => betsArray !== undefined)
   );
+
   const users = toObservable(userStore.users).pipe(
-    map(usersArray => usersArray.length > 0)
+    map(usersArray => usersArray !== undefined)
   );
+
   const matchdays = toObservable(matchdayStore.matchdays).pipe(
-    map(matchdaysArray => matchdaysArray.length > 0)
+    map(matchdaysArray => matchdaysArray !== undefined)
   );
+
   const userMatchdays = toObservable(userMatchdayStore.usersToMatchdays).pipe(
-    map(userMatchdaysObject =>
-      userMatchdaysObject ? Object.keys(userMatchdaysObject).length > 0 : false
-    )
+    map(userMatchdaysObject => userMatchdaysObject !== undefined)
   );
 
   return guardDependency(
@@ -43,7 +44,7 @@ export const userBettingGuard: CanActivateFn = (
     toObservable(userBettingsStore.bets),
     userBets => {
       console.warn('bets', userBets);
-      if (userBets.length > 0) {
+      if (userBets !== undefined) {
         return true;
       }
       userBettingsStore.calculateBets();

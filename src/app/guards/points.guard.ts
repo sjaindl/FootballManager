@@ -28,29 +28,27 @@ export const pointsGuard: CanActivateFn = (
   const pointsStore = inject(PointsStore);
 
   const players = toObservable(playerStore.players).pipe(
-    map(playersArray => playersArray.length > 0)
+    map(playersArray => playersArray !== undefined)
   );
 
   const bets = toObservable(bettingStore.bets).pipe(
-    map(betsArray => betsArray.length > 0)
+    map(betsArray => betsArray !== undefined)
   );
 
   const users = toObservable(userStore.users).pipe(
-    map(usersArray => usersArray.length > 0)
+    map(usersArray => usersArray !== undefined)
   );
 
   const matchdays = toObservable(matchdayStore.matchdays).pipe(
-    map(matchdaysArray => matchdaysArray.length > 0)
+    map(matchdaysArray => matchdaysArray !== undefined)
   );
 
   const userMatchdays = toObservable(userMatchdayStore.usersToMatchdays).pipe(
-    map(userMatchdaysObject =>
-      userMatchdaysObject ? Object.keys(userMatchdaysObject).length > 0 : false
-    )
+    map(userMatchdaysObject => userMatchdaysObject !== undefined)
   );
 
   const userBettings = toObservable(userBettingsStore.bets).pipe(
-    map(matchdaysArray => matchdaysArray.length > 0)
+    map(matchdaysArray => matchdaysArray !== undefined)
   );
 
   return guardDependencyTwoLevel(

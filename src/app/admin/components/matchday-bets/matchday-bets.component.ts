@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  Signal,
   WritableSignal,
   inject,
   input,
@@ -44,25 +43,20 @@ export class MatchdayBetsComponent implements OnInit {
 
   userBets: UserWithBets[] = [];
 
-  users: Signal<User[]>;
   match: WritableSignal<string> = signal('');
   homeScore: WritableSignal<number> = signal(0);
   awayScore: WritableSignal<number> = signal(0);
 
-  constructor() {
-    this.users = this.userStore.users;
-  }
-
   ngOnInit() {
     this.setCurrentBet();
-    this.userBets = this.userBettingsStore.bets().filter(bets => {
+    const bets = this.userBettingsStore.bets() ?? [];
+    this.userBets = bets.filter(bets => {
       return bets.matchday === this.matchday();
     });
   }
 
   setCurrentBet() {
-    const bets = this.bettingStore.bets();
-    const bet = bets.find(bet => {
+    const bet = this.bettingStore.bets()?.find(bet => {
       return bet.matchday === this.matchday();
     });
     if (bet) {

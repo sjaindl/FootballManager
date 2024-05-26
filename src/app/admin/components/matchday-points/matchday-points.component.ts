@@ -31,7 +31,7 @@ export class MatchdayComponent {
 
   constructor() {
     const totalPoints = this.playerStore.totalPoints();
-    this.players = this.playerStore.players().sort((first, second) => {
+    this.players = (this.playerStore.players() ?? []).sort((first, second) => {
       const firstPoints = totalPoints[first.playerId];
       const secondPoints = totalPoints[second.playerId];
       if (firstPoints > secondPoints) return -1;

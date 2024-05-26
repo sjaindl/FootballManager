@@ -18,7 +18,7 @@ export const lineupGuard: CanActivateFn = (
 
   const value = computed(() => {
     return (
-      playerStore.players().length > 0 &&
+      playerStore.players() !== undefined &&
       lineupStore.formation() !== undefined &&
       lineupStore.hasPlayers()
     );

@@ -11,11 +11,11 @@ import { SnackbarService } from '../../service/snackbar.service';
 import { User } from '../../shared/user';
 
 interface UserToMatchdaysState {
-  users: User[];
+  users: User[] | undefined;
 }
 
 const initialState: UserToMatchdaysState = {
-  users: [],
+  users: undefined,
 };
 
 export const UserStore = signalStore(

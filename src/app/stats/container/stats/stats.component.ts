@@ -77,7 +77,7 @@ export class StatsComponent implements OnInit {
   }
 
   playerName(playerId: string): string {
-    const playerName = this.playerStore.players().find(player => {
+    const playerName = this.playerStore.players()?.find(player => {
       return player.playerId === playerId;
     })?.name;
 

@@ -24,7 +24,7 @@ import { CoreStore } from '../../core/store/core.store';
 import { SnackbarService } from '../../service/snackbar.service';
 
 interface PlayerState {
-  players: Player[];
+  players: Player[] | undefined;
 }
 
 export interface MatchdayWithPoints {
@@ -44,7 +44,7 @@ export const sortMatchdayWithPointsByMatchday = (
 };
 
 const initialState: PlayerState = {
-  players: [],
+  players: undefined,
 };
 
 export const PlayerStore = signalStore(
@@ -56,13 +56,13 @@ export const PlayerStore = signalStore(
   withComputed(({ players }, storage = inject(Storage)) => ({
     playerMap: computed(() => {
       const playerMap: Record<string, Player> = {};
-      players().forEach(player => (playerMap[player.playerId] = player));
+      players()?.forEach(player => (playerMap[player.playerId] = player));
       return playerMap;
     }),
 
     playerImageRefs: computed(() => {
       const playerImageMap: Record<string, StorageReference> = {};
-      players().forEach(
+      players()?.forEach(
         player =>
           (playerImageMap[player.playerId] = ref(storage, player.imageRef))
       );
@@ -71,7 +71,7 @@ export const PlayerStore = signalStore(
 
     goalkeepers: computed(() => {
       const goalkeepers: Player[] = [];
-      players().forEach(player => {
+      players()?.forEach(player => {
         if (player.position === goalkeeper) {
           goalkeepers.push(player);
         }
@@ -82,7 +82,7 @@ export const PlayerStore = signalStore(
 
     defenders: computed(() => {
       const defenders: Player[] = [];
-      players().forEach(player => {
+      players()?.forEach(player => {
         if (player.position === defender) {
           defenders.push(player);
         }
@@ -93,7 +93,7 @@ export const PlayerStore = signalStore(
 
     midfielders: computed(() => {
       const midfielders: Player[] = [];
-      players().forEach(player => {
+      players()?.forEach(player => {
         if (player.position === midfielder) {
           midfielders.push(player);
         }
@@ -104,7 +104,7 @@ export const PlayerStore = signalStore(
 
     attackers: computed(() => {
       const attackers: Player[] = [];
-      players().forEach(player => {
+      players()?.forEach(player => {
         if (player.position === attacker) {
           attackers.push(player);
         }
@@ -116,7 +116,7 @@ export const PlayerStore = signalStore(
     matchdayPoints: computed(() => {
       const playerMatchdayPoints: Record<string, MatchdayWithPoints[]> = {};
 
-      players().forEach(player => {
+      players()?.forEach(player => {
         const matchdaysWithPoints: MatchdayWithPoints[] = [];
         Object.entries(player.points).forEach(
           ([matchDayKey, pointsOfMatchDay]) => {
@@ -136,7 +136,7 @@ export const PlayerStore = signalStore(
 
     totalPoints: computed(() => {
       const playerTotalPoints: Record<string, number> = {};
-      players().forEach(player => {
+      players()?.forEach(player => {
         var totalPoints = 0;
         const points = player.points;
         Object.entries(points).forEach(([, pointsOfMatchDay]) => {
@@ -189,17 +189,23 @@ export const PlayerStore = signalStore(
           })
         )
       ),
-      setPlayerMatchdays(players: Player[], matchday: string): void {
+      setPlayerMatchdays(
+        players: Player[] | undefined,
+        matchday: string
+      ): void {
         patchState(store, state => {
           state.players = players;
           return state;
         });
 
-        firebaseService.setPlayerMatchdays(players, matchday);
+        if (players) {
+          firebaseService.setPlayerMatchdays(players, matchday);
+        }
       },
       resetCurrentPoints(): void {
         patchState(store, state => {
-          state.players = state.players.map(player => {
+          const curPlayers = state.players ?? [];
+          state.players = curPlayers.map(player => {
             return {
               playerId: player.playerId,
               name: player.name,

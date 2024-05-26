@@ -14,9 +14,9 @@ export const matchdayGuard: CanActivateFn = (
 ) => {
   const matchdayStore = inject(MatchdayStore);
 
-  return toObservable(matchdayStore.loaded).pipe(
-    map(fulfillsRequirements => {
-      if (fulfillsRequirements) {
+  return toObservable(matchdayStore.matchdays).pipe(
+    map(matchdays => {
+      if (matchdays) {
         return true;
       }
       matchdayStore.loadMatchdays();

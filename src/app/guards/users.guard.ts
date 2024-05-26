@@ -16,23 +16,10 @@ export const usersGuard: CanActivateFn = (
   console.warn('userStore');
 
   return isSignedInRequirement(toObservable(userStore.users), users => {
-    if (users.length > 0) {
+    if (users !== undefined) {
       return true;
     }
     userStore.loadUsers();
     return false;
   });
-
-  // return toObservable(userStore.users).pipe(
-  //   map(users => {
-  //     if (users.length > 0) {
-  //       return true;
-  //     }
-  //     userStore.loadUsers();
-  //     return false;
-  //   }),
-  //   filter(canActivate => {
-  //     return canActivate;
-  //   })
-  // );
 };

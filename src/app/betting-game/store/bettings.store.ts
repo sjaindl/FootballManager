@@ -16,11 +16,11 @@ import { SnackbarService } from '../../service/snackbar.service';
 import { Bet, sortBetsByMatchday } from '../../shared/bet';
 
 interface BetState {
-  bets: Bet[];
+  bets: Bet[] | undefined;
 }
 
 const initialState: BetState = {
-  bets: [],
+  bets: undefined,
 };
 
 export const BettingStore = signalStore(
@@ -31,7 +31,10 @@ export const BettingStore = signalStore(
 
   withComputed(({ bets }) => ({
     nextBet: computed(() => {
-      return bets().length === 0 ? undefined : bets()[bets().length - 1];
+      const betsOptional = bets();
+      return betsOptional === undefined
+        ? undefined
+        : betsOptional[betsOptional.length - 1];
     }),
   })),
 
@@ -69,7 +72,7 @@ export const BettingStore = signalStore(
       ),
 
       saveBet(matchday: string, homeScore: number, awayScore: number) {
-        const bet = store.bets().find(bet => {
+        const bet = store.bets()?.find(bet => {
           return bet.matchday === matchday;
         });
 
@@ -78,11 +81,11 @@ export const BettingStore = signalStore(
         bet.resultScoreHome = homeScore;
         bet.resultScoreAway = awayScore;
 
-        const betsList = store.bets().filter(bet => {
+        const betsList = store.bets()?.filter(bet => {
           return bet.matchday !== matchday;
         });
 
-        betsList.push(bet);
+        betsList?.push(bet);
 
         firebaseService.setBet(
           matchday,
@@ -93,7 +96,7 @@ export const BettingStore = signalStore(
         );
 
         patchState(store, state => {
-          state.bets = betsList.sort(sortBetsByMatchday);
+          state.bets = betsList?.sort(sortBetsByMatchday);
           snackBarService.open('Ergebnis gespeichert!');
           return state;
         });

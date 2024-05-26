@@ -94,13 +94,12 @@ export class HeaderComponent {
 
     // TODO: move to user matchday store
     this.firebaseService.setUserMatchdayLineup(nextDay);
-
     this.playerStore.resetCurrentPoints();
   }
 
   private isValid(): Boolean {
     var isValid = true;
-    this.playerStore.players().forEach(player => {
+    this.playerStore.players()?.forEach(player => {
       const value = player.pointsCurrentRound;
       console.log(value === undefined);
       console.log(isNaN(+Number(value)));

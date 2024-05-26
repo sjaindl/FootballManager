@@ -51,7 +51,7 @@ export class BettingGameComponent implements OnInit {
     const curUserUid = this.authStore.user()?.uid;
 
     if (curUserUid) {
-      const userDataList = days[curUserUid];
+      const userDataList = days !== undefined ? days[curUserUid] : [];
 
       const nextBet = this.bettingStore.nextBet();
       const userData = userDataList.find(data => {

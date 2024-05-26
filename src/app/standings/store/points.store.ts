@@ -68,7 +68,7 @@ export const PointsStore = signalStore(
       userBettingStore = inject(UserBettingsStore)
     ) => {
       const pointsForPlayer = (playerId: string, matchday: string) => {
-        const player = playerStore.players().find(player => {
+        const player = playerStore.players()?.find(player => {
           return player.playerId === playerId;
         });
 
@@ -84,13 +84,13 @@ export const PointsStore = signalStore(
       };
 
       const pointsForBet = (userId: string, matchday: string) => {
-        const userBet = userBettingStore.bets().find(bet => {
+        const userBet = userBettingStore.bets()?.find(bet => {
           return bet.matchday === matchday && bet.user.uid === userId;
         });
         const userBetHome = userBet?.homeScore;
         const userBetAway = userBet?.awayScore;
 
-        const result = bettingStore.bets().find(bet => {
+        const result = bettingStore.bets()?.find(bet => {
           return bet.matchday === matchday;
         });
         const resultScoreHome = result?.resultScoreHome;
@@ -137,14 +137,16 @@ export const PointsStore = signalStore(
             distinctUntilChanged(),
             tap(() => coreStore.increaseLoadingCount()),
             switchMap(() => {
-              const usersMatchdays = userMatchdayStore.usersToMatchdays();
+              const usersMatchdaysObject = userMatchdayStore.usersToMatchdays();
 
-              return userStore.users().map(user => {
+              return (userStore.users() ?? []).map(user => {
                 var curPoints = 0;
                 var pointsForRound = 0;
                 var curBetPoints = 0;
                 var betPointsForRound = 0;
-                const userMatchdays = usersMatchdays[user.uid];
+                const userMatchdays = usersMatchdaysObject
+                  ? usersMatchdaysObject[user.uid]
+                  : [];
 
                 matchdayStore.matchdayKeys().map(matchday => {
                   const lineupAtMatchday = userMatchdays.find(lineup => {

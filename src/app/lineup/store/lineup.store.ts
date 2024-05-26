@@ -267,7 +267,7 @@ export const LineupStore = signalStore(
                       state.midfielders = [];
                       state.attackers = [];
 
-                      let keeper = playerStore.players().find(player => {
+                      let keeper = playerStore.players()?.find(player => {
                         return player.playerId === lineupData?.goalkeeper;
                       });
 
