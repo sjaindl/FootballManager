@@ -25,6 +25,9 @@ export const AuthStore = signalStore(
   withDevtools('authStore'),
 
   withComputed(({ user }) => ({
+    isSignedIn: computed(() => {
+      return user() ? true : false;
+    }),
     uid: computed(() => {
       if (user) {
         return user()?.uid ?? '';

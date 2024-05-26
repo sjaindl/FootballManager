@@ -4,7 +4,21 @@
 <img class="center" src="/assets/StartingEleven.jpg" />
 }
 
-<firebase-ui
+<!-- <s11-firebase-wrapper> -->
+<div class="s11-padding">
+  <h1 class="text-center home-padding-top">
+    Hallo, {{ authStore.userName() }}!
+  </h1>
+
+  @if (authStore.user() !== undefined && configStore.bets()) {
+  <s11-betting-game />
+  }
+
+  <s11-stats />
+</div>
+<!-- </s11-firebase-wrapper> -->
+
+<!-- <firebase-ui
   *ngIf="!isSignedIn()"
   (signInSuccessWithAuthResult)="successCallback($event)"
   (signInFailure)="errorCallback($event)"
@@ -22,7 +36,7 @@
 
   <s11-stats />
 </div>
-}
+} -->
 
 <!-- Social feed -->
 <!-- <div class="icon-bar">

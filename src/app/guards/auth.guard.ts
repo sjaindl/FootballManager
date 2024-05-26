@@ -6,7 +6,7 @@ import {
   Router,
   RouterStateSnapshot,
 } from '@angular/router';
-import { map } from 'rxjs';
+import { filter, map, retry } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
 
 export const authGuard: CanActivateFn = (
@@ -17,14 +17,14 @@ export const authGuard: CanActivateFn = (
   const router = inject(Router);
 
   return toObservable(authStore.user).pipe(
+    filter(user => user !== undefined && user !== null),
     map(user => {
-      if (user) {
-        return true;
-      }
+      return true;
 
-      router.navigate(['home']);
+      // router.navigate(['home']);
 
-      return false;
+      // return false;
     })
   );
+  retry;
 };

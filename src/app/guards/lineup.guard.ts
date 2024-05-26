@@ -5,9 +5,9 @@ import {
   CanActivateFn,
   RouterStateSnapshot,
 } from '@angular/router';
-import { filter, map } from 'rxjs';
 import { LineupStore } from '../lineup/store/lineup.store';
 import { PlayerStore } from '../lineup/store/player.store';
+import { isSignedInRequirement } from '../utils/is-signed-in-requirement';
 
 export const lineupGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -24,45 +24,11 @@ export const lineupGuard: CanActivateFn = (
     );
   });
 
-  return toObservable(value).pipe(
-    map(fulfillsRequirements => {
-      if (fulfillsRequirements) {
-        return true;
-      }
-      lineupStore.loadLineUp();
-      return false;
-    }),
-    filter(canActivate => {
-      return canActivate;
-    })
-  );
-
-  // return combineLatest([
-
-  //   toObservable(playerStore.players),
-  //   toObservable(lineupStore.formation),
-  // ]).pipe(
-  //   map(
-  //     ([players, formation]) => players.length > 0 && formation !== undefined
-  //   ),
-  //   filter(fulfillsRequirements => {
-  //     return fulfillsRequirements;
-  //   }),
-  //   //distinctUntilChanged(),
-  //   switchMap(() =>
-  //     toObservable(lineupStore.hasPlayers).pipe(
-  //       map(hasPlayers => {
-  //         if (hasPlayers) {
-  //           return true;
-  //         }
-
-  //         lineupStore.loadLineUp();
-  //         return false;
-  //       }),
-  //       filter(canActivate => {
-  //         return canActivate;
-  //       })
-  //     )
-  //   )
-  // );
+  return isSignedInRequirement(toObservable(value), fulfillsRequirements => {
+    if (fulfillsRequirements) {
+      return true;
+    }
+    lineupStore.loadLineUp();
+    return false;
+  });
 };

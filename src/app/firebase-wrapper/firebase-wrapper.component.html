@@ -1,0 +1,8 @@
+@if (isSignedIn()) {
+<ng-content></ng-content>
+} @else {
+<firebase-ui
+  (signInSuccessWithAuthResult)="successCallback($event)"
+  (signInFailure)="errorCallback($event)"
+  (uiShown)="uiShownCallback()"></firebase-ui>
+}
