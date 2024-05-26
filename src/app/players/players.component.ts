@@ -16,7 +16,7 @@ export class PlayersComponent {
   readonly playerStore = inject(PlayerStore);
   readonly matchdayStore = inject(MatchdayStore);
 
-  matchdays: Signal<string[]>;
+  matchdays: Signal<string[] | undefined>;
 
   goalkeepers: Signal<Player[]>;
   defenders: Signal<Player[]>;

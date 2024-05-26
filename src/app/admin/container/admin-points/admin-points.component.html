@@ -5,7 +5,7 @@
 
   @for (day of matchdays(); track $index) {
   <mat-tab label="Spieltag {{ $index + 1 }}">
-    <s11-matchday-points [matchday]="day"></s11-matchday-points>
+    <s11-matchday-points [matchday]="day.id"></s11-matchday-points>
   </mat-tab>
   }
 </mat-tab-group>

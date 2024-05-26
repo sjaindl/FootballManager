@@ -21,7 +21,7 @@ export class UserBetsComponent {
     const pastMatchdays = this.matchdayStore.matchdayKeys;
     const nextMatchday = this.bettingStore.nextBet()?.matchday;
 
-    const allMatchdays = pastMatchdays();
+    const allMatchdays = pastMatchdays() ?? [];
 
     if (nextMatchday) {
       allMatchdays.push(nextMatchday);

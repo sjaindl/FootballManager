@@ -148,7 +148,7 @@ export const PointsStore = signalStore(
                   ? usersMatchdaysObject[user.uid]
                   : [];
 
-                matchdayStore.matchdayKeys().map(matchday => {
+                matchdayStore.matchdayKeys()?.map(matchday => {
                   const lineupAtMatchday = userMatchdays.find(lineup => {
                     return lineup.id === matchday;
                   });

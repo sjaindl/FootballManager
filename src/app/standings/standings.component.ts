@@ -32,7 +32,7 @@ export class StandingsComponent {
 
   displayedColumns: string[] = ['place', 'image', 'name', 'points'];
 
-  matchdays: Signal<string[]>;
+  matchdays: Signal<string[] | undefined>;
   userPoints: Signal<UserWithPoints[] | undefined>;
 
   sorting = sortPoints;
