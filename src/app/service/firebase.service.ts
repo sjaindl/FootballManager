@@ -245,14 +245,14 @@ export class FirebaseService {
     }
 
     this.getLineUpOfUser(userId).subscribe(lineupData => {
+      const matchdaysCollection = collection(
+        this.getUserDoc(userId),
+        'matchdays'
+      );
+      const matchdayDoc = doc(matchdaysCollection, matchday);
+      let data: Partial<UserData>;
       if (lineupData) {
-        const matchdaysCollection = collection(
-          this.getUserDoc(userId),
-          'matchdays'
-        );
-        const matchdayDoc = doc(matchdaysCollection, matchday);
-
-        const data: UserData = {
+        data = {
           goalkeeper: lineupData.goalkeeper,
           defenders: lineupData.defenders,
           midfielders: lineupData.midfielders,
@@ -261,9 +261,13 @@ export class FirebaseService {
           homeScore: homeScore,
           awayScore: awayScore,
         };
-
-        setDoc(matchdayDoc, data, { merge: true });
+      } else {
+        data = {
+          homeScore: homeScore,
+          awayScore: awayScore,
+        };
       }
+      setDoc(matchdayDoc, data, { merge: true });
     });
   }
 

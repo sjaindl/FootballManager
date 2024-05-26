@@ -1,22 +1,28 @@
-import {
-  Component,
-  OnInit,
-  Signal,
-  WritableSignal,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, OnInit, Signal, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { AuthStore } from '../auth/store/auth.store';
 import { ConfigStore } from '../lineup/store/config.store';
 import { UserMatchdayStore } from '../shared/store/user-matchday.store';
+import { OnlyNumber } from '../utils/only-number.directive';
 import { BettingStore } from './store/bettings.store';
 
 @Component({
   selector: 's11-betting-game',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    OnlyNumber,
+    MatIcon,
+  ],
   templateUrl: './betting-game.component.html',
   styleUrl: './betting-game.component.scss',
 })
@@ -26,8 +32,8 @@ export class BettingGameComponent implements OnInit {
   readonly configStore = inject(ConfigStore);
   readonly authStore = inject(AuthStore);
 
-  homeScore: WritableSignal<number> = signal(0);
-  awayScore: WritableSignal<number> = signal(0);
+  homeScore = signal<number | undefined>(undefined);
+  awayScore = signal<number | undefined>(undefined);
 
   nextBet = this.bettingStore.nextBet();
   freeze: Signal<boolean | undefined>;
@@ -71,8 +77,8 @@ export class BettingGameComponent implements OnInit {
       this.userMatchDayStore.setUserMatchdayBet(
         nextMatchDay,
         curUserUid,
-        this.homeScore(),
-        this.awayScore()
+        this.homeScore() ?? 0,
+        this.awayScore() ?? 0
       );
     }
   }

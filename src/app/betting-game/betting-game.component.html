@@ -6,25 +6,35 @@
 
     <mat-card-content>
       <p>Dein Tipp für das nächste Spiel:</p>
-      <b>
-        <p>{{ nextBet?.home }} : {{ nextBet?.away }}</p>
-      </b>
-      <p>
-        <input
-          type="number"
-          min="0"
-          matInput
-          [disabled]="isFrozen()"
-          (change)="setHomeScore($event)"
-          [value]="homeScore()" />
-        <input
-          type="number"
-          min="0"
-          matInput
-          [disabled]="isFrozen()"
-          (change)="setAwayScore($event)"
-          [value]="awayScore()" />
-      </p>
+      <div class="result-bet" style="width: 100%">
+        <mat-form-field style="min-width: 50px">
+          <mat-label>{{ nextBet?.home }}</mat-label>
+          <input
+            [s11OnlyNumber]="true"
+            type="number"
+            min="0"
+            max="100"
+            matInput
+            [disabled]="isFrozen()"
+            (change)="setHomeScore($event)"
+            [value]="homeScore()" />
+        </mat-form-field>
+        <span>
+          <mat-icon aria-hidden="false" aria-label=":" fontIcon="go_to_line" />
+        </span>
+        <mat-form-field style="min-width: 50px">
+          <mat-label>{{ nextBet?.away }}</mat-label>
+          <input
+            [s11OnlyNumber]="true"
+            type="number"
+            min="0"
+            max="100"
+            matInput
+            [disabled]="isFrozen()"
+            (change)="setAwayScore($event)"
+            [value]="awayScore()" />
+        </mat-form-field>
+      </div>
       <p>
         <button
           mat-flat-button
