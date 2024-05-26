@@ -5,8 +5,8 @@ import {
   CanActivateFn,
   RouterStateSnapshot,
 } from '@angular/router';
-import { filter, map } from 'rxjs';
 import { FormationStore } from '../lineup/store/formation.store';
+import { isSignedInRequirement } from '../utils/is-signed-in-requirement';
 
 export const formationsGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -14,16 +14,14 @@ export const formationsGuard: CanActivateFn = (
 ) => {
   const formationStore = inject(FormationStore);
 
-  return toObservable(formationStore.formations).pipe(
-    map(formations => {
+  return isSignedInRequirement(
+    toObservable(formationStore.formations),
+    formations => {
       if (formations.length > 0) {
         return true;
       }
       formationStore.loadFormations();
       return false;
-    }),
-    filter(canActivate => {
-      return canActivate;
-    })
+    }
   );
 };

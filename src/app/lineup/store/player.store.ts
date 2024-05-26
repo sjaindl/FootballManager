@@ -38,8 +38,8 @@ export const sortMatchdayWithPointsByMatchday = (
 ) => {
   const firstMatchday = first.matchday;
   const secondMatchday = second.matchday;
-  if (firstMatchday > secondMatchday) return -1;
-  if (firstMatchday < secondMatchday) return 1;
+  if (firstMatchday > secondMatchday) return 1;
+  if (firstMatchday < secondMatchday) return -1;
   else return 0;
 };
 
@@ -139,7 +139,7 @@ export const PlayerStore = signalStore(
       players().forEach(player => {
         var totalPoints = 0;
         const points = player.points;
-        Object.entries(points).forEach(([matchDayKey, pointsOfMatchDay]) => {
+        Object.entries(points).forEach(([, pointsOfMatchDay]) => {
           totalPoints += pointsOfMatchDay;
         });
         playerTotalPoints[player.playerId] = totalPoints;

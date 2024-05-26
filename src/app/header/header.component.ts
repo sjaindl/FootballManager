@@ -10,12 +10,14 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { MatchdayStore } from '../admin/store/matchday.store';
-import { AppComponent } from '../app.component';
+import { AuthStore } from '../auth/store/auth.store';
+import { BettingStore } from '../betting-game/store/bettings.store';
 import { ConfigStore } from '../lineup/store/config.store';
 import { LineupStore } from '../lineup/store/lineup.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { FirebaseService } from '../service/firebase.service';
 import { SnackbarService } from '../service/snackbar.service';
+import { appTitle } from '../shared/constants';
 import { ProfileMenuIconComponent } from '../user/components/profile-menu-icon/profile-menu-icon.component';
 import { UserIconComponent } from '../user/components/user-icon/user-icon.component';
 
@@ -42,8 +44,10 @@ export class HeaderComponent {
   readonly playerStore = inject(PlayerStore);
   readonly matchdayStore = inject(MatchdayStore);
   readonly configStore = inject(ConfigStore);
+  readonly authStore = inject(AuthStore);
+  readonly bettingStore = inject(BettingStore);
 
-  title = new AppComponent().title;
+  title = appTitle; //new AppComponent().title;
 
   freeze: Signal<boolean | undefined>;
 
@@ -70,6 +74,10 @@ export class HeaderComponent {
   toggleFreeze() {
     this.configStore.setConfig(!this.isFrozen());
   }
+
+  // saveResult() {
+  //   this.bettingStore.saveBet;
+  // }
 
   saveMatchday() {
     if (!this.isValid()) {

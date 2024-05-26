@@ -14,6 +14,7 @@ import {
 } from '@angular/fire/firestore';
 import { EMPTY, Observable } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
+import { Bet, betConverter } from '../shared/bet';
 import {
   FirebaseResponse,
   Player,
@@ -25,6 +26,7 @@ import { LinedUpPlayer } from '../shared/lineup';
 import { LineupData, lineupDataConverter } from '../shared/lineupdata';
 import { Matchday, matchdayConverter } from '../shared/matchday';
 import { User, userConverter } from '../shared/user';
+import { UserData, userDataConverter } from '../shared/userdata';
 
 @Injectable({
   providedIn: 'root',
@@ -205,13 +207,13 @@ export class FirebaseService {
     return userId;
   }
 
-  getUserMatchdayLineups(
+  getUserMatchdayData(
     userId: string
-  ): Observable<LineupData[] | (LineupData[] & {})> {
+  ): Observable<UserData[] | (UserData[] & {})> {
     const matchdaysCollection = collection(
       this.getUserDoc(userId),
       'matchdays'
-    ).withConverter(lineupDataConverter);
+    ).withConverter(userDataConverter);
 
     // this.debugInfo(matchdaysCollection);
 
@@ -228,11 +230,44 @@ export class FirebaseService {
               'matchdays'
             );
             const matchdayDoc = doc(matchdaysCollection, matchday);
-
-            setDoc(matchdayDoc, lineupData);
+            setDoc(matchdayDoc, lineupData, { merge: true });
           }
         });
       });
+    });
+  }
+
+  saveUserMatchdayBet(matchday: string, homeScore: number, awayScore: number) {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('Cannot get lineup - User ID is null');
+      return;
+    }
+
+    this.getLineUpOfUser(userId).subscribe(lineupData => {
+      const matchdaysCollection = collection(
+        this.getUserDoc(userId),
+        'matchdays'
+      );
+      const matchdayDoc = doc(matchdaysCollection, matchday);
+      let data: Partial<UserData>;
+      if (lineupData) {
+        data = {
+          goalkeeper: lineupData.goalkeeper,
+          defenders: lineupData.defenders,
+          midfielders: lineupData.midfielders,
+          attackers: lineupData.attackers,
+          id: lineupData.id,
+          homeScore: homeScore,
+          awayScore: awayScore,
+        };
+      } else {
+        data = {
+          homeScore: homeScore,
+          awayScore: awayScore,
+        };
+      }
+      setDoc(matchdayDoc, data, { merge: true });
     });
   }
 
@@ -356,6 +391,39 @@ export class FirebaseService {
     });
   }
 
+  // Bets
+  getBets(): Observable<Bet[] | undefined> {
+    const betsCollection = collection(this.db, 'bets').withConverter(
+      betConverter
+    );
+
+    return collectionData(betsCollection);
+  }
+
+  setBet(
+    matchday: string,
+    homeScore: number,
+    awayScore: number,
+    home: string,
+    away: string
+  ) {
+    const betsCollection = collection(this.db, 'bets').withConverter(
+      betConverter
+    );
+
+    const betDoc = doc(betsCollection, matchday);
+
+    const docData = {
+      matchday: matchday,
+      home: home,
+      away: away,
+      resultScoreAway: awayScore,
+      resultScoreHome: homeScore,
+    };
+
+    setDoc(betDoc, docData, { merge: true });
+  }
+
   // Config
   getConfig(): Observable<Config | undefined> {
     const configCollection = collection(this.db, 'config').withConverter(
@@ -367,15 +435,16 @@ export class FirebaseService {
     return docData(ref);
   }
 
-  setFreeze(freeze: boolean) {
+  setConfig(freeze: boolean, bets: boolean) {
     const configCollection = collection(this.db, 'config').withConverter(
       configConverter
     );
 
     const configDoc = doc(configCollection, 'config');
 
-    const docData = {
+    const docData: Config = {
       freeze: freeze,
+      bets: bets,
     };
 
     setDoc(configDoc, docData, { merge: true });

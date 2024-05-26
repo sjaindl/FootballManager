@@ -1,6 +1,6 @@
 import { Component, Signal, inject } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatchdayComponent } from '../admin/components/matchday/matchday.component';
+import { MatchdayComponent } from '../admin/components/matchday-points/matchday-points.component';
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { Player } from '../shared/common.model';
