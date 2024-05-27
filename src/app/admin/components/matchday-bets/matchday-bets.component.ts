@@ -6,7 +6,11 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { BettingStore } from '../../../betting-game/store/bettings.store';
 import { UserBettingsStore } from '../../../betting-game/store/user-bettings.store';
@@ -17,6 +21,7 @@ import {
 import { UserMatchdayStore } from '../../../shared/store/user-matchday.store';
 import { User } from '../../../shared/user';
 import { UserStore } from '../../../standings/store/user.store';
+import { OnlyNumber } from '../../../utils/only-number.directive';
 
 interface UserWithBets {
   image: S11Image;
@@ -27,7 +32,16 @@ interface UserWithBets {
 @Component({
   selector: 's11-matchday-bets',
   standalone: true,
-  imports: [MatTableModule, ImageComponent, MatButtonModule],
+  imports: [
+    MatTableModule,
+    ImageComponent,
+    MatButtonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    OnlyNumber,
+    MatIcon,
+  ],
   templateUrl: './matchday-bets.component.html',
   styleUrl: './matchday-bets.component.scss',
 })
@@ -43,7 +57,8 @@ export class MatchdayBetsComponent implements OnInit {
 
   userBets: UserWithBets[] = [];
 
-  match: WritableSignal<string> = signal('');
+  home: WritableSignal<string> = signal('');
+  away: WritableSignal<string> = signal('');
   homeScore: WritableSignal<number> = signal(0);
   awayScore: WritableSignal<number> = signal(0);
 
@@ -66,7 +81,8 @@ export class MatchdayBetsComponent implements OnInit {
       if (bet.resultScoreAway) {
         this.awayScore.set(bet.resultScoreAway);
       }
-      this.match.set(`${bet.home} : ${bet.away}`);
+      this.home.set(bet.home);
+      this.away.set(bet.away);
     }
   }
 

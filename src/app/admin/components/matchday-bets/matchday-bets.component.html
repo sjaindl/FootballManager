@@ -1,19 +1,31 @@
 <div class="matchday-grid s11-padding">
   <h1>
-    {{ match() }} <br />
-    <input
-      type="number"
-      min="0"
-      matInput
-      (change)="setHomeScore($event)"
-      [value]="homeScore()" />
+    <mat-form-field style="min-width: 50px">
+      <mat-label>{{ home() }}</mat-label>
+      <input
+        [s11OnlyNumber]="true"
+        type="number"
+        min="0"
+        max="100"
+        matInput
+        (change)="setHomeScore($event)"
+        [value]="homeScore()" />
+    </mat-form-field>
+    <span>
+      <mat-icon aria-hidden="false" aria-label=":" fontIcon="go_to_line" />
+    </span>
+    <mat-form-field style="min-width: 50px">
+      <mat-label>{{ away() }}</mat-label>
+      <input
+        [s11OnlyNumber]="true"
+        type="number"
+        min="0"
+        max="100"
+        matInput
+        (change)="setAwayScore($event)"
+        [value]="awayScore()" />
+    </mat-form-field>
 
-    <input
-      type="number"
-      min="0"
-      matInput
-      (change)="setAwayScore($event)"
-      [value]="awayScore()" />
     <br />
     <!-- TODO: Move to header component -->
     <button mat-button (click)="saveResult()">Ergebnis speichern</button>
