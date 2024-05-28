@@ -48,7 +48,7 @@ export const UserBettingsStore = signalStore(
         const matchdays = (matchdayStore.matchdays() ?? []).map(
           matchDay => matchDay.id
         );
-        if (nextBet) {
+        if (nextBet && !matchdays.includes(nextBet.matchday)) {
           matchdays.push(nextBet.matchday);
         }
 
