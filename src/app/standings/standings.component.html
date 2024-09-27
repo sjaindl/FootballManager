@@ -28,17 +28,14 @@
     </ng-container>
 
     <ng-container matColumnDef="points">
-      <th mat-header-cell *matHeaderCellDef>
-        Punkte<br />
-        Gesamt / Tipps
-      </th>
+      <th mat-header-cell *matHeaderCellDef>Punkte gesamt (letzte Runde)</th>
       <td mat-cell *matCellDef="let userPoints">
         <p>
           <b>{{ userPoints.points }}</b> ({{ userPoints.pointsLastRound }})
         </p>
-        <p>
+        <!-- <p>
           +{{ userPoints.betPoints }} (+{{ userPoints.betPointsLastRound }})
-        </p>
+        </p> -->
       </td>
     </ng-container>
 
