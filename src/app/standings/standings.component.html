@@ -1,7 +1,17 @@
-<div class="matchday-grid s11-padding">
-  <table mat-table [dataSource]="userPoints" class="mat-elevation-z8">
+<div class="s11-padding">
+  <table
+    mat-table
+    [dataSource]="userPoints()?.sort(sorting) ?? []"
+    class="mat-elevation-z8">
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
+
+    <ng-container matColumnDef="place">
+      <th mat-header-cell *matHeaderCellDef>Platz</th>
+      <td mat-cell *matCellDef="let userPoints; let index = index">
+        {{ index + 1 }}
+      </td>
+    </ng-container>
 
     <ng-container matColumnDef="image">
       <th mat-header-cell *matHeaderCellDef></th>
@@ -18,9 +28,17 @@
     </ng-container>
 
     <ng-container matColumnDef="points">
-      <th mat-header-cell *matHeaderCellDef>Punkte</th>
+      <th mat-header-cell *matHeaderCellDef>
+        Punkte<br />
+        Gesamt / Tipps
+      </th>
       <td mat-cell *matCellDef="let userPoints">
-        {{ userPoints.points }} ({{ userPoints.pointsLastRound }})
+        <p>
+          <b>{{ userPoints.points }}</b> ({{ userPoints.pointsLastRound }})
+        </p>
+        <p>
+          +{{ userPoints.betPoints }} (+{{ userPoints.betPointsLastRound }})
+        </p>
       </td>
     </ng-container>
 

@@ -6,13 +6,12 @@ import { PlayerStore } from '../../../lineup/store/player.store';
 
 import { LineupRowComponent } from '../../../lineup/components/lineup-row/lineup-row.component';
 import { Player } from '../../../shared/common.model';
-import { MatchdayStore } from '../../store/matchday.store';
 
 @Component({
-  selector: 's11-matchday',
+  selector: 's11-matchday-points',
   standalone: true,
-  templateUrl: './matchday.component.html',
-  styleUrl: './matchday.component.scss',
+  templateUrl: './matchday-points.component.html',
+  styleUrl: './matchday-points.component.scss',
   imports: [CommonModule, FormsModule, MatButtonModule, LineupRowComponent],
 })
 export class MatchdayComponent {
@@ -22,7 +21,6 @@ export class MatchdayComponent {
   isAdmin = input<boolean>(true);
 
   readonly playerStore = inject(PlayerStore);
-  readonly matchdayStore = inject(MatchdayStore);
 
   players: Player[];
 
@@ -33,7 +31,7 @@ export class MatchdayComponent {
 
   constructor() {
     const totalPoints = this.playerStore.totalPoints();
-    this.players = this.playerStore.players().sort((first, second) => {
+    this.players = (this.playerStore.players() ?? []).sort((first, second) => {
       const firstPoints = totalPoints[first.playerId];
       const secondPoints = totalPoints[second.playerId];
       if (firstPoints > secondPoints) return -1;

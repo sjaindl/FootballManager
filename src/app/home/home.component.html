@@ -4,24 +4,21 @@
 <img class="center" src="/assets/StartingEleven.jpg" />
 }
 
-<firebase-ui
-  *ngIf="!isSignedIn()"
-  (signInSuccessWithAuthResult)="successCallback($event)"
-  (signInFailure)="errorCallback($event)"
-  (uiShown)="uiShownCallback()"></firebase-ui>
-
-@if (isSignedIn()) {
 <div class="s11-padding">
+  @if (authStore.user() !== undefined) {
   <h1 class="text-center home-padding-top">
     Hallo, {{ authStore.userName() }}!
   </h1>
 
+  @if (configStore.bets()) {
+  <s11-betting-game />
+  }
   <s11-stats />
+  }
 </div>
-}
 
 <!-- Social feed -->
-<div class="icon-bar">
+<!-- <div class="icon-bar">
   <a
     href="https://www.facebook.com/hvtdpstainz/"
     target="_blank"
@@ -40,4 +37,4 @@
     class="instagram">
     <svg class="fab fa-instagram"></svg>
   </a>
-</div>
+</div> -->

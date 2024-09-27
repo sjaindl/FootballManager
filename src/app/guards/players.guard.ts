@@ -16,7 +16,7 @@ export const playersGuard: CanActivateFn = (
 
   return toObservable(playerStore.players).pipe(
     map(players => {
-      if (players.length > 0) {
+      if (players !== undefined) {
         return true;
       }
       playerStore.loadPlayers();

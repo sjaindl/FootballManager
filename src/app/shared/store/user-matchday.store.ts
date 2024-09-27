@@ -16,16 +16,16 @@ import { FirebaseService } from '../../service/firebase.service';
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { CoreStore } from '../../core/store/core.store';
 import { SnackbarService } from '../../service/snackbar.service';
-import { LineupData } from '../lineupdata';
+import { UserData } from '../userdata';
 
-export type UserToMatchdays = Record<string, LineupData[]>;
+export type UserToMatchdays = Record<string, UserData[]>;
 
 interface UserToMatchdaysState {
-  usersToMatchdays: UserToMatchdays;
+  usersToMatchdays: UserToMatchdays | undefined;
 }
 
 const initialState: UserToMatchdaysState = {
-  usersToMatchdays: {},
+  usersToMatchdays: undefined,
 };
 
 export const UserMatchdayStore = signalStore(
@@ -51,17 +51,18 @@ export const UserMatchdayStore = signalStore(
                 next: users => {
                   forkJoin(
                     users.map(user =>
-                      firebaseService.getUserMatchdayLineups(user.uid).pipe(
+                      firebaseService.getUserMatchdayData(user.uid).pipe(
                         take(1),
-                        map(lineups => ({ user: user, lineups: lineups }))
+                        map(userData => ({ user: user, userData: userData }))
                       )
                     )
                   )
                     .pipe(
                       tap(values => {
                         const map: UserToMatchdays = {};
-                        values.forEach(lineupsWrapper => {
-                          map[lineupsWrapper.user.uid] = lineupsWrapper.lineups;
+                        values.forEach(userDataWrapper => {
+                          map[userDataWrapper.user.uid] =
+                            userDataWrapper.userData;
                         });
                         patchState(store, state => {
                           state.usersToMatchdays = map;
@@ -83,6 +84,41 @@ export const UserMatchdayStore = signalStore(
           })
         )
       ),
+
+      setUserMatchdayBet(
+        matchday: string,
+        uid: string,
+        homeScore: number,
+        awayScore: number
+      ): void {
+        firebaseService.saveUserMatchdayBet(matchday, homeScore, awayScore);
+
+        patchState(store, state => {
+          const days = state.usersToMatchdays ?? {};
+
+          var userData = days[uid].find(data => {
+            return data.id === matchday;
+          });
+
+          const userDataList = days[uid].filter(data => {
+            return data.id !== matchday;
+          });
+
+          if (userData) {
+            userData.homeScore = homeScore;
+            userData.awayScore = awayScore;
+
+            userDataList.push(userData);
+            days[uid] = userDataList;
+
+            state.usersToMatchdays = days;
+          }
+
+          snackBarService.open('Tipp gespeichert!');
+
+          return state;
+        });
+      },
     })
   )
 );

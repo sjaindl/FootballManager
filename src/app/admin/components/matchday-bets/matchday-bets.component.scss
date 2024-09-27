@@ -1,0 +1,12 @@
+.matchday-grid {
+  display: grid;
+  grid-template-columns: auto;
+  align-content: start;
+  grid-gap: 4px;
+}
+
+h1 {
+  padding-top: 16px;
+  text-align: center;
+  color: whitesmoke;
+}

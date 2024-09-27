@@ -1,0 +1,59 @@
+<div class="matchday-grid s11-padding">
+  <h1>
+    <mat-form-field style="min-width: 50px">
+      <mat-label>{{ home() }}</mat-label>
+      <input
+        [s11OnlyNumber]="true"
+        type="number"
+        min="0"
+        max="100"
+        matInput
+        (change)="setHomeScore($event)"
+        [value]="homeScore()" />
+    </mat-form-field>
+    <span>
+      <mat-icon aria-hidden="false" aria-label=":" fontIcon="go_to_line" />
+    </span>
+    <mat-form-field style="min-width: 50px">
+      <mat-label>{{ away() }}</mat-label>
+      <input
+        [s11OnlyNumber]="true"
+        type="number"
+        min="0"
+        max="100"
+        matInput
+        (change)="setAwayScore($event)"
+        [value]="awayScore()" />
+    </mat-form-field>
+
+    <br />
+    <!-- TODO: Move to header component -->
+    <button mat-button (click)="saveResult()">Ergebnis speichern</button>
+  </h1>
+
+  <table mat-table [dataSource]="userBets" class="mat-elevation-z8">
+    <ng-container matColumnDef="image">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let userBet">
+        <s11-image [image]="userBet.image"></s11-image>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let userBet">
+        {{ userBet.user.userName }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="bet">
+      <th mat-header-cell *matHeaderCellDef>Tipp</th>
+      <td mat-cell *matCellDef="let userBet">
+        {{ userBet.bet }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

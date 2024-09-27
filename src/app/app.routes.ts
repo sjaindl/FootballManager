@@ -1,21 +1,20 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
-import { authGuard } from './guards/auth.guard';
+import { bettingGuard } from './guards/betting.guard';
 import { configGuard } from './guards/config.guard';
 import { formationsGuard } from './guards/formations.guard';
 import { lineupGuard } from './guards/lineup.guard';
 import { matchdayGuard } from './guards/matchday.guard';
 import { playersGuard } from './guards/players.guard';
+import { pointsGuard } from './guards/points.guard';
 import { selectedFormationGuard } from './guards/selected-formation.guard';
+import { userBettingGuard } from './guards/user-betting.guard';
+import { userLineupGuard } from './guards/userlineup.guard';
 import { userMatchdayGuard } from './guards/usermatchday.guard';
 import { usersGuard } from './guards/users.guard';
 import { HomeComponent } from './home/home.component';
-import { userLineupGuard } from './guards/userlineup.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'home/logout', component: HomeComponent },
   {
     path: 'faq',
     loadComponent: () =>
@@ -28,56 +27,84 @@ export const routes: Routes = [
         mod => mod.PrivacyPolicyComponent
       ),
   },
-  {
-    path: 'players',
-    loadComponent: () =>
-      import('./players/players.component').then(mod => mod.PlayersComponent),
-    canActivate: [matchdayGuard, playersGuard],
-  },
-  {
-    path: 'standings',
-    loadComponent: () =>
-      import('./standings/standings.component').then(
-        mod => mod.StandingsComponent
-      ),
-    canActivate: [matchdayGuard, playersGuard, userMatchdayGuard, usersGuard],
-  },
+  { path: 'home/logout', component: HomeComponent },
   {
     path: 'prices',
     loadComponent: () =>
       import('./prices/prices.component').then(mod => mod.PricesComponent),
   },
+  // with required login: ->
   {
-    path: 'profile',
-    loadComponent: () =>
-      import('./user/components/user-profile/user-profile.component').then(
-        mod => mod.UserProfileComponent
-      ),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'admin',
-    loadComponent: () =>
-      import('./admin/container/admin.component').then(
-        mod => mod.AdminComponent
-      ),
-    canActivate: [matchdayGuard, playersGuard, adminGuard, configGuard, userLineupGuard, userMatchdayGuard],
-  },
-  {
-    path: 'lineup',
-    loadComponent: () =>
-      import('./lineup/container/lineup/lineup.component').then(
-        mod => mod.LineupComponent
-      ),
-    // TODO: Move to parent
-    canActivate: [
-      authGuard,
-      formationsGuard,
-      selectedFormationGuard,
-      playersGuard,
-      lineupGuard,
-      configGuard,
+    path: '',
+    canActivateChild: [configGuard, usersGuard, matchdayGuard, playersGuard],
+    children: [
+      {
+        path: 'players',
+        loadComponent: () =>
+          import('./players/players.component').then(
+            mod => mod.PlayersComponent
+          ),
+      },
+      {
+        path: 'standings',
+        // runGuardsAndResolvers: 'always',
+        loadComponent: () =>
+          import('./standings/standings.component').then(
+            mod => mod.StandingsComponent
+          ),
+        canActivate: [
+          bettingGuard,
+          userMatchdayGuard,
+          userBettingGuard,
+          pointsGuard,
+        ],
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./user/components/user-profile/user-profile.component').then(
+            mod => mod.UserProfileComponent
+          ),
+      },
+      {
+        path: 'admin',
+        canActivateChild: [adminGuard, usersGuard, matchdayGuard],
+        children: [
+          {
+            path: 'points',
+            loadComponent: () =>
+              import(
+                './admin/container/admin-points/admin-points.component'
+              ).then(mod => mod.AdminPointsComponent),
+            canActivate: [userLineupGuard, userMatchdayGuard],
+          },
+          {
+            path: 'bets',
+            // runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./admin/container/user-bets/user-bets.component').then(
+                mod => mod.UserBetsComponent
+              ),
+            canActivate: [bettingGuard, userBettingGuard, userMatchdayGuard],
+          },
+        ],
+      },
+
+      {
+        path: 'lineup',
+        loadComponent: () =>
+          import('./lineup/container/lineup/lineup.component').then(
+            mod => mod.LineupComponent
+          ),
+        canActivate: [formationsGuard, selectedFormationGuard, lineupGuard],
+      },
     ],
   },
-  { path: '**', component: HomeComponent },
+
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [userMatchdayGuard, bettingGuard, playersGuard, configGuard],
+  },
+  { path: '**', redirectTo: 'home' },
 ];

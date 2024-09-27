@@ -16,13 +16,11 @@ import { currentSeason } from '../../shared/constants';
 import { Matchday } from '../../shared/matchday';
 
 interface MatchdayState {
-  matchdays: Matchday[];
-  loaded: boolean | undefined;
+  matchdays: Matchday[] | undefined;
 }
 
 const initialState: MatchdayState = {
-  matchdays: [],
-  loaded: undefined,
+  matchdays: undefined,
 };
 
 export const MatchdayStore = signalStore(
@@ -32,10 +30,17 @@ export const MatchdayStore = signalStore(
   withDevtools('matchdayStore'),
 
   withComputed(({ matchdays }) => ({
-    matchdayKeys: computed(() => matchdays().map(matchDay => matchDay.id)),
+    matchdayKeys: computed(() => {
+      return matchdays()?.map(matchDay => matchDay.id);
+    }),
 
     nextMatchday: computed(() => {
-      const matchDayKeys = matchdays().map(matchDay => matchDay.id);
+      const matchDays = matchdays();
+      if (matchDays === undefined) {
+        return currentSeason + '_1';
+      }
+
+      const matchDayKeys = matchDays.map(matchDay => matchDay.id);
       const lastMatchday = matchDayKeys[matchDayKeys.length - 1];
       if (!lastMatchday) {
         return currentSeason + '_1';
@@ -63,7 +68,6 @@ export const MatchdayStore = signalStore(
               tap(matchdays => {
                 patchState(store, state => {
                   state.matchdays = matchdays;
-                  state.loaded = true;
                   return state;
                 });
                 coreStore.decreaseLoadingCount();
@@ -77,7 +81,7 @@ export const MatchdayStore = signalStore(
         const index = Number(matchday.substring(substrIndex + 1));
 
         patchState(store, state => {
-          const days = state.matchdays;
+          const days = state.matchdays ?? [];
           days.push({
             id: matchday,
             index: index,
