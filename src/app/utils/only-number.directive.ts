@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
-import { allowedStrings } from './utils';
+import { allowedCodes, allowedKeys } from './utils';
 
 @Directive({
   standalone: true,
@@ -13,10 +13,12 @@ export class OnlyNumber {
 
   @HostListener('keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
     const code = event.code;
+    const key = event.key;
+
     console.warn(event.code);
     if (this.s11OnlyNumber) {
       if (
-        !allowedStrings.includes(code) &&
+        !(allowedCodes.includes(code) || allowedKeys.includes(key)) &&
         !this.s11AdditionalAllowedCharacters.includes(code)
       ) {
         event.preventDefault();
