@@ -16,7 +16,7 @@
   margin: auto;
 }
 
-@media all and (min-width: 0px) and (max-width: 400px) {
+@media all and (min-width: 0px) and (max-width: 800px) {
   .player-form {
     flex-direction: column;
     align-content: center;
@@ -24,13 +24,14 @@
   }
 
   .player-row {
-    justify-content: space-between;
+    justify-content: start;
     align-content: center;
     align-items: center;
+    column-gap: 32px;
   }
 }
 
-@media all and (min-width: 400px) and (max-width: 6000px) {
+@media all and (min-width: 800px) and (max-width: 6000px) {
   .player-form {
     flex-direction: row;
     align-items: center;
