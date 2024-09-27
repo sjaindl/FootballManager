@@ -263,6 +263,9 @@ export class FirebaseService {
         };
       } else {
         data = {
+          defenders: [],
+          midfielders: [],
+          attackers: [],
           homeScore: homeScore,
           awayScore: awayScore,
         };
