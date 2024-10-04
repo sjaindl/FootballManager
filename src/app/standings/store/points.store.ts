@@ -164,19 +164,19 @@ export const PointsStore = signalStore(
                     curPoints += points;
                     pointsForRound += points;
 
-                    lineupAtMatchday.defenders.forEach(playerId => {
+                    (lineupAtMatchday.defenders ?? []).forEach(playerId => {
                       const points = pointsForPlayer(playerId, matchday);
                       curPoints += points;
                       pointsForRound += points;
                     });
 
-                    lineupAtMatchday.midfielders.forEach(playerId => {
+                    (lineupAtMatchday.midfielders ?? []).forEach(playerId => {
                       const points = pointsForPlayer(playerId, matchday);
                       curPoints += points;
                       pointsForRound += points;
                     });
 
-                    lineupAtMatchday.attackers.forEach(playerId => {
+                    (lineupAtMatchday.attackers ?? []).forEach(playerId => {
                       const points = pointsForPlayer(playerId, matchday);
                       curPoints += points;
                       pointsForRound += points;
@@ -184,9 +184,9 @@ export const PointsStore = signalStore(
 
                     const playersInFormation =
                       (lineupAtMatchday.goalkeeper !== '' ? 1 : 0) +
-                      lineupAtMatchday.defenders.length +
-                      lineupAtMatchday.midfielders.length +
-                      lineupAtMatchday.attackers.length;
+                      (lineupAtMatchday.defenders ?? []).length +
+                      (lineupAtMatchday.midfielders ?? []).length +
+                      (lineupAtMatchday.attackers ?? []).length;
 
                     const penaltyForMissingPlayers =
                       requiredNumOfPlayers - playersInFormation;

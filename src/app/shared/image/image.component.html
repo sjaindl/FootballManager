@@ -1,25 +1,9 @@
 <div class="container">
   @if (imageRef$()) {
-  <img
-    [width]="width()"
-    [height]="height()"
-    loading="lazy"
-    ngSrc="{{ imageRef$() }}"
-    width="{{ width() }}"
-    height="{{ height() }}"
-    alt="{{ image()?.alt }}" />
+  <img fill loading="lazy" src="{{ imageRef$() }}" alt="{{ image()?.alt }}" />
   } @else if(image()?.url) {
-  <img
-    ngSrc="{{ image()?.url }}"
-    width="{{ width() }}"
-    height="{{ height() }}"
-    alt="{{ image()?.alt }}"
-    priority />
+  <img fill src="{{ image()?.url }}" alt="{{ image()?.alt }}" priority />
   } @else {
-  <img
-    ngSrc="./../../../assets/no_photo.jpg"
-    width="{{ width() }}"
-    height="{{ height() }}"
-    alt="{{ image()?.alt }}" />
+  <img fill src="./../../../assets/no_photo.jpg" alt="{{ image()?.alt }}" />
   }
 </div>

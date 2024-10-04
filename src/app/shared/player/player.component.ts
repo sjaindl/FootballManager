@@ -168,7 +168,7 @@ export class PlayerComponent {
   ) {
     const matchDayId = this.matchDayId();
 
-    if (players.includes(playerId)) {
+    if (players !== undefined && players.includes(playerId)) {
       if (matchDayId && matchDayId > '') {
         if (lineupData.id === matchDayId) {
           return lineupCount + 1;

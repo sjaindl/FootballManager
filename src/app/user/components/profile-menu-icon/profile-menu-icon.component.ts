@@ -19,8 +19,4 @@ export class ProfileMenuIconComponent {
       console.warn('Active User state changed', state);
     });
   }
-
-  onButtonClick() {
-    this.store.updateName('Sigfried Jutter');
-  }
 }

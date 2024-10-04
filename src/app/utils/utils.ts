@@ -1,5 +1,5 @@
-function generateAllowedStrings() {
-  const allowedStrings = [
+function generateAllowedCodes() {
+  const allowedCodes = [
     'Backspace',
     'Delete',
     'ArrowLeft',
@@ -9,10 +9,20 @@ function generateAllowedStrings() {
   ];
 
   for (let index = 0; index < 10; index++) {
-    allowedStrings.push(`Numpad${index}`);
-    allowedStrings.push(`Digit${index}`);
+    allowedCodes.push(`Numpad${index}`);
+    allowedCodes.push(`Digit${index}`);
   }
-  return allowedStrings;
+  return allowedCodes;
 }
 
-export const allowedStrings = generateAllowedStrings();
+function generateAllowedKeys() {
+  const allowedCodes = ['Backspace'];
+
+  for (let index = 0; index < 10; index++) {
+    allowedCodes.push(`${index}`);
+  }
+  return allowedCodes;
+}
+
+export const allowedCodes = generateAllowedCodes();
+export const allowedKeys = generateAllowedKeys();
