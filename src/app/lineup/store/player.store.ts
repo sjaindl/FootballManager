@@ -76,7 +76,7 @@ export const PlayerStore = signalStore(
     goalkeepers: computed(() => {
       const goalkeepers: Player[] = [];
       players()?.forEach(player => {
-        if (player.position === goalkeeper) {
+        if (player.position === goalkeeper && player.active) {
           goalkeepers.push(player);
         }
       });
@@ -87,7 +87,7 @@ export const PlayerStore = signalStore(
     defenders: computed(() => {
       const defenders: Player[] = [];
       players()?.forEach(player => {
-        if (player.position === defender) {
+        if (player.position === defender && player.active) {
           defenders.push(player);
         }
       });
@@ -98,7 +98,7 @@ export const PlayerStore = signalStore(
     midfielders: computed(() => {
       const midfielders: Player[] = [];
       players()?.forEach(player => {
-        if (player.position === midfielder) {
+        if (player.position === midfielder && player.active) {
           midfielders.push(player);
         }
       });
@@ -109,7 +109,7 @@ export const PlayerStore = signalStore(
     attackers: computed(() => {
       const attackers: Player[] = [];
       players()?.forEach(player => {
-        if (player.position === attacker) {
+        if (player.position === attacker && player.active) {
           attackers.push(player);
         }
       });
@@ -166,7 +166,7 @@ export const PlayerStore = signalStore(
           distinctUntilChanged(),
           tap(() => coreStore.increaseLoadingCount()),
           switchMap(() => {
-            return firebaseService.getPlayers().pipe(
+            return firebaseService.getPlayers(false).pipe(
               // take(1),
               tapResponse({
                 next: players => {
@@ -174,6 +174,7 @@ export const PlayerStore = signalStore(
                     var mapped: Player[] = players.map(player => {
                       return {
                         playerId: player.playerId,
+                        active: player.active,
                         position: player.position,
                         name: player.name,
                         imageRef: player.imageRef,
@@ -213,6 +214,7 @@ export const PlayerStore = signalStore(
           state.players = curPlayers.map(player => {
             return {
               playerId: player.playerId,
+              active: player.active,
               name: player.name,
               position: player.position,
               imageRef: player.imageRef,

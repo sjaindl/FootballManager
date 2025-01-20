@@ -12,7 +12,7 @@ import {
   query,
   setDoc,
 } from '@angular/fire/firestore';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, map } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
 import { Bet, betConverter } from '../shared/bet';
 import {
@@ -53,12 +53,14 @@ export class FirebaseService {
   }
 
   // Players
-  getPlayers(): Observable<Player[] | (Player[] & {})> {
+  getPlayers(onlyActive: Boolean): Observable<Player[] | (Player[] & {})> {
     const itemCollection = collection(this.db, '/players/').withConverter(
       playerConverter
     );
 
-    return collectionData(itemCollection);
+    return collectionData(itemCollection).pipe(
+      map(players => players.filter(player => player.active || !onlyActive))
+    );
   }
 
   // User

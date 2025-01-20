@@ -29,6 +29,7 @@ export class PositionMapper {
 export type FirebaseResponse = DocumentData | (DocumentData & {});
 export interface Player {
   playerId: string;
+  active: boolean;
   name: string;
   position: Position;
   imageRef?: string;
@@ -51,6 +52,7 @@ export const playerConverter = {
   toFirestore: (player: Player) => {
     return {
       playerId: player.playerId,
+      active: player.active,
       name: player.name,
       position: player.position,
       imageRef: player.imageRef,
@@ -64,6 +66,7 @@ export const playerConverter = {
     const data = snapshot.data(options);
     return {
       playerId: data['playerId'],
+      active: data['active'],
       name: data['name'],
       position: data['position'],
       imageRef: data['imageRef'],
