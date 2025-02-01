@@ -1,4 +1,5 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { SnackbarService } from '../../../service/snackbar.service';
 import { News } from '../../../shared/news';
 import { NewsStore } from '../../store/news.store';
 
@@ -11,6 +12,7 @@ import { NewsStore } from '../../store/news.store';
 })
 export class NewsComponent {
   readonly newsStore = inject(NewsStore);
+  snackBarService = inject(SnackbarService);
 
   news: WritableSignal<News | undefined> = signal(undefined);
 
@@ -29,5 +31,6 @@ export class NewsComponent {
       return;
     }
     this.newsStore.setNews(news);
+    this.snackBarService.open('News gespeichert');
   }
 }
