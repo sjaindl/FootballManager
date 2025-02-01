@@ -1,0 +1,16 @@
+<div class="s11-padding">
+  <textarea
+    matInput
+    placeholder="News"
+    [value]="news()?.text"
+    (input)="setNews($event)"
+    rows="20"
+    cols="80">
+  </textarea>
+
+  <br />
+
+  <button mat-flat-button color="primary" (click)="saveNews()">
+    News speichern
+  </button>
+</div>

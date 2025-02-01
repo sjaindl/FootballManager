@@ -25,6 +25,7 @@ import { Formation, formationConverter } from '../shared/formation';
 import { LinedUpPlayer } from '../shared/lineup';
 import { LineupData, lineupDataConverter } from '../shared/lineupdata';
 import { Matchday, matchdayConverter } from '../shared/matchday';
+import { News, newsConverter } from '../shared/news';
 import { User, userConverter } from '../shared/user';
 import { UserData, userDataConverter } from '../shared/userdata';
 
@@ -453,6 +454,32 @@ export class FirebaseService {
     };
 
     setDoc(configDoc, docData, { merge: true });
+  }
+
+  // News
+
+  getNews(): Observable<News | (News & {})> {
+    const newsCollection = collection(this.db, 'news').withConverter(
+      newsConverter
+    );
+
+    const q = query(newsCollection).withConverter(newsConverter);
+
+    return collectionData(q).pipe(map(news => news[0]));
+  }
+
+  setNews(news: News) {
+    const newsCollection = collection(this.db, 'news').withConverter(
+      newsConverter
+    );
+
+    const docData = {
+      text: news.text,
+    };
+
+    const newsDoc = doc(newsCollection, 'news');
+
+    setDoc(newsDoc, docData, { merge: true });
   }
 
   // Util
