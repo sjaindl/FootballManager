@@ -1,5 +1,3 @@
-export const currentSeason = '2024';
-
 // standings
 export const requiredNumOfPlayers = 11;
 

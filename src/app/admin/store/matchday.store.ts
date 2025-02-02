@@ -12,7 +12,7 @@ import { FirebaseService } from '../../service/firebase.service';
 
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { CoreStore } from '../../core/store/core.store';
-import { currentSeason } from '../../shared/constants';
+import { ConfigStore } from '../../lineup/store/config.store';
 import { Matchday } from '../../shared/matchday';
 
 interface MatchdayState {
@@ -29,7 +29,7 @@ export const MatchdayStore = signalStore(
 
   withDevtools('matchdayStore'),
 
-  withComputed(({ matchdays }) => ({
+  withComputed(({ matchdays }, configStore = inject(ConfigStore)) => ({
     matchdayKeys: computed(() => {
       return matchdays()?.map(matchDay => matchDay.id);
     }),
@@ -37,18 +37,18 @@ export const MatchdayStore = signalStore(
     nextMatchday: computed(() => {
       const matchDays = matchdays();
       if (matchDays === undefined) {
-        return currentSeason + '_1';
+        return configStore.season() + '_1';
       }
 
       const matchDayKeys = matchDays.map(matchDay => matchDay.id);
       const lastMatchday = matchDayKeys[matchDayKeys.length - 1];
       if (!lastMatchday) {
-        return currentSeason + '_1';
+        return configStore.season() + '_1';
       }
 
       const index = lastMatchday.lastIndexOf('_');
       const lastMatchdayNum = Number(lastMatchday.substring(index + 1));
-      const nextMatchday = currentSeason + '_' + (lastMatchdayNum + 1);
+      const nextMatchday = configStore.season() + '_' + (lastMatchdayNum + 1);
       return nextMatchday;
     }),
   })),
@@ -57,7 +57,8 @@ export const MatchdayStore = signalStore(
     (
       store,
       firebaseService = inject(FirebaseService),
-      coreStore = inject(CoreStore)
+      coreStore = inject(CoreStore),
+      configStore = inject(ConfigStore)
     ) => ({
       loadMatchdays: rxMethod<void>(
         pipe(
@@ -67,7 +68,9 @@ export const MatchdayStore = signalStore(
             return firebaseService.getMatchdays().pipe(
               tap(matchdays => {
                 patchState(store, state => {
-                  state.matchdays = matchdays;
+                  state.matchdays = matchdays.filter((matchday: Matchday) =>
+                    matchday.id.startsWith(configStore.season())
+                  );
                   return state;
                 });
                 coreStore.decreaseLoadingCount();

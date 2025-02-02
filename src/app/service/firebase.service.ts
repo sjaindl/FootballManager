@@ -441,7 +441,7 @@ export class FirebaseService {
     return docData(ref);
   }
 
-  setConfig(freeze: boolean, bets: boolean) {
+  setConfig(freeze: boolean, bets: boolean, season: string) {
     const configCollection = collection(this.db, 'config').withConverter(
       configConverter
     );
@@ -451,6 +451,7 @@ export class FirebaseService {
     const docData: Config = {
       freeze: freeze,
       bets: bets,
+      season: season,
     };
 
     setDoc(configDoc, docData, { merge: true });

@@ -12,6 +12,7 @@ import { Config } from '../../shared/config';
 const initialState: Config = {
   freeze: undefined,
   bets: undefined,
+  season: '',
 };
 
 export const ConfigStore = signalStore(
@@ -38,6 +39,7 @@ export const ConfigStore = signalStore(
                   patchState(store, state => {
                     state.freeze = config?.freeze ?? true;
                     state.bets = config?.bets ?? false;
+                    state.season = config!.season;
                     return state;
                   });
                 },
@@ -54,7 +56,7 @@ export const ConfigStore = signalStore(
 
       setConfig(freeze: boolean): void {
         patchState(store, state => {
-          firebaseService.setConfig(freeze, state.bets ?? false);
+          firebaseService.setConfig(freeze, state.bets ?? false, state.season);
 
           state.freeze = freeze;
           return state;

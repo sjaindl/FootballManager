@@ -3,6 +3,7 @@ import { QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 export interface Config {
   freeze: boolean | undefined;
   bets: boolean | undefined;
+  season: string;
 }
 
 export const configConverter = {
@@ -10,6 +11,7 @@ export const configConverter = {
     return {
       freeze: config.freeze,
       bets: config.bets,
+      season: config.season,
     };
   },
   fromFirestore: (
@@ -21,6 +23,7 @@ export const configConverter = {
     return {
       freeze: data['freeze'],
       bets: data['bets'],
+      season: data['season'],
     };
   },
 };

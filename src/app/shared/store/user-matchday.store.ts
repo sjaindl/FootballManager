@@ -15,6 +15,7 @@ import { FirebaseService } from '../../service/firebase.service';
 
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { CoreStore } from '../../core/store/core.store';
+import { ConfigStore } from '../../lineup/store/config.store';
 import { SnackbarService } from '../../service/snackbar.service';
 import { UserData } from '../userdata';
 
@@ -39,6 +40,7 @@ export const UserMatchdayStore = signalStore(
       store,
       firebaseService = inject(FirebaseService),
       coreStore = inject(CoreStore),
+      configStore = inject(ConfigStore),
       snackBarService = inject(SnackbarService)
     ) => ({
       load: rxMethod<void>(
@@ -62,7 +64,11 @@ export const UserMatchdayStore = signalStore(
                         const map: UserToMatchdays = {};
                         values.forEach(userDataWrapper => {
                           map[userDataWrapper.user.uid] =
-                            userDataWrapper.userData;
+                            userDataWrapper.userData.filter(currentUserData => {
+                              return currentUserData.id.startsWith(
+                                configStore.season()
+                              );
+                            });
                         });
                         patchState(store, state => {
                           state.usersToMatchdays = map;
