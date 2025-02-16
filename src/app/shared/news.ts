@@ -1,13 +1,17 @@
 import { QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 
 export interface News {
-  text: string;
+  generalNews: string;
+  matchdayNews: string;
+  matchdayPhotoRef: string;
 }
 
 export const newsConverter = {
   toFirestore: (news: News) => {
     return {
-      text: news.text,
+      generalNews: news.generalNews,
+      matchdayNews: news.matchdayNews,
+      matchdayPhotoRef: news.matchdayPhotoRef,
     };
   },
   fromFirestore: (
@@ -17,7 +21,9 @@ export const newsConverter = {
     const data = snapshot.data(options);
 
     return {
-      text: data['text'],
+      generalNews: data['generalNews'],
+      matchdayNews: data['matchdayNews'],
+      matchdayPhotoRef: data['matchdayPhotoRef'],
     };
   },
 };

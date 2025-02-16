@@ -475,7 +475,9 @@ export class FirebaseService {
     );
 
     const docData = {
-      text: news.text,
+      generalNews: news.generalNews,
+      matchdayNews: news.matchdayNews,
+      matchdayPhotoRef: news.matchdayPhotoRef,
     };
 
     const newsDoc = doc(newsCollection, 'news');

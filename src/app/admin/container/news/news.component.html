@@ -1,14 +1,46 @@
 <div class="s11-padding">
   <textarea
     matInput
-    placeholder="News"
-    [value]="news()?.text"
-    (input)="setNews($event)"
+    placeholder="Generelle News"
+    [value]="generalNews()"
+    (input)="setGeneralNews($event)"
     rows="20"
     cols="80">
   </textarea>
 
   <br />
+
+  <textarea
+    matInput
+    placeholder="Spieltags-News"
+    [value]="matchdayNews()"
+    (input)="setMatchdayNews($event)"
+    rows="20"
+    cols="80">
+  </textarea>
+
+  <br />
+
+  <div class="file-upload" style="margin-left: 10px; margin-right: 10px">
+    <button
+      mat-mini-fab
+      color="primary"
+      class="upload-btn"
+      (click)="fileUpload.click()">
+      <mat-icon>attach_file</mat-icon>
+    </button>
+  </div>
+
+  <s11-image [image]="image()" [width]="400" [height]="200" />
+
+  <br />
+
+  <input
+    type="file"
+    class="file-input"
+    accept="image/*"
+    (change)="upload($event)"
+    #fileUpload />
 
   <button mat-flat-button color="primary" (click)="saveNews()">
     News speichern
