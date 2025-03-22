@@ -11,6 +11,7 @@ import {
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from '@angular/fire/firestore';
 import { EMPTY, Observable, map } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
@@ -392,8 +393,8 @@ export class FirebaseService {
       };
 
       console.log(docData);
-
-      setDoc(playerDoc, docData, { merge: true });
+      
+      updateDoc(playerDoc, docData);
     });
   }
 
@@ -441,20 +442,19 @@ export class FirebaseService {
     return docData(ref);
   }
 
-  setConfig(freeze: boolean, bets: boolean, season: string) {
+  setConfig(freeze: boolean, bets: boolean) {
     const configCollection = collection(this.db, 'config').withConverter(
       configConverter
     );
 
     const configDoc = doc(configCollection, 'config');
 
-    const docData: Config = {
+    const docData = {
       freeze: freeze,
       bets: bets,
-      season: season,
     };
 
-    setDoc(configDoc, docData, { merge: true });
+    updateDoc(configDoc, docData);
   }
 
   // News

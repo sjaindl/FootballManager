@@ -67,10 +67,14 @@ export const MatchdayStore = signalStore(
           switchMap(() => {
             return firebaseService.getMatchdays().pipe(
               tap(matchdays => {
+                const season = configStore.season();
                 patchState(store, state => {
-                  state.matchdays = matchdays.filter((matchday: Matchday) =>
-                    matchday.id.startsWith(configStore.season())
-                  );
+                  state.matchdays = matchdays.filter((matchday: Matchday) => {
+                    if (season === undefined) {
+                      return false;
+                    }
+                    return matchday.id.startsWith(season);
+                  });
                   return state;
                 });
                 coreStore.decreaseLoadingCount();

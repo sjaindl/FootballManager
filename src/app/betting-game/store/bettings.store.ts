@@ -59,9 +59,14 @@ export const BettingStore = signalStore(
 
                   patchState(store, state => {
                     state.bets = betsList
-                      .filter((bet: Bet) =>
-                        bet.matchday.startsWith(configStore.season())
-                      )
+                      .filter((bet: Bet) => {
+                        const season = configStore.season();
+
+                        return (
+                          season !== undefined &&
+                          bet.matchday.startsWith(season)
+                        );
+                      })
                       .sort(sortBetsByMatchday);
                     return state;
                   });

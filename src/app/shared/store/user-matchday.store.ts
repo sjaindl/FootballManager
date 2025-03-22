@@ -65,9 +65,12 @@ export const UserMatchdayStore = signalStore(
                         values.forEach(userDataWrapper => {
                           map[userDataWrapper.user.uid] =
                             userDataWrapper.userData.filter(currentUserData => {
-                              return currentUserData.id.startsWith(
-                                configStore.season()
-                              );
+                              const season = configStore.season();
+                              if (season === undefined) {
+                                return false;
+                              }
+
+                              return currentUserData.id.startsWith(season);
                             });
                         });
                         patchState(store, state => {

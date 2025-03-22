@@ -134,8 +134,12 @@ export const PlayerStore = signalStore(
                 matchday: matchDayKey,
                 points: pointsOfMatchDay,
               };
-              if (matchDayKey.startsWith(configStore.season())) {
-                matchdaysWithPoints.push(matchdayWithPoints);
+
+              const season = configStore.season();
+              if (season !== undefined) {
+                if (matchDayKey.startsWith(season)) {
+                  matchdaysWithPoints.push(matchdayWithPoints);
+                }
               }
             }
           );
@@ -149,16 +153,19 @@ export const PlayerStore = signalStore(
       totalPoints: computed(() => {
         const playerTotalPoints: Record<string, number> = {};
         players()?.forEach(player => {
-          const points = Object.keys(player.points).filter(key =>
-            key.startsWith(configStore.season())
-          );
+          const season = configStore.season();
+          if (season !== undefined) {
+            const points = Object.keys(player.points).filter(key =>
+              key.startsWith(season)
+            );
 
-          const totalPoints = points.reduce(
-            (sum, key) => sum + player.points[key],
-            0
-          );
+            const totalPoints = points.reduce(
+              (sum, key) => sum + player.points[key],
+              0
+            );
 
-          playerTotalPoints[player.playerId] = totalPoints;
+            playerTotalPoints[player.playerId] = totalPoints;
+          }
         });
 
         return playerTotalPoints;
