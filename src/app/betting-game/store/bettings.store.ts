@@ -11,6 +11,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 import { CoreStore } from '../../core/store/core.store';
+import { ConfigStore } from '../../lineup/store/config.store';
 import { FirebaseService } from '../../service/firebase.service';
 import { SnackbarService } from '../../service/snackbar.service';
 import { Bet, sortBetsByMatchday } from '../../shared/bet';
@@ -43,6 +44,7 @@ export const BettingStore = signalStore(
       store,
       firebaseService = inject(FirebaseService),
       coreStore = inject(CoreStore),
+      configStore = inject(ConfigStore),
       snackBarService = inject(SnackbarService)
     ) => ({
       loadBets: rxMethod<void>(
@@ -56,7 +58,16 @@ export const BettingStore = signalStore(
                   const betsList = bets ?? [];
 
                   patchState(store, state => {
-                    state.bets = betsList.sort(sortBetsByMatchday);
+                    state.bets = betsList
+                      .filter((bet: Bet) => {
+                        const season = configStore.season();
+
+                        return (
+                          season !== undefined &&
+                          bet.matchday.startsWith(season)
+                        );
+                      })
+                      .sort(sortBetsByMatchday);
                     return state;
                   });
                 },

@@ -11,8 +11,9 @@ import {
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from '@angular/fire/firestore';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, map } from 'rxjs';
 import { AuthStore } from '../auth/store/auth.store';
 import { Bet, betConverter } from '../shared/bet';
 import {
@@ -25,6 +26,7 @@ import { Formation, formationConverter } from '../shared/formation';
 import { LinedUpPlayer } from '../shared/lineup';
 import { LineupData, lineupDataConverter } from '../shared/lineupdata';
 import { Matchday, matchdayConverter } from '../shared/matchday';
+import { News, newsConverter } from '../shared/news';
 import { User, userConverter } from '../shared/user';
 import { UserData, userDataConverter } from '../shared/userdata';
 
@@ -53,12 +55,14 @@ export class FirebaseService {
   }
 
   // Players
-  getPlayers(): Observable<Player[] | (Player[] & {})> {
+  getPlayers(onlyActive: Boolean): Observable<Player[] | (Player[] & {})> {
     const itemCollection = collection(this.db, '/players/').withConverter(
       playerConverter
     );
 
-    return collectionData(itemCollection);
+    return collectionData(itemCollection).pipe(
+      map(players => players.filter(player => player.active || !onlyActive))
+    );
   }
 
   // User
@@ -389,8 +393,8 @@ export class FirebaseService {
       };
 
       console.log(docData);
-
-      setDoc(playerDoc, docData, { merge: true });
+      
+      updateDoc(playerDoc, docData);
     });
   }
 
@@ -445,12 +449,40 @@ export class FirebaseService {
 
     const configDoc = doc(configCollection, 'config');
 
-    const docData: Config = {
+    const docData = {
       freeze: freeze,
       bets: bets,
     };
 
-    setDoc(configDoc, docData, { merge: true });
+    updateDoc(configDoc, docData);
+  }
+
+  // News
+
+  getNews(): Observable<News | (News & {})> {
+    const newsCollection = collection(this.db, 'news').withConverter(
+      newsConverter
+    );
+
+    const q = query(newsCollection).withConverter(newsConverter);
+
+    return collectionData(q).pipe(map(news => news[0]));
+  }
+
+  setNews(news: News) {
+    const newsCollection = collection(this.db, 'news').withConverter(
+      newsConverter
+    );
+
+    const docData = {
+      generalNews: news.generalNews,
+      matchdayNews: news.matchdayNews,
+      matchdayPhotoRef: news.matchdayPhotoRef,
+    };
+
+    const newsDoc = doc(newsCollection, 'news');
+
+    setDoc(newsDoc, docData, { merge: true });
   }
 
   // Util

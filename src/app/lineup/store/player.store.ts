@@ -22,6 +22,7 @@ import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { Storage, StorageReference, ref } from '@angular/fire/storage';
 import { CoreStore } from '../../core/store/core.store';
 import { SnackbarService } from '../../service/snackbar.service';
+import { ConfigStore } from './config.store';
 
 interface PlayerState {
   players: Player[] | undefined;
@@ -57,102 +58,120 @@ export const PlayerStore = signalStore(
 
   withDevtools('playerStore'),
 
-  withComputed(({ players }, storage = inject(Storage)) => ({
-    playerMap: computed(() => {
-      const playerMap: Record<string, Player> = {};
-      players()?.forEach(player => (playerMap[player.playerId] = player));
-      return playerMap;
-    }),
+  withComputed(
+    (
+      { players },
+      storage = inject(Storage),
+      configStore = inject(ConfigStore)
+    ) => ({
+      playerMap: computed(() => {
+        const playerMap: Record<string, Player> = {};
+        players()?.forEach(player => (playerMap[player.playerId] = player));
+        return playerMap;
+      }),
 
-    playerImageRefs: computed(() => {
-      const playerImageMap: Record<string, StorageReference> = {};
-      players()?.forEach(
-        player =>
-          (playerImageMap[player.playerId] = ref(storage, player.imageRef))
-      );
-      return playerImageMap;
-    }),
+      playerImageRefs: computed(() => {
+        const playerImageMap: Record<string, StorageReference> = {};
+        players()?.forEach(
+          player =>
+            (playerImageMap[player.playerId] = ref(storage, player.imageRef))
+        );
+        return playerImageMap;
+      }),
 
-    goalkeepers: computed(() => {
-      const goalkeepers: Player[] = [];
-      players()?.forEach(player => {
-        if (player.position === goalkeeper) {
-          goalkeepers.push(player);
-        }
-      });
-
-      return goalkeepers;
-    }),
-
-    defenders: computed(() => {
-      const defenders: Player[] = [];
-      players()?.forEach(player => {
-        if (player.position === defender) {
-          defenders.push(player);
-        }
-      });
-
-      return defenders;
-    }),
-
-    midfielders: computed(() => {
-      const midfielders: Player[] = [];
-      players()?.forEach(player => {
-        if (player.position === midfielder) {
-          midfielders.push(player);
-        }
-      });
-
-      return midfielders;
-    }),
-
-    attackers: computed(() => {
-      const attackers: Player[] = [];
-      players()?.forEach(player => {
-        if (player.position === attacker) {
-          attackers.push(player);
-        }
-      });
-
-      return attackers;
-    }),
-
-    matchdayPoints: computed(() => {
-      const playerMatchdayPoints: Record<string, MatchdayWithPoints[]> = {};
-
-      players()?.forEach(player => {
-        const matchdaysWithPoints: MatchdayWithPoints[] = [];
-        Object.entries(player.points).forEach(
-          ([matchDayKey, pointsOfMatchDay]) => {
-            const matchdayWithPoints: MatchdayWithPoints = {
-              matchday: matchDayKey,
-              points: pointsOfMatchDay,
-            };
-            matchdaysWithPoints.push(matchdayWithPoints);
+      goalkeepers: computed(() => {
+        const goalkeepers: Player[] = [];
+        players()?.forEach(player => {
+          if (player.position === goalkeeper && player.active) {
+            goalkeepers.push(player);
           }
-        );
+        });
 
-        playerMatchdayPoints[player.playerId] = matchdaysWithPoints;
-      });
+        return goalkeepers;
+      }),
 
-      return playerMatchdayPoints;
-    }),
+      defenders: computed(() => {
+        const defenders: Player[] = [];
+        players()?.forEach(player => {
+          if (player.position === defender && player.active) {
+            defenders.push(player);
+          }
+        });
 
-    totalPoints: computed(() => {
-      const playerTotalPoints: Record<string, number> = {};
-      players()?.forEach(player => {
-        const points = player.points;
-        const totalPoints = Object.values(points).reduce(
-          (sum, current) => sum + current,
-          0
-        );
+        return defenders;
+      }),
 
-        playerTotalPoints[player.playerId] = totalPoints;
-      });
+      midfielders: computed(() => {
+        const midfielders: Player[] = [];
+        players()?.forEach(player => {
+          if (player.position === midfielder && player.active) {
+            midfielders.push(player);
+          }
+        });
 
-      return playerTotalPoints;
-    }),
-  })),
+        return midfielders;
+      }),
+
+      attackers: computed(() => {
+        const attackers: Player[] = [];
+        players()?.forEach(player => {
+          if (player.position === attacker && player.active) {
+            attackers.push(player);
+          }
+        });
+
+        return attackers;
+      }),
+
+      matchdayPoints: computed(() => {
+        const playerMatchdayPoints: Record<string, MatchdayWithPoints[]> = {};
+
+        players()?.forEach(player => {
+          const matchdaysWithPoints: MatchdayWithPoints[] = [];
+          Object.entries(player.points).forEach(
+            ([matchDayKey, pointsOfMatchDay]) => {
+              const matchdayWithPoints: MatchdayWithPoints = {
+                matchday: matchDayKey,
+                points: pointsOfMatchDay,
+              };
+
+              const season = configStore.season();
+              if (season !== undefined) {
+                if (matchDayKey.startsWith(season)) {
+                  matchdaysWithPoints.push(matchdayWithPoints);
+                }
+              }
+            }
+          );
+
+          playerMatchdayPoints[player.playerId] = matchdaysWithPoints;
+        });
+
+        return playerMatchdayPoints;
+      }),
+
+      totalPoints: computed(() => {
+        const playerTotalPoints: Record<string, number> = {};
+        players()?.forEach(player => {
+          const season = configStore.season();
+          if (season !== undefined) {
+            const points = Object.keys(player.points).filter(key =>
+              key.startsWith(season)
+            );
+
+            const totalPoints = points.reduce(
+              (sum, key) => sum + player.points[key],
+              0
+            );
+
+            playerTotalPoints[player.playerId] = totalPoints;
+          }
+        });
+
+        return playerTotalPoints;
+      }),
+    })
+  ),
 
   withMethods(
     (
@@ -166,7 +185,7 @@ export const PlayerStore = signalStore(
           distinctUntilChanged(),
           tap(() => coreStore.increaseLoadingCount()),
           switchMap(() => {
-            return firebaseService.getPlayers().pipe(
+            return firebaseService.getPlayers(false).pipe(
               // take(1),
               tapResponse({
                 next: players => {
@@ -174,6 +193,7 @@ export const PlayerStore = signalStore(
                     var mapped: Player[] = players.map(player => {
                       return {
                         playerId: player.playerId,
+                        active: player.active,
                         position: player.position,
                         name: player.name,
                         imageRef: player.imageRef,
@@ -213,6 +233,7 @@ export const PlayerStore = signalStore(
           state.players = curPlayers.map(player => {
             return {
               playerId: player.playerId,
+              active: player.active,
               name: player.name,
               position: player.position,
               imageRef: player.imageRef,

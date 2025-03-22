@@ -5,6 +5,7 @@ import { configGuard } from './guards/config.guard';
 import { formationsGuard } from './guards/formations.guard';
 import { lineupGuard } from './guards/lineup.guard';
 import { matchdayGuard } from './guards/matchday.guard';
+import { newsGuard } from './guards/news.guard';
 import { playersGuard } from './guards/players.guard';
 import { pointsGuard } from './guards/points.guard';
 import { selectedFormationGuard } from './guards/selected-formation.guard';
@@ -68,7 +69,7 @@ export const routes: Routes = [
       },
       {
         path: 'admin',
-        canActivateChild: [adminGuard, usersGuard, matchdayGuard],
+        canActivateChild: [adminGuard, usersGuard, matchdayGuard, newsGuard],
         children: [
           {
             path: 'points',
@@ -86,6 +87,14 @@ export const routes: Routes = [
                 mod => mod.UserBetsComponent
               ),
             canActivate: [bettingGuard, userBettingGuard, userMatchdayGuard],
+          },
+          {
+            path: 'news',
+            loadComponent: () =>
+              import('./admin/container/news/news.component').then(
+                mod => mod.NewsComponent
+              ),
+            canActivate: [newsGuard],
           },
         ],
       },

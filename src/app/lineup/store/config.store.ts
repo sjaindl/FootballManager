@@ -12,6 +12,7 @@ import { Config } from '../../shared/config';
 const initialState: Config = {
   freeze: undefined,
   bets: undefined,
+  season: undefined,
 };
 
 export const ConfigStore = signalStore(
@@ -38,6 +39,7 @@ export const ConfigStore = signalStore(
                   patchState(store, state => {
                     state.freeze = config?.freeze ?? true;
                     state.bets = config?.bets ?? false;
+                    state.season = config!.season;
                     return state;
                   });
                 },
