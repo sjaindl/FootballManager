@@ -226,9 +226,10 @@ export const PointsStore = signalStore(
                 };
               });
 
-              patchState(store, { userWithPoints: allUserPoints });
+              const filtered = allUserPoints.filter(u => u.points >= 0);
+              patchState(store, { userWithPoints: filtered });
 
-              return allUserPoints;
+              return filtered;
             })
           )
         ),
