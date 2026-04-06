@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm outdated:*)",
+      "Bash(npm --version)",
+      "Bash(npx ng:*)",
+      "Bash(npm view:*)",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); console.log\\(arr.filter\\(x=>x.startsWith\\(''''19''''\\)\\).join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); console.log\\(arr.slice\\(-5\\).join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); console.log\\(arr.filter\\(x=>parseInt\\(x\\)>=9\\).join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); const parsed = arr.filter\\(x=>x.startsWith\\(''''0.1''''\\)\\).slice\\(-10\\); console.log\\(parsed.join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(npm install:*)",
+      "Bash(npm audit:*)",
+      "Bash(head -20 grep -rn \"toFirestore\\\\|fromFirestore\" /Users/stefanjaindl/Code/FootballManager/src/app/shared/)",
+      "Bash(node -e \"const ssr = require\\(''''./node_modules/@angular/ssr''''\\); console.log\\(Object.keys\\(ssr\\)\\)\")",
+      "Bash(head -5 node -e \"const ssr = require\\(''''./node_modules/@angular/ssr/node''''\\); console.log\\(Object.keys\\(ssr\\)\\)\")",
+      "Bash(head -20 grep -n \"export\\\\|AngularNode\\\\|handle\\\\|writeResponse\" node_modules/@angular/ssr/node/index.d.ts)",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); console.log\\(arr.filter\\(x=>x.startsWith\\(''''20''''\\)\\).join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); console.log\\(arr.filter\\(x=>x.startsWith\\(''''9''''\\) || x.startsWith\\(''''10''''\\)\\).slice\\(-10\\).join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(node -e \"const v=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const arr=JSON.parse\\(v\\); console.log\\(arr.slice\\(-5\\).join\\(''''\\\\n''''\\)\\)\" npm view firebaseui-angular versions --json)",
+      "Bash(xargs cat:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
