@@ -103,10 +103,7 @@ export const UserBettingsStore = signalStore(
           })
           .reduce((a, b) => a.concat(b), []);
 
-        patchState(store, state => {
-          state.bets = newMatchdayBets;
-          return state;
-        });
+        patchState(store, { bets: newMatchdayBets });
       },
     })
   )

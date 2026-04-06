@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap } from 'rxjs';
 import { MatchdayStore } from '../../admin/store/matchday.store';
 import { BettingStore } from '../../betting-game/store/bettings.store';
 import { UserBettingsStore } from '../../betting-game/store/user-bettings.store';
@@ -96,7 +96,7 @@ export const PointsStore = signalStore(
         const resultScoreHome = result?.resultScoreHome;
         const resultScoreAway = result?.resultScoreAway;
 
-        var points = 0;
+        let points = 0;
 
         if (
           resultScoreHome != undefined &&
@@ -111,15 +111,15 @@ export const PointsStore = signalStore(
             resultScoreHome > resultScoreAway
               ? Result.Win
               : resultScoreHome === resultScoreAway
-              ? Result.Draw
-              : Result.Loss;
+                ? Result.Draw
+                : Result.Loss;
 
           const bet =
             userBetHome > userBetAway
               ? Result.Win
               : userBetHome === userBetAway
-              ? Result.Draw
-              : Result.Loss;
+                ? Result.Draw
+                : Result.Loss;
 
           if (isExactBet) {
             points += pointsForExactBet;
@@ -134,102 +134,101 @@ export const PointsStore = signalStore(
       return {
         calculatePoints: rxMethod<void>(
           pipe(
-            distinctUntilChanged(),
             tap(() => coreStore.increaseLoadingCount()),
             switchMap(() => {
               const usersMatchdaysObject = userMatchdayStore.usersToMatchdays();
 
-              return (userStore.users() ?? []).map(user => {
-                var curPoints = 0;
-                var pointsForRound = 0;
-                var curBetPoints = 0;
-                var betPointsForRound = 0;
+              const allUserPoints: UserWithPoints[] = (
+                userStore.users() ?? []
+              ).map(user => {
+                let curPoints = 0;
+                let pointsForRound = 0;
+                let curBetPoints = 0;
+                let betPointsForRound = 0;
                 const userMatchdays = usersMatchdaysObject
                   ? usersMatchdaysObject[user.uid]
                   : [];
 
-                matchdayStore.matchdayKeys()?.map(matchday => {
-                  const lineupAtMatchday = userMatchdays.find(lineup => {
-                    return lineup.id === matchday;
+                matchdayStore
+                  .matchdays()
+                  ?.filter(m => !m.excludeFromStandings)
+                  .map(m => m.id)
+                  .forEach(matchday => {
+                    const lineupAtMatchday = userMatchdays.find(lineup => {
+                      return lineup.id === matchday;
+                    });
+
+                    if (lineupAtMatchday) {
+                      // Points for lineup at matchday
+                      pointsForRound = 0;
+
+                      const points = pointsForPlayer(
+                        lineupAtMatchday.goalkeeper,
+                        matchday
+                      );
+                      curPoints += points;
+                      pointsForRound += points;
+
+                      (lineupAtMatchday.defenders ?? []).forEach(playerId => {
+                        const points = pointsForPlayer(playerId, matchday);
+                        curPoints += points;
+                        pointsForRound += points;
+                      });
+
+                      (lineupAtMatchday.midfielders ?? []).forEach(playerId => {
+                        const points = pointsForPlayer(playerId, matchday);
+                        curPoints += points;
+                        pointsForRound += points;
+                      });
+
+                      (lineupAtMatchday.attackers ?? []).forEach(playerId => {
+                        const points = pointsForPlayer(playerId, matchday);
+                        curPoints += points;
+                        pointsForRound += points;
+                      });
+
+                      const playersInFormation =
+                        (lineupAtMatchday.goalkeeper !== '' ? 1 : 0) +
+                        (lineupAtMatchday.defenders ?? []).length +
+                        (lineupAtMatchday.midfielders ?? []).length +
+                        (lineupAtMatchday.attackers ?? []).length;
+
+                      const penaltyForMissingPlayers =
+                        requiredNumOfPlayers - playersInFormation;
+
+                      curPoints -= penaltyForMissingPlayers;
+                      pointsForRound -= penaltyForMissingPlayers;
+                    } else {
+                      // Penalty points for missing lineup at matchday
+                      pointsForRound = -requiredNumOfPlayers;
+                      curPoints -= requiredNumOfPlayers;
+                    }
+
+                    // Additional points for matchday bet
+                    const betPoints = pointsForBet(user.uid, matchday);
+                    curPoints += betPoints;
+                    pointsForRound += betPoints;
+                    curBetPoints += betPoints;
+                    betPointsForRound = betPoints;
                   });
 
-                  if (lineupAtMatchday) {
-                    // Points for lineup at matchday
-                    pointsForRound = 0;
-
-                    const points = pointsForPlayer(
-                      lineupAtMatchday.goalkeeper,
-                      matchday
-                    );
-                    curPoints += points;
-                    pointsForRound += points;
-
-                    (lineupAtMatchday.defenders ?? []).forEach(playerId => {
-                      const points = pointsForPlayer(playerId, matchday);
-                      curPoints += points;
-                      pointsForRound += points;
-                    });
-
-                    (lineupAtMatchday.midfielders ?? []).forEach(playerId => {
-                      const points = pointsForPlayer(playerId, matchday);
-                      curPoints += points;
-                      pointsForRound += points;
-                    });
-
-                    (lineupAtMatchday.attackers ?? []).forEach(playerId => {
-                      const points = pointsForPlayer(playerId, matchday);
-                      curPoints += points;
-                      pointsForRound += points;
-                    });
-
-                    const playersInFormation =
-                      (lineupAtMatchday.goalkeeper !== '' ? 1 : 0) +
-                      (lineupAtMatchday.defenders ?? []).length +
-                      (lineupAtMatchday.midfielders ?? []).length +
-                      (lineupAtMatchday.attackers ?? []).length;
-
-                    const penaltyForMissingPlayers =
-                      requiredNumOfPlayers - playersInFormation;
-
-                    curPoints -= penaltyForMissingPlayers;
-                    pointsForRound -= penaltyForMissingPlayers;
-
-                    console.log(matchday, points);
-                  } else {
-                    // Penalty points for missing lineup at matchday
-                    pointsForRound = -requiredNumOfPlayers;
-                    curPoints -= requiredNumOfPlayers;
-                  }
-
-                  // Additional points for matchday bet
-                  const betPoints = pointsForBet(user.uid, matchday);
-                  curPoints += betPoints;
-                  pointsForRound += betPoints;
-                  curBetPoints += betPoints;
-                  betPointsForRound = betPoints;
-                });
-
-                patchState(store, state => {
-                  if (state.userWithPoints === undefined) {
-                    state.userWithPoints = [];
-                  }
-
-                  state.userWithPoints.push({
-                    image: {
-                      ref: user.photoRef,
-                      url: user.photoUrl,
-                      alt: user.userName,
-                    },
-                    user: user,
-                    points: curPoints,
-                    pointsLastRound: pointsForRound,
-                    betPoints: curBetPoints,
-                    betPointsLastRound: betPointsForRound,
-                  });
-
-                  return state;
-                });
+                return {
+                  image: {
+                    ref: user.photoRef,
+                    url: user.photoUrl,
+                    alt: user.userName,
+                  },
+                  user: user,
+                  points: curPoints,
+                  pointsLastRound: pointsForRound,
+                  betPoints: curBetPoints,
+                  betPointsLastRound: betPointsForRound,
+                };
               });
+
+              patchState(store, { userWithPoints: allUserPoints });
+
+              return allUserPoints;
             })
           )
         ),

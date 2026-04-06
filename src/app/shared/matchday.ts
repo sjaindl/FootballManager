@@ -4,6 +4,7 @@ export interface Matchday {
   id: string;
   index: number;
   opponent: string;
+  excludeFromStandings?: boolean;
 }
 
 export const matchdayConverter = {
@@ -23,6 +24,7 @@ export const matchdayConverter = {
       id: snapshot.id,
       index: data['id'],
       opponent: data['opponent'],
+      excludeFromStandings: data['exclude_from_standings'] ?? false,
     };
   },
 };
