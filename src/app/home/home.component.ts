@@ -24,20 +24,20 @@ import { StatsComponent } from '../stats/container/stats/stats.component';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private metaTagService = inject(Meta);
+  private titleService = inject(Title);
+  private deviceService = inject(DeviceDetectorService);
+  private authService = inject(AuthService);
+
   readonly authStore = inject(AuthStore);
   readonly configStore = inject(ConfigStore);
 
   isMobile = true;
   private sub: Subscription | undefined;
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private metaTagService: Meta,
-    private titleService: Title,
-    private deviceService: DeviceDetectorService,
-    private authService: AuthService
-  ) {}
+  constructor() {}
 
   ngOnInit() {
     this.checkDevice();

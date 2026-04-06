@@ -1,4 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  inject,
+  runInInjectionContext,
+} from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { AuthStore } from '../auth/store/auth.store';
 import { defaultFormation } from '../shared/formation';
@@ -8,6 +13,10 @@ import { FirebaseService } from './firebase.service';
   providedIn: 'root',
 })
 export class AuthService {
+  private fireAuth = inject(Auth);
+  private firebaseService = inject(FirebaseService);
+  private injector = inject(Injector);
+
   private readonly authStore = inject(AuthStore);
 
   private isUserSignedIn: boolean;
@@ -20,10 +29,10 @@ export class AuthService {
     this.fireAuth.signOut();
   }
 
-  constructor(
-    private fireAuth: Auth,
-    private firebaseService: FirebaseService
-  ) {
+  constructor() {
+    const fireAuth = this.fireAuth;
+    const firebaseService = this.firebaseService;
+
     this.isUserSignedIn = fireAuth.currentUser != null;
 
     console.log('Current user: ' + fireAuth.currentUser);
@@ -31,7 +40,9 @@ export class AuthService {
 
     fireAuth.onAuthStateChanged(user => {
       if (user) {
-        firebaseService.getUser(user.uid).subscribe(dbUser => {
+        runInInjectionContext(this.injector, () =>
+          firebaseService.getUser(user.uid)
+        ).subscribe(dbUser => {
           const userName = dbUser?.userName ?? user.displayName ?? 'No Name';
 
           if (!dbUser) {

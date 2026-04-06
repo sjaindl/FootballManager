@@ -56,19 +56,16 @@ export const BettingStore = signalStore(
               tapResponse({
                 next: bets => {
                   const betsList = bets ?? [];
-
-                  patchState(store, state => {
-                    state.bets = betsList
+                  patchState(store, {
+                    bets: betsList
                       .filter((bet: Bet) => {
                         const season = configStore.season();
-
                         return (
                           season !== undefined &&
                           bet.matchday.startsWith(season)
                         );
                       })
-                      .sort(sortBetsByMatchday);
-                    return state;
+                      .sort(sortBetsByMatchday),
                   });
                 },
                 error: () =>
@@ -106,11 +103,8 @@ export const BettingStore = signalStore(
           bet.away
         );
 
-        patchState(store, state => {
-          state.bets = betsList?.sort(sortBetsByMatchday);
-          snackBarService.open('Ergebnis gespeichert!');
-          return state;
-        });
+        patchState(store, { bets: betsList?.sort(sortBetsByMatchday) });
+        snackBarService.open('Ergebnis gespeichert!');
       },
     })
   )

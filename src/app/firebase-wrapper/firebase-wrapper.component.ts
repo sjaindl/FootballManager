@@ -18,6 +18,10 @@ import { AuthService } from '../service/auth.service';
   styleUrl: './firebase-wrapper.component.scss',
 })
 export class FirebaseWrapperComponent implements OnInit {
+  private metaTagService = inject(Meta);
+  private titleService = inject(Title);
+  private authService = inject(AuthService);
+
   readonly authStore = inject(AuthStore);
   // readonly configStore = inject(ConfigStore);
 
@@ -25,12 +29,11 @@ export class FirebaseWrapperComponent implements OnInit {
   // private sub: Subscription | undefined;
   isSignedIn = this.authStore.isSignedIn;
 
-  constructor(
-    private metaTagService: Meta,
-    private titleService: Title,
-    private authService: AuthService,
-    firebaseuiAngularLibraryService: FirebaseuiAngularLibraryService
-  ) {
+  constructor() {
+    const firebaseuiAngularLibraryService = inject(
+      FirebaseuiAngularLibraryService
+    );
+
     firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
 
     computed(() => this.authStore.user);

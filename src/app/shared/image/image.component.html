@@ -1,9 +1,9 @@
 <div class="container">
   @if (imageRef$()) {
-  <img fill loading="lazy" src="{{ imageRef$() }}" alt="{{ image()?.alt }}" />
-  } @else if(image()?.url) {
-  <img fill src="{{ image()?.url }}" alt="{{ image()?.alt }}" priority />
+    <img fill loading="lazy" src="{{ imageRef$() }}" alt="{{ image()?.alt }}" />
+  } @else if (image()?.url) {
+    <img fill src="{{ image()?.url }}" alt="{{ image()?.alt }}" priority />
   } @else {
-  <img fill src="./../../../assets/no_photo.jpg" alt="{{ image()?.alt }}" />
+    <img fill src="./../../../assets/no_photo.jpg" alt="{{ image()?.alt }}" />
   }
 </div>

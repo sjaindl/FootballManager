@@ -36,11 +36,10 @@ export const ConfigStore = signalStore(
             return firebaseService.getConfig().pipe(
               tapResponse({
                 next: config => {
-                  patchState(store, state => {
-                    state.freeze = config?.freeze ?? true;
-                    state.bets = config?.bets ?? false;
-                    state.season = config!.season;
-                    return state;
+                  patchState(store, {
+                    freeze: config?.freeze ?? true,
+                    bets: config?.bets ?? false,
+                    season: config!.season,
                   });
                 },
                 error: () =>
@@ -55,12 +54,8 @@ export const ConfigStore = signalStore(
       ),
 
       setConfig(freeze: boolean): void {
-        patchState(store, state => {
-          firebaseService.setConfig(freeze, state.bets ?? false);
-
-          state.freeze = freeze;
-          return state;
-        });
+        firebaseService.setConfig(freeze, store.bets() ?? false);
+        patchState(store, { freeze });
       },
     })
   )

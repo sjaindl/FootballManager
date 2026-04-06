@@ -31,6 +31,8 @@ import {
   styleUrl: './user-profile.component.scss',
 })
 export class UserProfileComponent {
+  private authService = inject(AuthService);
+
   readonly authStore = inject(AuthStore);
   readonly storage = inject(Storage);
 
@@ -39,7 +41,7 @@ export class UserProfileComponent {
 
   image: Signal<S11Image>;
 
-  constructor(private authService: AuthService) {
+  constructor() {
     this.editMode = computed(() => false);
     this.image = computed(() => ({
       ref: this.authStore.imageRef(),
@@ -71,9 +73,9 @@ export class UserProfileComponent {
 
   upload(event: any) {
     this.authStore.updatePhotoRef('players/no_photo.jpg');
-    var storageLocation = '/users/' + this.authStore.uid();
+    const storageLocation = '/users/' + this.authStore.uid();
     console.log(storageLocation);
-    let storageRef = ref(this.storage, storageLocation);
+    const storageRef = ref(this.storage, storageLocation);
     uploadBytesResumable(storageRef, event.target.files[0]).then(() => {
       this.authService.updatePhotoRef(storageLocation);
       this.authStore.updatePhotoRef(storageLocation);

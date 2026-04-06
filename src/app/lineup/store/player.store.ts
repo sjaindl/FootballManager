@@ -189,21 +189,16 @@ export const PlayerStore = signalStore(
               // take(1),
               tapResponse({
                 next: players => {
-                  patchState(store, state => {
-                    var mapped: Player[] = players.map(player => {
-                      return {
-                        playerId: player.playerId,
-                        active: player.active,
-                        position: player.position,
-                        name: player.name,
-                        imageRef: player.imageRef,
-                        points: player.points,
-                        pointsCurrentRound: 0,
-                      };
-                    });
-                    state.players = mapped;
-                    return state;
-                  });
+                  const mapped: Player[] = players.map(player => ({
+                    playerId: player.playerId,
+                    active: player.active,
+                    position: player.position,
+                    name: player.name,
+                    imageRef: player.imageRef,
+                    points: player.points,
+                    pointsCurrentRound: 0,
+                  }));
+                  patchState(store, { players: mapped });
                 },
                 error: () =>
                   snackBarService.open('Fehler beim Laden der Spieler!'),
@@ -218,31 +213,24 @@ export const PlayerStore = signalStore(
         players: Player[] | undefined,
         matchday: string
       ): void {
-        patchState(store, state => {
-          state.players = players;
-          return state;
-        });
+        patchState(store, { players });
 
         if (players) {
           firebaseService.setPlayerMatchdays(players, matchday);
         }
       },
       resetCurrentPoints(): void {
-        patchState(store, state => {
-          const curPlayers = state.players ?? [];
-          state.players = curPlayers.map(player => {
-            return {
-              playerId: player.playerId,
-              active: player.active,
-              name: player.name,
-              position: player.position,
-              imageRef: player.imageRef,
-              points: player.points,
-              pointsCurrentRound: 0,
-            };
-          });
-          return state;
-        });
+        patchState(store, state => ({
+          players: (state.players ?? []).map(player => ({
+            playerId: player.playerId,
+            active: player.active,
+            name: player.name,
+            position: player.position,
+            imageRef: player.imageRef,
+            points: player.points,
+            pointsCurrentRound: 0,
+          })),
+        }));
       },
     })
   )

@@ -36,16 +36,17 @@ export const FormationStore = signalStore(
       coreStore = inject(CoreStore),
       lineupStore = inject(LineupStore)
     ) => {
-      const setSelectedFormationById = (state: FormationState) => {
-        const id = state.selectedFormationId;
-        if (id && state.formations.length > 0) {
-          const newFormation = state.formations.find(formation => {
-            return formation.formation.trim() === id.trim();
-          });
-
-          state.selectedFormation = newFormation;
-          lineupStore.setFormation(state.selectedFormation);
+      const findSelectedFormation = (
+        formations: Formation[],
+        selectedFormationId: string | undefined
+      ) => {
+        if (selectedFormationId && formations.length > 0) {
+          return formations.find(
+            formation =>
+              formation.formation.trim() === selectedFormationId.trim()
+          );
         }
+        return undefined;
       };
 
       return {
@@ -58,11 +59,14 @@ export const FormationStore = signalStore(
                 // take(1),
                 tapResponse({
                   next: formations => {
-                    patchState(store, state => {
-                      state.formations = formations;
-                      setSelectedFormationById(state);
-                      return state;
-                    });
+                    const selectedFormation = findSelectedFormation(
+                      formations,
+                      store.selectedFormationId()
+                    );
+                    patchState(store, { formations, selectedFormation });
+                    if (selectedFormation) {
+                      lineupStore.setFormation(selectedFormation);
+                    }
                   },
                   error: () =>
                     snackBarService.open('Fehler beim Laden der Formation!'),
@@ -85,15 +89,18 @@ export const FormationStore = signalStore(
                 take(1),
                 tapResponse({
                   next: user => {
-                    patchState(store, state => {
-                      const formationId = user?.formation;
-
-                      state.selectedFormationId = formationId;
-
-                      setSelectedFormationById(state);
-
-                      return state;
+                    const formationId = user?.formation;
+                    const selectedFormation = findSelectedFormation(
+                      store.formations(),
+                      formationId
+                    );
+                    patchState(store, {
+                      selectedFormationId: formationId,
+                      selectedFormation,
                     });
+                    if (selectedFormation) {
+                      lineupStore.setFormation(selectedFormation);
+                    }
                   },
                   error: () =>
                     snackBarService.open(
@@ -113,10 +120,9 @@ export const FormationStore = signalStore(
           lineupStore.saveLineup();
           firebaseService.setFormation(formation.formation);
 
-          patchState(store, state => {
-            state.selectedFormation = formation;
-            state.selectedFormationId = formation.formation;
-            return state;
+          patchState(store, {
+            selectedFormation: formation,
+            selectedFormationId: formation.formation,
           });
         },
       };

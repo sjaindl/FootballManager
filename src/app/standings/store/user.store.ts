@@ -39,10 +39,7 @@ export const UserStore = signalStore(
             return firebaseService.getUsers().pipe(
               tapResponse({
                 next: users => {
-                  patchState(store, state => {
-                    state.users = users;
-                    return state;
-                  });
+                  patchState(store, { users });
                 },
                 error: () => {
                   snackBarService.open('Fehler beim Laden der User!');

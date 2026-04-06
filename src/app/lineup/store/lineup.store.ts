@@ -189,68 +189,45 @@ export const LineupStore = signalStore(
 
       return {
         setFormation(formation?: Formation): void {
-          patchState(store, state => {
-            state.goalkeeper = getUndefinedPlayer(goalkeeper);
-            state.attackers = initArray(formation?.attack ?? 0, attacker);
-            state.defenders = initArray(formation?.defense ?? 0, defender);
-            state.midfielders = initArray(formation?.midfield ?? 0, midfielder);
-            state.formation = formation;
-
-            return { ...state };
+          patchState(store, {
+            goalkeeper: getUndefinedPlayer(goalkeeper),
+            attackers: initArray(formation?.attack ?? 0, attacker),
+            defenders: initArray(formation?.defense ?? 0, defender),
+            midfielders: initArray(formation?.midfield ?? 0, midfielder),
+            formation,
           });
         },
 
         setPlayer(request: ChangePlayerRequestWrapper): void {
-          patchState(store, state => {
-            const position = request.position;
-            const newPlayerId = request.newPlayerId;
-            const oldPlayerId = request.oldPlayerId;
+          const position = request.position;
+          const newPlayerId = request.newPlayerId;
+          const oldPlayerId = request.oldPlayerId;
 
-            const newPlayer =
-              playerStore.playerMap()[newPlayerId] ??
-              getUndefinedPlayer(position);
+          const newPlayer =
+            playerStore.playerMap()[newPlayerId] ??
+            getUndefinedPlayer(position);
 
-            switch (position) {
-              case 'Goalkeeper':
-                state.goalkeeper = newPlayer;
-                break;
-              case 'Defender':
-                state.defenders = state.defenders.map(player => {
-                  if (player.playerId === oldPlayerId) {
-                    return newPlayer;
-                  }
-                  if (player.playerId === newPlayerId) {
-                    return getUndefinedPlayer(position);
-                  }
-                  return player;
-                });
-                console.warn(state.defenders);
-                break;
-              case 'Midfielder':
-                state.midfielders = state.midfielders.map(player => {
-                  if (player.playerId === oldPlayerId) {
-                    return newPlayer;
-                  }
-                  if (player.playerId === newPlayerId) {
-                    return getUndefinedPlayer(position);
-                  }
-                  return player;
-                });
-                break;
-              case 'Attacker':
-                state.attackers = state.attackers.map(player => {
-                  if (player.playerId === oldPlayerId) {
-                    return newPlayer;
-                  }
-                  if (player.playerId === newPlayerId) {
-                    return getUndefinedPlayer(position);
-                  }
-                  return player;
-                });
-                break;
-            }
-            return { ...state };
-          });
+          const mapPlayers = (players: Player[]) =>
+            players.map(player => {
+              if (player.playerId === oldPlayerId) return newPlayer;
+              if (player.playerId === newPlayerId) return getUndefinedPlayer(position);
+              return player;
+            });
+
+          switch (position) {
+            case 'Goalkeeper':
+              patchState(store, { goalkeeper: newPlayer });
+              break;
+            case 'Defender':
+              patchState(store, state => ({ defenders: mapPlayers(state.defenders) }));
+              break;
+            case 'Midfielder':
+              patchState(store, state => ({ midfielders: mapPlayers(state.midfielders) }));
+              break;
+            case 'Attacker':
+              patchState(store, state => ({ attackers: mapPlayers(state.attackers) }));
+              break;
+          }
         },
 
         loadLineUp: rxMethod<void>(
@@ -262,43 +239,50 @@ export const LineupStore = signalStore(
                 // take(1),
                 tapResponse({
                   next: lineupData => {
-                    patchState(store, state => {
-                      state.defenders = [];
-                      state.midfielders = [];
-                      state.attackers = [];
+                    const tempState: LineupState = {
+                      formation: store.formation(),
+                      goalkeeper: getUndefinedPlayer(goalkeeper),
+                      defenders: [],
+                      midfielders: [],
+                      attackers: [],
+                    };
 
-                      let keeper = playerStore.players()?.find(player => {
-                        return player.playerId === lineupData?.goalkeeper;
-                      });
+                    let keeper = playerStore.players()?.find(player => {
+                      return player.playerId === lineupData?.goalkeeper;
+                    });
 
-                      state.goalkeeper =
-                        keeper ?? getUndefinedPlayer(goalkeeper);
+                    tempState.goalkeeper =
+                      keeper ?? getUndefinedPlayer(goalkeeper);
 
-                      setLineUpState(
-                        playerStore.defenders(),
-                        lineupData?.defenders ?? [],
-                        state,
-                        defender,
-                        state.formation?.defense ?? 0
-                      );
+                    setLineUpState(
+                      playerStore.defenders(),
+                      lineupData?.defenders ?? [],
+                      tempState,
+                      defender,
+                      tempState.formation?.defense ?? 0
+                    );
 
-                      setLineUpState(
-                        playerStore.midfielders(),
-                        lineupData?.midfielders ?? [],
-                        state,
-                        midfielder,
-                        state.formation?.midfield ?? 0
-                      );
+                    setLineUpState(
+                      playerStore.midfielders(),
+                      lineupData?.midfielders ?? [],
+                      tempState,
+                      midfielder,
+                      tempState.formation?.midfield ?? 0
+                    );
 
-                      setLineUpState(
-                        playerStore.attackers(),
-                        lineupData?.attackers ?? [],
-                        state,
-                        attacker,
-                        state.formation?.attack ?? 0
-                      );
+                    setLineUpState(
+                      playerStore.attackers(),
+                      lineupData?.attackers ?? [],
+                      tempState,
+                      attacker,
+                      tempState.formation?.attack ?? 0
+                    );
 
-                      return state;
+                    patchState(store, {
+                      goalkeeper: tempState.goalkeeper,
+                      defenders: tempState.defenders,
+                      midfielders: tempState.midfielders,
+                      attackers: tempState.attackers,
                     });
                   },
                   error: () =>

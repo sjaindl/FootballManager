@@ -1,5 +1,5 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, Signal, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Signal, inject, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Storage, getDownloadURL, ref } from '@angular/fire/storage';
 import { from, of, switchMap } from 'rxjs';
@@ -13,18 +13,20 @@ export interface S11Image {
 @Component({
   selector: 's11-image',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule],
   templateUrl: './image.component.html',
   styleUrl: './image.component.scss',
 })
 export class ImageComponent {
+  private storage = inject(Storage);
+
   image = input<S11Image>();
   width = input<number>(100);
   height = input<number>(75);
 
   imageRef$: Signal<string | undefined>;
 
-  constructor(private storage: Storage) {
+  constructor() {
     this.imageRef$ = toSignal(
       toObservable(this.image).pipe(
         switchMap(image => {

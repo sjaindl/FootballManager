@@ -3,12 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import {
-  Router,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet,
-} from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { AuthStore } from '../auth/store/auth.store';
 import { BettingStore } from '../betting-game/store/bettings.store';
@@ -19,7 +14,6 @@ import { FirebaseService } from '../service/firebase.service';
 import { SnackbarService } from '../service/snackbar.service';
 import { appTitle } from '../shared/constants';
 import { ProfileMenuIconComponent } from '../user/components/profile-menu-icon/profile-menu-icon.component';
-import { UserIconComponent } from '../user/components/user-icon/user-icon.component';
 
 @Component({
   selector: 's11-header',
@@ -30,9 +24,7 @@ import { UserIconComponent } from '../user/components/user-icon/user-icon.compon
     MatMenuModule,
     MatIcon,
     MatMenuTrigger,
-    UserIconComponent,
     ProfileMenuIconComponent,
-    RouterOutlet,
     RouterLink,
     RouterLinkActive,
   ],
@@ -40,6 +32,10 @@ import { UserIconComponent } from '../user/components/user-icon/user-icon.compon
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+  router = inject(Router);
+  private snackbarService = inject(SnackbarService);
+  private firebaseService = inject(FirebaseService);
+
   readonly lineupStore = inject(LineupStore);
   readonly playerStore = inject(PlayerStore);
   readonly matchdayStore = inject(MatchdayStore);
@@ -51,11 +47,7 @@ export class HeaderComponent {
 
   freeze: Signal<boolean | undefined>;
 
-  constructor(
-    public router: Router,
-    private snackbarService: SnackbarService,
-    private firebaseService: FirebaseService
-  ) {
+  constructor() {
     this.freeze = this.configStore.freeze;
   }
 
@@ -97,8 +89,8 @@ export class HeaderComponent {
     this.playerStore.resetCurrentPoints();
   }
 
-  private isValid(): Boolean {
-    var isValid = true;
+  private isValid(): boolean {
+    let isValid = true;
     this.playerStore.players()?.forEach(player => {
       const value = player.pointsCurrentRound;
       console.log(value === undefined);

@@ -1,9 +1,10 @@
 @if (topPlayersLastRound().length > 0) {
-<s11-stats-item
-  [mvps]="topPlayersLastRound()"
-  [title]="topPlayersTitle"></s11-stats-item>
-} @if (mvpPlayersByPoints().length > 0) {
-<s11-stats-item
-  [mvps]="mvpPlayersByPoints()"
-  [title]="'MVPs (Punkte)'"></s11-stats-item>
+  <s11-stats-item
+    [mvps]="topPlayersLastRound()"
+    [title]="topPlayersTitle"></s11-stats-item>
+}
+@if (mvpPlayersByPoints().length > 0) {
+  <s11-stats-item
+    [mvps]="mvpPlayersByPoints()"
+    [title]="'MVPs (Punkte)'"></s11-stats-item>
 }

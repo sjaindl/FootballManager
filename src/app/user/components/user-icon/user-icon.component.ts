@@ -1,19 +1,19 @@
-import { Component, Input } from '@angular/core';
-import { MatFabButton } from '@angular/material/button';
+import { Component, Input, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 's11-user-icon',
   standalone: true,
-  imports: [MatFabButton],
   templateUrl: './user-icon.component.html',
   styleUrl: './user-icon.component.scss',
 })
 export class UserIconComponent {
+  private router = inject(Router);
+
   @Input()
   userUrl?: string;
 
-  constructor(private router: Router) {}
+  constructor() {}
 
   goToProfile() {
     this.router.navigate(['profile']);

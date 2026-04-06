@@ -34,9 +34,11 @@ import { UserData, userDataConverter } from '../shared/userdata';
   providedIn: 'root',
 })
 export class FirebaseService {
+  private db = inject(Firestore);
+
   private readonly authStore = inject(AuthStore);
 
-  constructor(private db: Firestore) {}
+  constructor() {}
 
   // FAQs
   getFaqs(): Observable<FirebaseResponse[]> {
@@ -60,7 +62,7 @@ export class FirebaseService {
       playerConverter
     );
 
-    return collectionData(itemCollection).pipe(
+    return (collectionData(itemCollection) as Observable<Player[]>).pipe(
       map(players => players.filter(player => player.active || !onlyActive))
     );
   }
@@ -85,7 +87,7 @@ export class FirebaseService {
   getUser(uid: string): Observable<User | undefined> {
     const userDoc = this.getUserDoc(uid);
 
-    return docData(userDoc);
+    return docData(userDoc) as Observable<User | undefined>;
   }
 
   getUserDoc(uid: string): DocumentReference<User> {
@@ -221,7 +223,7 @@ export class FirebaseService {
 
     // this.debugInfo(matchdaysCollection);
 
-    return collectionData(matchdaysCollection);
+    return collectionData(matchdaysCollection) as Observable<UserData[]>;
   }
 
   setUserMatchdayLineup(matchday: string) {
@@ -298,7 +300,7 @@ export class FirebaseService {
 
     const linedUpDataDoc = doc(lineupCollection, 'lineupData');
 
-    return docData(linedUpDataDoc);
+    return docData(linedUpDataDoc) as Observable<LineupData | undefined>;
   }
 
   setLineup(lineup: LinedUpPlayer[]) {
@@ -355,7 +357,7 @@ export class FirebaseService {
       matchdayConverter
     );
 
-    return collectionData(q);
+    return collectionData(q) as Observable<Matchday[]>;
   }
 
   addMatchday(matchday: string, index: number, opponent: string) {
@@ -393,7 +395,6 @@ export class FirebaseService {
       };
 
       console.log(docData);
-      
       updateDoc(playerDoc, docData);
     });
   }
@@ -404,7 +405,7 @@ export class FirebaseService {
       betConverter
     );
 
-    return collectionData(betsCollection);
+    return collectionData(betsCollection) as Observable<Bet[]>;
   }
 
   setBet(

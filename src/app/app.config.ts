@@ -4,7 +4,6 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
-import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {
   PreloadAllModules,
@@ -26,17 +25,12 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules),
       withDebugTracing()
     ),
-    provideClientHydration(),
     provideAnimationsAsync(),
     { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
-    importProvidersFrom([
-      provideFirebaseApp(() => {
-        return initializeApp(environment.firebaseConfig);
-      }),
-      provideAuth(() => getAuth()),
-      provideFirestore(() => getFirestore(db)),
-      provideStorage(() => getStorage()),
-      FirebaseUIModule.forRoot(firebaseUiAuthConfig),
-    ]),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore(db)),
+    provideStorage(() => getStorage()),
+    importProvidersFrom(FirebaseUIModule.forRoot(firebaseUiAuthConfig)),
   ],
 };

@@ -7,7 +7,6 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { produce } from 'immer';
 import { User } from '../../shared/user';
 
 interface AuthState {
@@ -57,28 +56,22 @@ export const AuthStore = signalStore(
   withMethods(store => {
     return {
       setUser(user?: User): void {
-        patchState(store, state => {
-          return produce(state, draft => {
-            draft.user = user;
-          });
-        });
+        patchState(store, { user });
       },
       updateName(name: string): void {
         patchState(store, state => {
           if (state.user) {
-            // TODO: ... Mit immer ersetzen
             return { user: { ...state.user, name: name } };
           }
-          return { ...state };
+          return {};
         });
       },
       updatePhotoRef(photoRef: string): void {
         patchState(store, state => {
           if (state.user) {
-            // TODO: ... Mit immer ersetzen
             return { user: { ...state.user, photoRef: photoRef } };
           }
-          return { ...state };
+          return {};
         });
       },
     };

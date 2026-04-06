@@ -7,9 +7,9 @@
     <mat-card-content>
       <mat-list role="list">
         @for (mvp of mvps(); track $index) {
-        <mat-list-item role="listitem">
-          {{ $index + 1 }}. {{ mvp.playerName }} ({{ mvp.points }})
-        </mat-list-item>
+          <mat-list-item role="listitem">
+            {{ $index + 1 }}. {{ mvp.playerName }} ({{ mvp.points }})
+          </mat-list-item>
         }
       </mat-list>
     </mat-card-content>

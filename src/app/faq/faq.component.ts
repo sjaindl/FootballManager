@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
@@ -16,10 +16,11 @@ import { Faq } from '../shared/faq';
   styleUrl: './faq.component.scss',
 })
 export class FaqComponent {
-  faqs$: Observable<Faq[]>;
+  private firebaseService = inject(FirebaseService);
 
-  constructor(private firebaseService: FirebaseService) {
-    var index = 0;
+  faqs$: Observable<Faq[]>;
+  constructor() {
+    let index = 0;
 
     this.faqs$ = this.firebaseService.getFaqs().pipe(
       map(doc => {

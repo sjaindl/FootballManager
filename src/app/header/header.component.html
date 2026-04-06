@@ -35,15 +35,15 @@
         </button>
 
         @if (authStore.user()?.isAdmin === true) {
-        <button mat-menu-item [matMenuTriggerFor]="admin">
-          <span class="fas fa-lock fa-sm"></span> Admin
-        </button>
+          <button mat-menu-item [matMenuTriggerFor]="admin">
+            <span class="fas fa-lock fa-sm"></span> Admin
+          </button>
 
-        <mat-menu #admin="matMenu">
-          <button mat-menu-item routerLink="/admin/points">Punkte</button>
-          <button mat-menu-item routerLink="/admin/bets">Tipps</button>
-          <button mat-menu-item routerLink="/admin/news">News</button>
-        </mat-menu>
+          <mat-menu #admin="matMenu">
+            <button mat-menu-item routerLink="/admin/points">Punkte</button>
+            <button mat-menu-item routerLink="/admin/bets">Tipps</button>
+            <button mat-menu-item routerLink="/admin/news">News</button>
+          </mat-menu>
         }
 
         <button
@@ -58,38 +58,37 @@
     <span>{{ title }}</span>
 
     <div class="s11-toolbar" matRipple>
-      @if (this.router.url == '/lineup') {
+      @if (this.router.url === '/lineup') {
+        <button
+          [disabled]="configStore.freeze()"
+          (click)="saveLineup()"
+          mat-icon-button>
+          <mat-icon
+            class="icon-display"
+            aria-hidden="false"
+            aria-label="Aufstellung speichern"
+            fontIcon="save" />
+        </button>
+      }
+      @if (this.router.url === '/admin/points') {
+        <button (click)="toggleFreeze()" mat-icon-button>
+          <mat-icon
+            class="icon-display"
+            aria-hidden="false"
+            aria-label="Änderungen einfrieren"
+            fontIcon="{{ toggleFreezeIcon() }}" />
+        </button>
 
-      <button
-        [disabled]="configStore.freeze()"
-        (click)="saveLineup()"
-        mat-icon-button>
-        <mat-icon
-          class="icon-display"
-          aria-hidden="false"
-          aria-label="Aufstellung speichern"
-          fontIcon="save" />
-      </button>
-      } @if (this.router.url == '/admin/points') {
-
-      <button (click)="toggleFreeze()" mat-icon-button>
-        <mat-icon
-          class="icon-display"
-          aria-hidden="false"
-          aria-label="Änderungen einfrieren"
-          fontIcon="{{ toggleFreezeIcon() }}" />
-      </button>
-
-      <button (click)="saveMatchday()" mat-icon-button>
-        <mat-icon
-          class="icon-display"
-          aria-hidden="false"
-          aria-label="Spieltag speichern"
-          fontIcon="save" />
-      </button>
-      } @if (this.router.url == '/admin/bets') {
-
-      <!-- <button (click)="saveResult()" mat-icon-button>
+        <button (click)="saveMatchday()" mat-icon-button>
+          <mat-icon
+            class="icon-display"
+            aria-hidden="false"
+            aria-label="Spieltag speichern"
+            fontIcon="save" />
+        </button>
+      }
+      @if (this.router.url === '/admin/bets') {
+        <!-- <button (click)="saveResult()" mat-icon-button>
         <mat-icon
           class="icon-display"
           aria-hidden="false"

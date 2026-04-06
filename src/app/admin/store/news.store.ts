@@ -35,10 +35,7 @@ export const NewsStore = signalStore(
           switchMap(() => {
             return firebaseService.getNews().pipe(
               tap(news => {
-                patchState(store, state => {
-                  state.news = news;
-                  return state;
-                });
+                patchState(store, { news });
                 coreStore.decreaseLoadingCount();
               })
             );
@@ -46,11 +43,7 @@ export const NewsStore = signalStore(
         )
       ),
       setNews(news: News): void {
-        patchState(store, state => {
-          state.news = news;
-          return state;
-        });
-
+        patchState(store, { news });
         firebaseService.setNews(news);
       },
     })

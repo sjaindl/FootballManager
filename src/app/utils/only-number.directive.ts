@@ -1,4 +1,10 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  inject,
+} from '@angular/core';
 import { allowedCodes, allowedKeys } from './utils';
 
 @Directive({
@@ -6,7 +12,9 @@ import { allowedCodes, allowedKeys } from './utils';
   selector: '[s11OnlyNumber]',
 })
 export class OnlyNumber {
-  constructor(private el: ElementRef) {}
+  private el = inject(ElementRef);
+
+  constructor() {}
 
   @Input() s11OnlyNumber: boolean = true;
   @Input() s11AdditionalAllowedCharacters: string[] = [];

@@ -74,9 +74,9 @@ export const routes: Routes = [
           {
             path: 'points',
             loadComponent: () =>
-              import(
-                './admin/container/admin-points/admin-points.component'
-              ).then(mod => mod.AdminPointsComponent),
+              import('./admin/container/admin-points/admin-points.component').then(
+                mod => mod.AdminPointsComponent
+              ),
             canActivate: [userLineupGuard, userMatchdayGuard],
           },
           {

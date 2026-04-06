@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, Signal, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatchdayComponent } from '../admin/components/matchday-points/matchday-points.component';
 import { MatchdayStore } from '../admin/store/matchday.store';
 import { PlayerStore } from '../lineup/store/player.store';
 import { ImageComponent } from '../shared/image/image.component';
@@ -13,13 +12,7 @@ import { UserStore } from './store/user.store';
 @Component({
   selector: 's11-standings',
   standalone: true,
-  imports: [
-    MatTabsModule,
-    MatchdayComponent,
-    MatTableModule,
-    CommonModule,
-    ImageComponent,
-  ],
+  imports: [MatTabsModule, MatTableModule, CommonModule, ImageComponent],
   templateUrl: './standings.component.html',
   styleUrl: './standings.component.scss',
 })

@@ -67,10 +67,7 @@ export const UserLineupStore = signalStore(
                           }
                         });
 
-                        patchState(store, state => {
-                          state.userToLineup = map;
-                          return state;
-                        });
+                        patchState(store, { userToLineup: map });
                       })
                       //take(1)
                     )

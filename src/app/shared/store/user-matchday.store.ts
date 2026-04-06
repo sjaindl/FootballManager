@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { Injector, inject, runInInjectionContext } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -41,7 +41,8 @@ export const UserMatchdayStore = signalStore(
       firebaseService = inject(FirebaseService),
       coreStore = inject(CoreStore),
       configStore = inject(ConfigStore),
-      snackBarService = inject(SnackbarService)
+      snackBarService = inject(SnackbarService),
+      injector = inject(Injector)
     ) => ({
       load: rxMethod<void>(
         pipe(
@@ -53,7 +54,7 @@ export const UserMatchdayStore = signalStore(
                 next: users => {
                   forkJoin(
                     users.map(user =>
-                      firebaseService.getUserMatchdayData(user.uid).pipe(
+                      runInInjectionContext(injector, () => firebaseService.getUserMatchdayData(user.uid)).pipe(
                         take(1),
                         map(userData => ({ user: user, userData: userData }))
                       )
@@ -73,10 +74,7 @@ export const UserMatchdayStore = signalStore(
                               return currentUserData.id.startsWith(season);
                             });
                         });
-                        patchState(store, state => {
-                          state.usersToMatchdays = map;
-                          return state;
-                        });
+                        patchState(store, { usersToMatchdays: map });
                       }),
                       take(1)
                     )
@@ -102,31 +100,20 @@ export const UserMatchdayStore = signalStore(
       ): void {
         firebaseService.saveUserMatchdayBet(matchday, homeScore, awayScore);
 
-        patchState(store, state => {
-          const days = state.usersToMatchdays ?? {};
+        const days = store.usersToMatchdays() ?? {};
+        const userData = days[uid]?.find(data => data.id === matchday);
 
-          var userData = days[uid].find(data => {
-            return data.id === matchday;
+        if (userData) {
+          const updatedUserData = { ...userData, homeScore, awayScore };
+          const userDataList = days[uid].filter(data => data.id !== matchday);
+          userDataList.push(updatedUserData);
+
+          patchState(store, {
+            usersToMatchdays: { ...days, [uid]: userDataList },
           });
+        }
 
-          const userDataList = days[uid].filter(data => {
-            return data.id !== matchday;
-          });
-
-          if (userData) {
-            userData.homeScore = homeScore;
-            userData.awayScore = awayScore;
-
-            userDataList.push(userData);
-            days[uid] = userDataList;
-
-            state.usersToMatchdays = days;
-          }
-
-          snackBarService.open('Tipp gespeichert!');
-
-          return state;
-        });
+        snackBarService.open('Tipp gespeichert!');
       },
     })
   )

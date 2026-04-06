@@ -68,14 +68,13 @@ export const MatchdayStore = signalStore(
             return firebaseService.getMatchdays().pipe(
               tap(matchdays => {
                 const season = configStore.season();
-                patchState(store, state => {
-                  state.matchdays = matchdays.filter((matchday: Matchday) => {
+                patchState(store, {
+                  matchdays: matchdays.filter((matchday: Matchday) => {
                     if (season === undefined) {
                       return false;
                     }
                     return matchday.id.startsWith(season);
-                  });
-                  return state;
+                  }),
                 });
                 coreStore.decreaseLoadingCount();
               })
@@ -87,16 +86,12 @@ export const MatchdayStore = signalStore(
         const substrIndex = matchday.lastIndexOf('_');
         const index = Number(matchday.substring(substrIndex + 1));
 
-        patchState(store, state => {
-          const days = state.matchdays ?? [];
-          days.push({
-            id: matchday,
-            index: index,
-            opponent: opponent,
-          });
-          state.matchdays = days;
-          return state;
-        });
+        patchState(store, state => ({
+          matchdays: [
+            ...(state.matchdays ?? []),
+            { id: matchday, index: index, opponent: opponent },
+          ],
+        }));
 
         firebaseService.addMatchday(matchday, index, opponent);
       },
